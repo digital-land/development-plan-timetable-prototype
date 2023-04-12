@@ -3,8 +3,10 @@
 from flask import Flask
 from flask.cli import load_dotenv
 
-load_dotenv()
 
+from application.models import *  # noqa
+
+load_dotenv()
 
 
 def create_app(config_filename):
@@ -44,8 +46,13 @@ def register_context_processors(app):
 def register_filters(app):
     pass
 
+
 def register_extensions(app):
-    pass
+    from application.extensions import db, migrate
+
+    db.init_app(app)
+    migrate.init_app(app)
+
 
 def register_templates(app):
     """

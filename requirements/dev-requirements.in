@@ -1,0 +1,6 @@
+-c requirements.in
+pytest
+flake8
+pre-commit
+black
+isort

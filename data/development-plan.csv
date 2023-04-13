@@ -1,5 +1,5 @@
 reference,name,description,development-plan-type,period-start-date,period-end-date,documentation-url,notes,organisation,entry-date,start-date,end-date
 camden-2017-local-plan,Camden 2017 local plan,,local-plan,2016,2031,https://www.camden.gov.uk/camden-local-plan1,,local-authority-eng:CMD,,,
 leeds-local-plan-2033,Leeds local plan,,local-plan,2017,2033,https://www.leeds.gov.uk/planning/planning-policy/adopted-local-plan,,local-authority-eng:LDS,,,
-crawley-2030,Crawley 2030,,local-plan,2015,2030,https://crawley.gov.uk/planning/planning-policy/local-plan/about-local-plan,,Crawley,,,
-doncaster-local-plan,Doncaster local plan 2015-2035,,local-plan,2015,2035,https://www.doncaster.gov.uk/services/planning/local-plan,,Doncaster,,,
+crawley-2030,Crawley 2030,,local-plan,2015,2030,https://crawley.gov.uk/planning/planning-policy/local-plan/about-local-plan,,local-authority-eng:CRW,,,
+doncaster-local-plan,Doncaster local plan 2015-2035,,local-plan,2015,2035,https://www.doncaster.gov.uk/services/planning/local-plan,,local-authority-eng:DNC,,,

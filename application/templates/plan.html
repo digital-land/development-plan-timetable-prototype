@@ -10,6 +10,18 @@
     <p class="govuk-body">Name: {{ development_plan.name }}</p>
     <p class="govuk-body">Organisation: {{ development_plan.organisation }}</p>
     <p class="govuk-body">Documentation URL: {{ development_plan.documentation_url }}</p>
+    <h2 class="govuk-heading-s">Timetable</h2>
+    <ul class="govuk-list--bullet">
+      {% for stage in development_plan.timetable %}
+        <li>{{ stage.reference }}: {{ stage.development_plan_event }}, {{ stage.event_date }}</li>
+      {% endfor %}
+    </ul>
+    <h2 class="govuk-heading-s">Documents</h2>
+    <ul class="govuk-list--bullet">
+      {% for document in development_plan.documents %}
+        <li>{{ document.reference }}: {{ document.name }}, {{ document.documentation_url }}</li>
+      {% endfor %}
+    </ul>
   </section>
 </main>
 {% endblock main %}

@@ -4,7 +4,7 @@ init::
 	python -m piptools compile requirements/dev-requirements.in
 	python -m piptools compile requirements/requirements.in
 	python -m piptools sync requirements/dev-requirements.txt requirements/requirements.txt
-	# python -m pre_commit install
+	python -m pre_commit install
 	npm install
 
 reqs:
@@ -50,4 +50,3 @@ load-data:
 
 drop-data:
 	flask data drop
-

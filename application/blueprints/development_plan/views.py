@@ -11,7 +11,7 @@ development_plan = Blueprint(
 @development_plan.route("/<string:reference>")
 def plan(reference):
     development_plan = DevelopmentPlan.query.get(reference)
-    return render_template("plan.html", development_plan=development_plan)
+    return render_template("plan/plan.html", development_plan=development_plan)
 
 
 @development_plan.route("/<string:reference>/edit")

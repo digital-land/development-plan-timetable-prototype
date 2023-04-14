@@ -27,7 +27,13 @@
             </div>
             <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key">Organisation</dt>
-              <dd class="govuk-summary-list__value">{{ plan.organisation.name }}</dd>
+              <dd class="govuk-summary-list__value">
+                <ul class="govuk-list">
+                {% for org in plan.organisations %}
+                  <li>{{ org.name }}</li>
+                {% endfor %}
+                </ul>
+              </dd>
             </div>
             <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key">Documentation URL</dt>

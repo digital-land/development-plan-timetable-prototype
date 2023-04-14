@@ -1,3 +1,5 @@
 // import all digital land and GOVUK Frontend scss
 @import "digital-land-frontend/dl-frontend";
 
+// app specific component scss
+@import "components/summary-card";

@@ -1,27 +1,58 @@
 {% extends 'layouts/base.html' %}
+{%- set plan = development_plan -%}
 
-{% block main %}
-<main id="content" role="main">
-   <section class="govuk-width-container">
-    <h1 class="govuk-heading-m">Development plan {{development_plan.reference}}</h1>
-  </section>
-  <section class="govuk-width-container">
-    <p class="govuk-body">Reference: {{ development_plan.reference }}</p>
-    <p class="govuk-body">Name: {{ development_plan.name }}</p>
-    <p class="govuk-body">Organisation: {{ development_plan.organisation }}</p>
-    <p class="govuk-body">Documentation URL: {{ development_plan.documentation_url }}</p>
-    <h2 class="govuk-heading-s">Timetable</h2>
+{% block content %}
+
+  <span class="govuk-caption-xl">Development plan</span>
+  <h1 class="govuk-heading-xl">{{development_plan.reference}}</h1>
+
+  <a href="{{ url_for('development_plan.edit', reference=plan.reference) }}" class="govuk-link">Edit record</a>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <section class="app-summary-card govuk-!-margin-bottom-9">
+        <header class="app-summary-card__header">
+          <h2 class="app-summary-card__title">
+            Plan record
+          </h2>
+        </header>
+        <div class="app-summary-card__body">
+          <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">Reference</dt>
+              <dd class="govuk-summary-list__value">{{ plan.reference }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">Name</dt>
+              <dd class="govuk-summary-list__value">{{ plan.name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">Organisation</dt>
+              <dd class="govuk-summary-list__value">{{ plan.organisation.name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">Documentation URL</dt>
+              <dd class="govuk-summary-list__value"><a href="{{ plan.documentation_url }}" class="govuk-link">{{ plan.documentation_url }}</a></dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </div>
+  </div>
+
+    <h2 class="govuk-heading-m">Timetable</h2>
     <ul class="govuk-list--bullet">
       {% for stage in development_plan.timetable %}
         <li>{{ stage.reference }}: {{ stage.development_plan_event.name }}, {{ stage.event_date }}</li>
       {% endfor %}
     </ul>
-    <h2 class="govuk-heading-s">Documents</h2>
+    <a href="#" class="govuk-button govuk-button--secondary">+ add event to timetable</a>
+    <h2 class="govuk-heading-m">Documents</h2>
     <ul class="govuk-list--bullet">
       {% for document in development_plan.documents %}
         <li>{{ document.reference }}: {{ document.name }}, {{ document.documentation_url }}</li>
       {% endfor %}
     </ul>
+    <a href="#" class="govuk-button govuk-button--secondary">+ add supporting document</a>
   </section>
 </main>
-{% endblock main %}
+{% endblock content %}

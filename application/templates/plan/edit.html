@@ -36,7 +36,10 @@
         </div>
       {% endif -%}
       {% endfor %}
-      <button class="govuk-button" type="submit">Create record</button>
+      <div class="govuk-button-group">
+        <button class="govuk-button" type="submit">Edit record</button>
+        <a class="govuk-link" href="{{ url_for('development_plan.plan', reference=plan.reference) }}">Cancel</a>
+      </div>
     </form>
   </div>
 </div>

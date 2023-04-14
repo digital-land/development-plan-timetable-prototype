@@ -50,3 +50,6 @@ load-data:
 
 drop-data:
 	flask data drop
+
+build-css:
+	npm run nps build.stylesheets

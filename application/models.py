@@ -12,7 +12,6 @@ class DateModel(db.Model):
 
 
 class DevelopmentPlanType(DateModel):
-
     __tablename__ = "development_plan_type"
 
     reference = db.Column(db.Text, primary_key=True)
@@ -21,7 +20,6 @@ class DevelopmentPlanType(DateModel):
 
 
 class DevelopmentPlanEvent(DateModel):
-
     __tablename__ = "development_plan_event"
 
     reference = db.Column(db.Text, primary_key=True)
@@ -30,7 +28,6 @@ class DevelopmentPlanEvent(DateModel):
 
 
 class DocumentType(DateModel):
-
     __tablename__ = "document_type"
 
     reference = db.Column(db.Text, primary_key=True)
@@ -38,8 +35,35 @@ class DocumentType(DateModel):
     category = db.Column(db.Text)
 
 
-class DevelopmentPlan(DateModel):
+development_plan_organisation = db.Table(
+    "development_plan_organisation",
+    db.Column("development_plan", db.Text, db.ForeignKey("development_plan.reference")),
+    db.Column("organisation", db.Text, db.ForeignKey("organisation.organisation")),
+)
 
+
+development_plan_document_organisation = db.Table(
+    "development_plan_document_organisation",
+    db.Column(
+        "development_plan_document",
+        db.Text,
+        db.ForeignKey("development_plan_document.reference"),
+    ),
+    db.Column("organisation", db.Text, db.ForeignKey("organisation.organisation")),
+)
+
+development_plan_timetable_organisation = db.Table(
+    "development_plan_timetable_organisation",
+    db.Column(
+        "development_plan_timetable",
+        db.Text,
+        db.ForeignKey("development_plan_timetable.reference"),
+    ),
+    db.Column("organisation", db.Text, db.ForeignKey("organisation.organisation")),
+)
+
+
+class DevelopmentPlan(DateModel):
     __tablename__ = "development_plan"
 
     reference = db.Column(db.Text, primary_key=True)
@@ -50,8 +74,13 @@ class DevelopmentPlan(DateModel):
     period_end_date = db.Column(db.Integer)
     documentation_url = db.Column(db.Text)
     notes = db.Column(db.Text)
-    organisation_id = mapped_column(db.ForeignKey("organisation.organisation"))
-    organisation = db.relationship("Organisation")
+
+    organisations = db.relationship(
+        "Organisation",
+        secondary=development_plan_organisation,
+        lazy="subquery",
+        back_populates="development_plans",
+    )
 
     timetable = db.relationship(
         "DevelopmentPlanTimetable", back_populates="development_plan"
@@ -63,7 +92,6 @@ class DevelopmentPlan(DateModel):
 
 
 class DevelopmentPlanTimetable(DateModel):
-
     __tablename__ = "development_plan_timetable"
 
     reference = db.Column(db.Text, primary_key=True)
@@ -71,8 +99,13 @@ class DevelopmentPlanTimetable(DateModel):
     development_plan_event = db.Column(db.Text)
     event_date = db.Column(db.String)
     notes = db.Column(db.Text)
-    organisation_id = mapped_column(db.ForeignKey("organisation.organisation"))
-    organisation = db.relationship("Organisation")
+
+    organisations = db.relationship(
+        "Organisation",
+        secondary=development_plan_timetable_organisation,
+        lazy="subquery",
+        back_populates="development_plan_timetables",
+    )
 
     development_plan_reference = mapped_column(
         db.ForeignKey("development_plan.reference")
@@ -81,7 +114,6 @@ class DevelopmentPlanTimetable(DateModel):
 
 
 class DevelopmentPlanDocument(DateModel):
-
     __tablename__ = "development_plan_document"
 
     reference = db.Column(db.Text, primary_key=True)
@@ -91,8 +123,13 @@ class DevelopmentPlanDocument(DateModel):
     documentation_url = db.Column(db.Text)
     document_url = db.Column(db.Text)
     notes = db.Column(db.Text)
-    organisation_id = mapped_column(db.ForeignKey("organisation.organisation"))
-    organisation = db.relationship("Organisation")
+
+    organisations = db.relationship(
+        "Organisation",
+        secondary=development_plan_document_organisation,
+        lazy="subquery",
+        back_populates="development_plan_documents",
+    )
 
     development_plan_reference = mapped_column(
         db.ForeignKey("development_plan.reference")
@@ -125,3 +162,24 @@ class Organisation(DateModel):
     website = db.Column(db.Text)
     wikidata = db.Column(db.Text)
     wikipedia = db.Column(db.Text)
+
+    development_plans = db.relationship(
+        "DevelopmentPlan",
+        secondary=development_plan_organisation,
+        lazy="subquery",
+        back_populates="organisations",
+    )
+
+    development_plan_documents = db.relationship(
+        "DevelopmentPlanDocument",
+        secondary=development_plan_document_organisation,
+        lazy="subquery",
+        back_populates="organisations",
+    )
+
+    development_plan_timetables = db.relationship(
+        "DevelopmentPlanTimetable",
+        secondary=development_plan_timetable_organisation,
+        lazy="subquery",
+        back_populates="organisations",
+    )

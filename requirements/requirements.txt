@@ -57,7 +57,7 @@ markupsafe==2.1.2
     #   mako
     #   werkzeug
     #   wtforms
-psycopg2==2.9.6
+psycopg2-binary==2.9.6
     # via -r requirements/requirements.in
 python-dotenv==1.0.0
     # via -r requirements/requirements.in

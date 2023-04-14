@@ -7,3 +7,4 @@ Flask-SQLAlchemy
 Flask-Migrate
 psycopg2
 flask-sslify
+requests

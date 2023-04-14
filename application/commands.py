@@ -1,7 +1,9 @@
 import csv
 import logging
-from pathlib import Path
 import sys
+import requests
+
+from pathlib import Path
 from flask.cli import AppGroup
 
 logging.basicConfig(stream=sys.stdout)
@@ -17,19 +19,25 @@ def load_data():
 
     for table in db.metadata.sorted_tables:
         logger.info(f"loading data for table: {table.name}")
-        data_file_name = f"{table.name.replace('_', '-')}.csv"
-        data_file_path = f"{Path(__file__).parent.parent}/data/{data_file_name}"
-        try:
-            with open(data_file_path) as data:
-                reader = csv.DictReader(data)
-                for row in reader:
-                    copy = _get_insert_copy(row, table.name)
-                    insert = table.insert().values(**copy)
-                    db.session.execute(insert)
-            db.session.commit()
-        except Exception as e:
-            logger.info(f"error loading data for table: {table.name}")
-            logger.error(e)
+
+        if table.name == "organisation":
+            logger.info("organisation table is loaded from datasette")
+            _load_orgs(db, table)
+
+        else:
+            data_file_name = f"{table.name.replace('_', '-')}.csv"
+            data_file_path = f"{Path(__file__).parent.parent}/data/{data_file_name}"
+            try:
+                with open(data_file_path) as data:
+                    reader = csv.DictReader(data)
+                    for row in reader:
+                        copy = _get_insert_copy(row, table.name)
+                        insert = table.insert().values(**copy)
+                        db.session.execute(insert)
+                db.session.commit()
+            except Exception as e:
+                logger.info(f"error loading data for table: {table.name}")
+                logger.error(e)
 
 
 @data_cli.command("drop")
@@ -54,8 +62,34 @@ def _get_insert_copy(row, table_name):
             and k == "development_plan"
         ):
             k = "development_plan_reference"
+        if k == "organisation" and table_name != "organisation":
+            k = "organisation_id"
         if value:
             copy[k] = value
         else:
             copy[k] = None
     return copy
+
+
+def _load_orgs(db, table):
+    url = "https://datasette.planning.data.gov.uk/digital-land/organisation.json?_shape=array"
+
+    orgs = []
+    while url:
+        resp = requests.get(url)
+        try:
+            url = resp.links.get("next").get("url")
+        except AttributeError:
+            url = None
+
+        orgs.extend(resp.json())
+
+    for org in orgs:
+        try:
+            insert = table.insert().values(_get_insert_copy(org, table.name))
+            db.session.execute(insert)
+            db.session.commit()
+        except Exception as e:
+            logger.exception(e)
+            logger.exception(f"error loading {table} with data {org}")
+            db.session.rollback()

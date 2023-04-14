@@ -50,7 +50,8 @@ class DevelopmentPlan(DateModel):
     period_end_date = db.Column(db.Integer)
     documentation_url = db.Column(db.Text)
     notes = db.Column(db.Text)
-    organisation = db.Column(db.Text)
+    organisation_id = mapped_column(db.ForeignKey("organisation.organisation"))
+    organisation = db.relationship("Organisation")
 
     timetable = db.relationship(
         "DevelopmentPlanTimetable", back_populates="development_plan"
@@ -70,7 +71,8 @@ class DevelopmentPlanTimetable(DateModel):
     development_plan_event = db.Column(db.Text)
     event_date = db.Column(db.String)
     notes = db.Column(db.Text)
-    organisation = db.Column(db.Text)
+    organisation_id = mapped_column(db.ForeignKey("organisation.organisation"))
+    organisation = db.relationship("Organisation")
 
     development_plan_reference = mapped_column(
         db.ForeignKey("development_plan.reference")
@@ -85,13 +87,41 @@ class DevelopmentPlanDocument(DateModel):
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
-    document_type = mapped_column(db.ForeignKey("document_type.reference"))
+    document_type = db.Column(db.Text)
     documentation_url = db.Column(db.Text)
     document_url = db.Column(db.Text)
     notes = db.Column(db.Text)
-    organisation = db.Column(db.Text)
+    organisation_id = mapped_column(db.ForeignKey("organisation.organisation"))
+    organisation = db.relationship("Organisation")
 
     development_plan_reference = mapped_column(
         db.ForeignKey("development_plan.reference")
     )
     development_plan = db.relationship("DevelopmentPlan")
+
+
+class Organisation(DateModel):
+    organisation = db.Column(db.Text, primary_key=True)
+    addressbase_custodian = db.Column(db.Text)
+    billing_authority = db.Column(db.Text)
+    census_area = db.Column(db.Text)
+    combined_authority = db.Column(db.Text)
+    company = db.Column(db.Text)
+    entity = db.Column(db.BigInteger)
+    esd_inventory = db.Column(db.Text)
+    local_authority_type = db.Column(db.Text)
+    local_resilience_forum = db.Column(db.Text)
+    name = db.Column(db.Text)
+    notes = db.Column(db.Text)
+    official_name = db.Column(db.Text)
+    opendatacommunities_uri = db.Column(db.Text)
+    parliament_thesaurus = db.Column(db.Text)
+    prefix = db.Column(db.Text)
+    reference = db.Column(db.Text)
+    region = db.Column(db.Text)
+    shielding_hub = db.Column(db.Text)
+    statistical_geography = db.Column(db.Text)
+    twitter = db.Column(db.Text)
+    website = db.Column(db.Text)
+    wikidata = db.Column(db.Text)
+    wikipedia = db.Column(db.Text)

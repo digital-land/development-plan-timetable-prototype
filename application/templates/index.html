@@ -1,16 +1,18 @@
 {% extends 'layouts/base.html' %}
 
-{% block main %}
-<main id="content" role="main">
-   <section class="govuk-width-container">
-    <h1 class="govuk-heading-m">Development plan timetable prototype</h1>
-  </section>
-  <section class="govuk-width-container">
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <h1 class="govuk-heading-xl">Development plan timetable prototype</h1>
+
+    <p class="govuk-body">We have seeded the prototype with these plans:</p>
     <ul class="govuk-list govuk-list--bullet">
       {% for plan in development_plans %}
         <li><a class="govuk-link" href="{{ url_for('development_plan.plan', reference=plan.reference) }}">{{ plan.name }}</a></li>
       {% endfor %}
     </ul>
-  </section>
-</main>
-{% endblock main %}
+
+    <a href="{{ url_for('development_plan.new') }}" class="govuk-button govuk-button--secondary">+ add new plan record</a>
+  </div>
+</div>
+{% endblock content %}

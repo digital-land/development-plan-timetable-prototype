@@ -1,0 +1,15 @@
+{% extends 'layouts/base.html' %}
+
+{% block main %}
+<main id="content" role="main">
+   <section class="govuk-width-container">
+    <h1 class="govuk-heading-m">Development plan {{development_plan.reference}}</h1>
+  </section>
+  <section class="govuk-width-container">
+    <p class="govuk-body">Reference: {{ development_plan.reference }}</p>
+    <p class="govuk-body">Name: {{ development_plan.name }}</p>
+    <p class="govuk-body">Organisation: {{ development_plan.organisation }}</p>
+    <p class="govuk-body">Documentation URL: {{ development_plan.documentation_url }}</p>
+  </section>
+</main>
+{% endblock main %}

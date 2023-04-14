@@ -5,5 +5,12 @@
    <section class="govuk-width-container">
     <h1 class="govuk-heading-m">Development plan timetable prototype</h1>
   </section>
+  <section class="govuk-width-container">
+    <ul class="govuk-list govuk-list--bullet">
+      {% for plan in development_plans %}
+        <li><a class="govuk-link" href="{{ url_for('development_plan.plan', reference=plan.reference) }}">{{ plan.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
 </main>
 {% endblock main %}

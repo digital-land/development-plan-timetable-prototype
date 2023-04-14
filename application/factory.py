@@ -28,8 +28,10 @@ def create_app(config_filename):
 def register_blueprints(app):
 
     from application.blueprints.base.views import base
+    from application.blueprints.development_plan.views import development_plan
 
     app.register_blueprint(base)
+    app.register_blueprint(development_plan)
 
 
 def register_context_processors(app):

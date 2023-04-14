@@ -54,12 +54,9 @@ class DevelopmentPlan(DateModel):
     notes = db.Column(db.Text)
     organisation = db.Column(db.Text)
 
-    timetable = db.relationship(
-        "DevelopmentPlanTimetable", back_populates="development_plan"
-    )
-    documents = db.relationship(
-        "DevelopmentPlanDocument", back_populates="development_plan"
-    )
+    timetable = db.relationship("DevelopmentPlanTimetable")
+
+    documents = db.relationship("DevelopmentPlanDocument")
 
 
 class DevelopmentPlanTimetable(DateModel):

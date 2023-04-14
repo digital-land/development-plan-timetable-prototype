@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+{%- set plan = development_plan -%}
+
+<span class="govuk-caption-xl">Development plans</span>
+<h1 class="govuk-heading-xl">Edit plan: {{ plan.reference }}</h1>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form class="govuk-form" method="POST">
+      {{ form.csrf_token }}
+
+      <div class="govuk-form-group">
+        <label for="#" class="govuk-label">Reference</label>
+        <div class="govuk-body govuk-!-font-weight-bold">{{ plan.reference }}</div>
+      </div>
+
+      {% for field in form %}
+      {%- if field.name not in ['reference'] %}
+        <div class="govuk-form-group">
+          {{ field.label(class='govuk-label') }}
+          {% if field.type == "TextAreaField" %}
+          {{ field(class='govuk-textarea') }}
+          {% else %}
+          {{ field(class='govuk-input') }}
+          {% endif %}
+          {% if field.errors %}
+              <ul>
+              {% for error in field.errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+              </ul>
+          {% endif %}
+        </div>
+      {% endif -%}
+      {% endfor %}
+      <button class="govuk-button" type="submit">Create record</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -3,14 +3,12 @@
 from flask import Flask
 from flask.cli import load_dotenv
 
-
 from application.models import *  # noqa
 
 load_dotenv()
 
 
 def create_app(config_filename):
-
     app = Flask(__name__)
     app.config.from_object(config_filename)
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 10
@@ -26,7 +24,6 @@ def create_app(config_filename):
 
 
 def register_blueprints(app):
-
     from application.blueprints.base.views import base
     from application.blueprints.development_plan.views import development_plan
 
@@ -54,6 +51,10 @@ def register_extensions(app):
 
     db.init_app(app)
     migrate.init_app(app)
+
+    from flask_sslify import SSLify
+
+    sslify = SSLify(app)  # noqa
 
 
 def register_templates(app):

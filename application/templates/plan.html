@@ -13,7 +13,7 @@
     <h2 class="govuk-heading-s">Timetable</h2>
     <ul class="govuk-list--bullet">
       {% for stage in development_plan.timetable %}
-        <li>{{ stage.reference }}: {{ stage.development_plan_event }}, {{ stage.event_date }}</li>
+        <li>{{ stage.reference }}: {{ stage.development_plan_event.name }}, {{ stage.event_date }}</li>
       {% endfor %}
     </ul>
     <h2 class="govuk-heading-s">Documents</h2>

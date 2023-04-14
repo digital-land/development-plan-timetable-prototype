@@ -45,18 +45,20 @@ class DevelopmentPlan(DateModel):
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
-    development_plan_type = mapped_column(
-        db.ForeignKey("development_plan_type.reference")
-    )
+    development_plan_type = db.Column(db.Text)
     period_start_date = db.Column(db.Integer)
     period_end_date = db.Column(db.Integer)
     documentation_url = db.Column(db.Text)
     notes = db.Column(db.Text)
     organisation = db.Column(db.Text)
 
-    timetable = db.relationship("DevelopmentPlanTimetable")
+    timetable = db.relationship(
+        "DevelopmentPlanTimetable", back_populates="development_plan"
+    )
 
-    documents = db.relationship("DevelopmentPlanDocument")
+    documents = db.relationship(
+        "DevelopmentPlanDocument", back_populates="development_plan"
+    )
 
 
 class DevelopmentPlanTimetable(DateModel):
@@ -65,14 +67,15 @@ class DevelopmentPlanTimetable(DateModel):
 
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
-    development_plan_event = mapped_column(
-        db.ForeignKey("development_plan_event.reference")
-    )
+    development_plan_event = db.Column(db.Text)
     event_date = db.Column(db.String)
     notes = db.Column(db.Text)
     organisation = db.Column(db.Text)
 
-    development_plan = mapped_column(db.ForeignKey("development_plan.reference"))
+    development_plan_reference = mapped_column(
+        db.ForeignKey("development_plan.reference")
+    )
+    development_plan = db.relationship("DevelopmentPlan")
 
 
 class DevelopmentPlanDocument(DateModel):
@@ -88,4 +91,7 @@ class DevelopmentPlanDocument(DateModel):
     notes = db.Column(db.Text)
     organisation = db.Column(db.Text)
 
-    development_plan = mapped_column(db.ForeignKey("development_plan.reference"))
+    development_plan_reference = mapped_column(
+        db.ForeignKey("development_plan.reference")
+    )
+    development_plan = db.relationship("DevelopmentPlan")

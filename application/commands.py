@@ -23,7 +23,7 @@ def load_data():
             with open(data_file_path) as data:
                 reader = csv.DictReader(data)
                 for row in reader:
-                    copy = _get_insert_copy(row)
+                    copy = _get_insert_copy(row, table.name)
                     insert = table.insert().values(**copy)
                     db.session.execute(insert)
             db.session.commit()
@@ -45,10 +45,15 @@ def drop_data():
             logger.error(e)
 
 
-def _get_insert_copy(row):
+def _get_insert_copy(row, table_name):
     copy = {}
     for key, value in row.items():
         k = key.replace("-", "_")
+        if (
+            table_name in ["development_plan_timetable", "development_plan_document"]
+            and k == "development_plan"
+        ):
+            k = "development_plan_reference"
         if value:
             copy[k] = value
         else:

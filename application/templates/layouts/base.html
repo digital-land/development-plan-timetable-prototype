@@ -2,6 +2,7 @@
 
 {% block stylesheets %}
   <link rel="stylesheet" href="/static/stylesheets/application.css">
+  <link rel="stylesheet" href="/static/stylesheets/vendor/accessible-autocomplete.css">
   {% block pageStylesheets %}{% endblock pageStylesheets %}
 {% endblock %}
 
@@ -33,3 +34,8 @@
 {% block content %}
   <h1 class="govuk-heading-xl">{{ title|default('Index') }}</h1>
 {% endblock content %}
+
+{% block govScripts %}
+  {{ super() }}
+  <script src="{{ assetPath | default('/static') }}/javascripts/vendor/accessible-autocomplete.min.js"></script>
+{% endblock %}

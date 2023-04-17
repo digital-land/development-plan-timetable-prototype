@@ -1,0 +1,19 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+  <span class="govuk-caption-xl">Development plans</span>
+  <h1 class="govuk-heading-xl">Organisations</h1>
+
+  <form class="govuk-form">
+    <div class="govuk-form-group">
+      <label for="organisation" class="govuk-label">Local authority code</label>
+      <span class="govuk-hint">For example, BAB for Babergh</span>
+      <input type="text" class="govuk-input" name="organisation">
+    </div>
+    <div class="govuk-form-group">
+      <button class="govuk-button">Find</button>
+    </div>
+  </form>
+
+{% endblock content %}

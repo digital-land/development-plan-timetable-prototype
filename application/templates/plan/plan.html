@@ -9,7 +9,7 @@
   <a href="{{ url_for('development_plan.edit', reference=plan.reference) }}" class="govuk-link">Edit record</a>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <section class="app-summary-card govuk-!-margin-bottom-9">
+      <section class="app-summary-card">
         <header class="app-summary-card__header">
           <h2 class="app-summary-card__title">
             Plan record
@@ -66,21 +66,32 @@
     </div>
   </div>
 
-  <h2 id="timetable" class="govuk-heading-m">Timetable</h2>
-  <p class="govuk-body">Record any events that happen during the plan-making process. Events can have already happened or happen on a future date.</p>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 id="timetable" class="govuk-heading-m govuk-!-margin-top-9">Timetable</h2>
+      <p class="govuk-body">Record any events that happen during the plan-making process. Events can have already happened or happen on a future date.</p>
+    </div>
+  </div>
+
   <ul class="govuk-list govuk-list--bullet">
     {% for stage in development_plan.timetable %}
       <li>{{ stage.reference }}: {{ stage.development_plan_event.name }}, {{ stage.event_date }}</li>
     {% endfor %}
   </ul>
-  <a href="#" class="govuk-button govuk-button--secondary">+ add event to timetable</a>
-  <h2 id="documents" class="govuk-heading-m">Documents</h2>
-  <p class="govuk-body">Record any associated documents. These can be documents that contain relevant policies, documents outlining activities or publication notices.</p>
+  <a href="{{ url_for('development_plan.add_event', reference=plan.reference) }}" class="govuk-button govuk-button--secondary">+ add event to timetable</a>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 id="documents" class="govuk-heading-m govuk-!-margin-top-9">Documents</h2>
+      <p class="govuk-body">Record any associated documents. These can be documents that contain relevant policies, documents outlining activities or publication notices.</p>
+    </div>
+  </div>
+
   <ul class="govuk-list govuk-list--bullet">
     {% for document in development_plan.documents %}
       <li><a href="{{ document.documentation_url }}" class="govuk-link">{{ document.name }}</a> <span class="govuk-hint">({{ document.reference }})</span></li>
     {% endfor %}
   </ul>
-  <a href="#" class="govuk-button govuk-button--secondary">+ add supporting document</a>
+  <a href="{{ url_for('development_plan.add_document', reference=plan.reference) }}" class="govuk-button govuk-button--secondary">+ add supporting document</a>
 
 {% endblock content %}

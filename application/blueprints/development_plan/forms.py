@@ -12,3 +12,21 @@ class PlanForm(FlaskForm):
     period_start_date = StringField("Plan start date", validators=[DataRequired()])
     period_end_date = StringField("Plan end date", validators=[DataRequired()])
     documentation_url = StringField("URL", validators=[DataRequired()])
+
+
+class EventForm(FlaskForm):
+    development_plan_event = StringField(
+        "Development plan event", validators=[DataRequired()]
+    )
+    organisation = StringField("Organisation", validators=[DataRequired()])
+    event_date = StringField("Event date", validators=[DataRequired()])
+    notes = TextAreaField("Notes")
+
+
+class DocumentForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    description = TextAreaField("Description")
+    document_type = StringField("Document type", validators=[DataRequired()])
+    documentation_url = StringField("Documentation URL", validators=[DataRequired()])
+    document_url = StringField("Document URL", validators=[DataRequired()])
+    organisation = StringField("Organisation", validators=[DataRequired()])

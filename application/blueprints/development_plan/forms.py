@@ -1,14 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField
+from wtforms import SelectField, SelectMultipleField, StringField, TextAreaField
 from wtforms.validators import DataRequired
 
 
 class PlanForm(FlaskForm):
     reference = StringField("Reference", validators=[DataRequired()])
     name = StringField("Name", validators=[DataRequired()])
-    organisation = StringField("Organisation", validators=[DataRequired()])
+    organisations = SelectMultipleField(
+        "Organisation", validators=[DataRequired()], validate_choice=False
+    )
     description = TextAreaField("Description")
-    development_plan_type = StringField("Plan type", validators=[DataRequired()])
+    development_plan_type = SelectField("Plan type", validators=[DataRequired()])
     period_start_date = StringField("Plan start date", validators=[DataRequired()])
     period_end_date = StringField("Plan end date", validators=[DataRequired()])
     documentation_url = StringField("URL", validators=[DataRequired()])

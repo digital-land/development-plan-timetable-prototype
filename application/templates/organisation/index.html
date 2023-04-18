@@ -16,4 +16,27 @@
     </div>
   </form>
 
+  <dl class="govuk-summary-list govuk-!-margin-bottom-0"></dl>
+  {% for organisation in organisations %}
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ organisation.name }}</h3>
+        <span class="govuk-hint">{{ organisation.organisation }}</span>
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {% if organisation.development_plans | length > 0 %}
+        <ul class="govuk-list govuk-!-margin-bottom-1">
+          {% for plan in organisation.development_plans %}
+            <li><a href="{{ url_for('development_plan.plan', reference=plan.reference) }}" class="govuk-link">{{ plan.name }}</a> <span class="govuk-hint">({{plan.reference}})</span></li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        <a href="{{ url_for('development_plan.new', organisation=organisation.organisation) }}" class="govuk-link">+ add plan</a>
+      </dd>
+    </div>
+
+  {% endfor %}
+  </dl>
+
 {% endblock content %}

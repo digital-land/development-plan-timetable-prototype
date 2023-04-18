@@ -14,7 +14,13 @@ def organisations():
             url_for("organisation.organisation", reference=f"local-authority-eng:{lpa}")
         )
 
-    return render_template("organisation/index.html")
+    # TODO: how do I get all orgs that should be publishing a plan?
+    orgs = (
+        Organisation.query.filter(Organisation.organisation.contains("local-authority"))
+        .order_by(Organisation.name.asc())
+        .all()
+    )
+    return render_template("organisation/index.html", organisations=orgs)
 
 
 @organisation_bp.route("/<string:reference>")

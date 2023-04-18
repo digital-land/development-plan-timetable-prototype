@@ -19,18 +19,20 @@ def plan(reference):
     return render_template("plan/plan.html", development_plan=development_plan)
 
 
-@development_plan.route("/<string:reference>/edit")
+@development_plan.route("/<string:reference>/edit", methods=["GET", "POST"])
 def edit(reference):
-    development_plan = DevelopmentPlan.query.get(reference)
+    plan = DevelopmentPlan.query.get(reference)
 
-    form = PlanForm()
+    form = PlanForm(obj=plan)
+    form.organisations.choices = _get_organisation_choices()
+    form.development_plan_type.choices = _get_plan_type_choices()
     if form.validate_on_submit():
-        # handle form
-        pass
+        plan = _populate_plan(form, plan)
+        db.session.add(plan)
+        db.session.commit()
+        return redirect(url_for("development_plan.plan", reference=plan.reference))
 
-    return render_template(
-        "plan/edit.html", development_plan=development_plan, form=form
-    )
+    return render_template("plan/edit.html", development_plan=plan, form=form)
 
 
 @development_plan.route("/add", methods=["GET", "POST"])
@@ -39,28 +41,11 @@ def new():
     # requests.get...
 
     form = PlanForm()
-    form.organisations.choices = [
-        (org.organisation, org.name) for org in Organisation.query.all()
-    ]
-    form.development_plan_type.choices = [
-        (plan_type.reference, plan_type.name)
-        for plan_type in DevelopmentPlanType.query.all()
-    ]
+    form.organisations.choices = _get_organisation_choices()
+    form.development_plan_type.choices = _get_plan_type_choices()
+
     if form.validate_on_submit():
-        plan = DevelopmentPlan()
-        plan.reference = form.reference.data
-        plan.name = form.name.data
-        plan.development_plan_type = form.development_plan_type.data
-        # plan.notes = form.notes.data
-        plan.description = form.description.data
-        plan.documentation_url = form.documentation_url.data
-        plan.period_start_date = form.period_start_date.data
-        plan.period_end_date = form.period_end_date.data
-
-        for org in form.organisations.data:
-            organisation = Organisation.query.get(org)
-            plan.organisations.append(organisation)
-
+        plan = _populate_plan(form, DevelopmentPlan)
         db.session.add(plan)
         db.session.commit()
         return redirect(url_for("development_plan.plan", reference=plan.reference))
@@ -94,3 +79,27 @@ def add_document(reference):
     return render_template(
         "plan/add-document.html", development_plan=development_plan, form=form
     )
+
+
+def _populate_plan(form, plan):
+    organisations = form.organisations.data
+    del form.organisations
+
+    form.populate_obj(plan)
+
+    for org in organisations:
+        organisation = Organisation.query.get(org)
+        plan.organisations.append(organisation)
+
+    return plan
+
+
+def _get_organisation_choices():
+    return [(org.organisation, org.name) for org in Organisation.query.all()]
+
+
+def _get_plan_type_choices():
+    return [
+        (plan_type.reference, plan_type.name)
+        for plan_type in DevelopmentPlanType.query.all()
+    ]

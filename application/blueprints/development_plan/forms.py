@@ -10,6 +10,7 @@ class PlanForm(FlaskForm):
         "Organisation", validators=[DataRequired()], validate_choice=False
     )
     description = TextAreaField("Description")
+    notes = TextAreaField("Notes")
     development_plan_type = SelectField("Plan type", validators=[DataRequired()])
     period_start_date = StringField("Plan start date", validators=[DataRequired()])
     period_end_date = StringField("Plan end date", validators=[DataRequired()])

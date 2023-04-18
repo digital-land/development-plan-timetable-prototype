@@ -2,6 +2,9 @@
   "name": "development-plan-timetable",
   "version": "0.0.1",
   "description": "A prototype tool for to help users collect development plan timetable data",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "flask": "flask run",
     "watch": "npm-run-all --parallel watch:*",

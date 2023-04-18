@@ -4,9 +4,9 @@
 {% block content %}
 
   <span class="govuk-caption-xl">Development plan</span>
-  <h1 class="govuk-heading-xl">{{development_plan.reference}}</h1>
+  <h1 class="govuk-heading-xl">{{development_plan.name}} <span class="app-plan-reference">({{development_plan.reference}})</span></h1>
 
-  <a href="{{ url_for('development_plan.edit', reference=plan.reference) }}" class="govuk-link">Edit record</a>
+
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <section class="app-summary-card">
@@ -14,6 +14,9 @@
           <h2 class="app-summary-card__title">
             Plan record
           </h2>
+          <div class="app-summary-card__actions">
+            <a href="{{ url_for('development_plan.edit', reference=plan.reference) }}" class="govuk-link">Edit<span class="govuk-visually-hidden"> record</span></a>
+          </div>
         </header>
         <div class="app-summary-card__body">
           <dl class="govuk-summary-list govuk-!-margin-bottom-0">
@@ -38,6 +41,14 @@
             <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key">Documentation URL</dt>
               <dd class="govuk-summary-list__value"><a href="{{ plan.documentation_url }}" class="govuk-link">{{ plan.documentation_url }}</a></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">Period</dt>
+              <dd class="govuk-summary-list__value">{{ plan.period_start_date }} - {{ plan.period_end_date }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">Description</dt>
+              <dd class="govuk-summary-list__value">{{ plan.description }}</dd>
             </div>
           </dl>
         </div>

@@ -3,26 +3,31 @@
 {% block content %}
 
   <span class="govuk-caption-xl">Development plans</span>
-  <h1 class="govuk-heading-xl">Organisations</h1>
+  <h1 class="govuk-heading-xl">Find a plan by organisation</h1>
 
-  <form class="govuk-form">
-    <div class="govuk-form-group">
-      <label for="organisation" class="govuk-label">Local authority code</label>
-      <span class="govuk-hint">For example, BAB for Babergh</span>
-      <input type="text" class="govuk-input" name="organisation">
-    </div>
-    <div class="govuk-form-group">
-      <button class="govuk-button">Find</button>
-    </div>
-  </form>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+    <form class="govuk-form">
+      <div class="govuk-form-group">
+        <label for="organisation" class="govuk-label">Local authority code</label>
+        <div class="govuk-hint">For example, BAB for Babergh</div>
+        <input type="text" class="govuk-input" name="organisation">
+      </div>
+      <div class="govuk-form-group">
+        <button class="govuk-button">Find</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-  <dl class="govuk-summary-list govuk-!-margin-bottom-0"></dl>
+  <p class="govuk-body">{{ organisations|length }} planning authorities listed</p>
+  <dl class="govuk-summary-list govuk-!-margin-bottom-0">
   {% for organisation in organisations %}
 
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ organisation.name }}</h3>
-        <span class="govuk-hint">{{ organisation.organisation }}</span>
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">{{ organisation.name }}</h3>
+        <span class="govuk-hint govuk-!-font-size-16">{{ organisation.organisation }}</span>
       </dt>
       <dd class="govuk-summary-list__value">
         {% if organisation.development_plans | length > 0 %}

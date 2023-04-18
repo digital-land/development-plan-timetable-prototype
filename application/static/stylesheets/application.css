@@ -7211,3 +7211,6 @@
     break-inside: avoid; }
   .app-summary-card__actions {
     display: none; } }
+
+.app-plan-reference {
+  color: #505a5f; }

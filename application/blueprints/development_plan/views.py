@@ -6,7 +6,12 @@ from application.blueprints.development_plan.forms import (
     PlanForm,
 )
 from application.extensions import db
-from application.models import DevelopmentPlan, DevelopmentPlanType, Organisation
+from application.models import (
+    DevelopmentPlan,
+    DevelopmentPlanTimetable,
+    DevelopmentPlanType,
+    Organisation,
+)
 
 development_plan = Blueprint(
     "development_plan", __name__, url_prefix="/development-plan"
@@ -53,18 +58,32 @@ def new():
     return render_template("plan/new.html", form=form)
 
 
-@development_plan.route("/<string:reference>/timetable/add")
+@development_plan.route("/<string:reference>/timetable/add", methods=["GET", "POST"])
 def add_event(reference):
-    development_plan = DevelopmentPlan.query.get(reference)
+    plan = DevelopmentPlan.query.get(reference)
 
     form = EventForm()
-    if form.validate_on_submit():
-        # handle form
-        pass
+    form.organisations.choices = _get_organisation_choices()
 
-    return render_template(
-        "plan/add-event.html", development_plan=development_plan, form=form
-    )
+    if form.validate_on_submit():
+        # model might need changing - this might be better modelled as plan has
+        # one timetable which has many events.
+        timetable = DevelopmentPlanTimetable()
+        ref = f"{plan.reference}-{form.development_plan_event.data.lower().replace(' ', '-')}"
+        timetable.reference = ref
+        organisations = form.organisations.data
+        del form.organisations
+        form.populate_obj(timetable)
+        for org in organisations:
+            organisation = Organisation.query.get(org)
+            timetable.organisations.append(organisation)
+
+        plan.timetable.append(timetable)
+        db.session.add(plan)
+        db.session.commit()
+        return redirect(url_for("development_plan.plan", reference=reference))
+
+    return render_template("plan/add-event.html", development_plan=plan, form=form)
 
 
 @development_plan.route("/<string:reference>/document/add")

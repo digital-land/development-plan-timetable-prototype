@@ -14,6 +14,8 @@
         {{ field.label(class='govuk-label') }}
         {% if field.type == "TextAreaField" %}
         {{ field(class='govuk-textarea') }}
+        {% elif field.type == "SelectField" %}
+        {{ field(class='govuk-select') }}
         {% else %}
         {{ field(class='govuk-input') }}
         {% endif %}
@@ -35,3 +37,13 @@
 </div>
 
 {% endblock %}
+
+{% block pageScripts -%}
+  <script>
+    accessibleAutocomplete.enhanceSelectElement({
+      selectElement: document.querySelector('#development_plan_event'),
+      showNoOptionsFound: false
+    })
+  </script>
+
+{%- endblock %}

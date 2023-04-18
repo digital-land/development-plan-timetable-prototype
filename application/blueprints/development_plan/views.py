@@ -8,6 +8,7 @@ from application.blueprints.development_plan.forms import (
 from application.extensions import db
 from application.models import (
     DevelopmentPlan,
+    DevelopmentPlanEvent,
     DevelopmentPlanTimetable,
     DevelopmentPlanType,
     Organisation,
@@ -64,6 +65,7 @@ def add_event(reference):
 
     form = EventForm()
     form.organisations.choices = _get_organisation_choices()
+    form.development_plan_event.choices = _get_event_choices()
 
     if form.validate_on_submit():
         # model might need changing - this might be better modelled as plan has
@@ -121,4 +123,11 @@ def _get_plan_type_choices():
     return [
         (plan_type.reference, plan_type.name)
         for plan_type in DevelopmentPlanType.query.all()
+    ]
+
+
+def _get_event_choices():
+    return [("", "")] + [
+        (evt.reference, evt.name)
+        for evt in DevelopmentPlanEvent.query.order_by(DevelopmentPlanEvent.name).all()
     ]

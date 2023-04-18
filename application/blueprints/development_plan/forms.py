@@ -18,7 +18,7 @@ class PlanForm(FlaskForm):
 
 
 class EventForm(FlaskForm):
-    development_plan_event = StringField(
+    development_plan_event = SelectField(
         "Development plan event", validators=[DataRequired()]
     )
     organisations = SelectMultipleField("Organisation", validators=[DataRequired()])

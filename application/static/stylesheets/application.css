@@ -7214,3 +7214,40 @@
 
 .app-plan-reference {
   color: #505a5f; }
+
+.app-link--destructive {
+  color: #7a1e10 !important; }
+
+.app-timetable .govuk-table__header,
+.app-timetable .govuk-table__cell {
+  vertical-align: middle; }
+
+.app-cell--meta {
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+  background-color: #f3f2f1;
+  padding-left: 15px;
+  border-left: 1px solid #b1b4b6; }
+  @media print {
+    .app-cell--meta {
+      font-family: sans-serif; } }
+  @media (min-width: 40.0625em) {
+    .app-cell--meta {
+      font-size: 16px;
+      font-size: 1rem;
+      line-height: 1.25; } }
+  @media print {
+    .app-cell--meta {
+      font-size: 14pt;
+      line-height: 1.2; } }
+  .app-cell--meta ~ .app-cell--meta {
+    padding-left: 0;
+    border-left: none; }
+  .app-cell--meta ~ .app-cell--actions {
+    padding-left: 15px;
+    border-left: 1px solid #b1b4b6; }

@@ -80,15 +80,40 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h2 id="timetable" class="govuk-heading-m govuk-!-margin-top-9">Timetable</h2>
-      <p class="govuk-body">Record any events that happen during the plan-making process. Events can have already happened or happen on a future date.</p>
+      <p class="govuk-body">The timetable data is a collection of events that happen during the plan making process. Events in the timetable migth already have happened or might happen on a future data.</p>
     </div>
   </div>
 
-  <ul class="govuk-list govuk-list--bullet">
-    {% for stage in development_plan.timetable %}
-      <li>{{ stage.reference }}: {{ stage.development_plan_event.name }}, {{ stage.event_date }}</li>
-    {% endfor %}
-  </ul>
+  <table class="govuk-table app-timetable">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Event</th>
+        <th scope="col" class="govuk-table__header">Event date</th>
+        <th scope="col" class="govuk-table__header">Organisation</th>
+        <th scope="col" class="govuk-table__header app-cell--meta">Entered</th>
+        <th scope="col" class="govuk-table__header app-cell--meta">Ended</th>
+        <th scope="col" class="govuk-table__header app-cell--meta app-cell--actions"></th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for evt in development_plan.timetable %}
+      <tr class="govuk-table__row" data-timetable-entry-reference="{{ evt.reference }}" data-timetable-entry-plan="{{ evt.development_plan.reference }}">
+        <th scope="row" class="govuk-table__header">{{ evt.development_plan_event }}</th>
+        <td class="govuk-table__cell">{{ evt.event_date }}</td>
+        <td class="govuk-table__cell">{{ evt.organisation }}</td>
+        <td class="govuk-table__cell app-cell--meta">{{ evt.entry_date }}</td>
+        <td class="govuk-table__cell app-cell--meta">{{ evt.end_date if evt.end_date }}</td>
+        <td class="govuk-table__cell app-cell--meta app-cell--actions">
+          <ul class="govuk-list govuk-!-margin-bottom-0 govuk-!-font-size-16">
+            <li><a href="#" class="govuk-link">Edit</a></li>
+            <li><a href="#" class="govuk-link app-link--destructive">Delete</a></li>
+          </ul>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
   <a href="{{ url_for('development_plan.add_event', reference=plan.reference) }}" class="govuk-button govuk-button--secondary">+ add event to timetable</a>
 
   <div class="govuk-grid-row">

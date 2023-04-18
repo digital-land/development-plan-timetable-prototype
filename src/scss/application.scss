@@ -4,7 +4,38 @@
 // app specific component scss
 @import "components/summary-card";
 
+// Typography tweaks
 
 .app-plan-reference {
   color: $govuk-secondary-text-colour;
+}
+
+.app-link--destructive {
+  color: darken(govuk-colour("red"), 20) !important;
+}
+
+// Styles for timetable
+
+.app-timetable {
+  .govuk-table__header,
+  .govuk-table__cell {
+    vertical-align: middle
+  }
+}
+
+.app-cell--meta {
+  @include govuk-font(16);
+  background-color: govuk-colour("light-grey");
+  padding-left: 15px;
+  border-left: 1px solid  govuk-colour("mid-grey");
+
+  & ~ .app-cell--meta {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  & ~ .app-cell--actions {
+    padding-left: 15px;
+    border-left: 1px solid  govuk-colour("mid-grey");
+  }
 }

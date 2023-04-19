@@ -22,7 +22,9 @@ class EventForm(FlaskForm):
         "Development plan event", validators=[DataRequired()]
     )
     organisations = SelectMultipleField("Organisation", validators=[DataRequired()])
-    event_date = StringField("Event date", validators=[DataRequired()])
+    event_date_year = StringField("Event date year", validators=[DataRequired()])
+    event_date_month = StringField("Event date month", validators=[DataRequired()])
+    event_date_day = StringField("Event date day", validators=[DataRequired()])
     notes = TextAreaField("Notes")
 
 

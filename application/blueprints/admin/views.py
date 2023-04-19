@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, render_template, request
 
 from application.blueprints.admin.forms import DocumentTypeForm, EventForm, PlanTypeForm
+from application.extensions import db
 from application.models import DevelopmentPlanEvent, DevelopmentPlanType, DocumentType
 from application.utils import kebab_case
 
@@ -35,7 +36,16 @@ def ajax_add_event():
     if "reference" not in data.keys() or data["reference"] is None:
         data["reference"] = kebab_case(data["name"])
 
-    result = {"status": "success", "record": data}
+    if "description" not in data.keys() or data["description"] is None:
+        data["description"] = ""
+
+    evt = DevelopmentPlanEvent(
+        name=data["name"], reference=data["reference"], notes=data["description"]
+    )
+
+    db.session.add(evt)
+    db.session.commit()
+    result = {"status": "success", "record": evt.to_dict()}
     return jsonify(result)
 
 

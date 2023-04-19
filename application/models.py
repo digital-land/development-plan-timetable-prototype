@@ -26,6 +26,13 @@ class DevelopmentPlanEvent(DateModel):
     name = db.Column(db.Text)
     notes = db.Column(db.Text)
 
+    def to_dict(self):
+        return {
+            "reference": self.reference,
+            "name": self.name,
+            "description": self.notes,
+        }
+
 
 class DocumentType(DateModel):
     __tablename__ = "document_type"

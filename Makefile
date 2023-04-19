@@ -54,7 +54,12 @@ drop-data:
 build-css:
 	npm run nps build.stylesheets
 
+build-js:
+	npm run nps build.javascripts
+
+build-assets: build-css build-js
+
 copyjs:
 	npm run copyjs
 
-assets: build-css copyjs
+assets: build-assets copyjs

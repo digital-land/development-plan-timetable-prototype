@@ -32,3 +32,8 @@
   {{ super() }}
   <script src="{{ assetPath | default('/static') }}/javascripts/vendor/accessible-autocomplete.min.js"></script>
 {% endblock %}
+
+{% block digitalLandScripts -%}
+  {{ super() }}
+  <script src="{{ assetPath | default('/static') }}/javascripts/application.js"></script>
+{%- endblock %}

@@ -7271,6 +7271,29 @@
     font-style: normal;
     font-weight: 900; }
 
+.new-record {
+  margin-top: -30px;
+  padding-bottom: 30px; }
+  .new-record [data-new-record='request'],
+  .new-record [data-new-record='result'] {
+    display: none;
+    padding: 15px; }
+  .new-record [data-new-record="request"] {
+    background-color: #b7d1e8; }
+  .new-record [data-new-record='result'] {
+    background-color: #bfcc97; }
+  .new-record p {
+    margin-bottom: 10px; }
+    .new-record p:last-child {
+      margin-bottom: 0; }
+  .new-record [data-new-record="name"] {
+    font-family: monospace;
+    font-weight: 700; }
+  .new-record.new-record__mode--request [data-new-record='request'] {
+    display: block; }
+  .new-record.new-record__mode--result [data-new-record='result'] {
+    display: block; }
+
 .app-plan-reference {
   color: #505a5f; }
 

@@ -168,7 +168,7 @@ def _get_plan_type_choices():
 
 
 def _get_event_choices():
-    return [("", "")] + [
+    return [
         (evt.reference, evt.name)
         for evt in DevelopmentPlanEvent.query.order_by(DevelopmentPlanEvent.name).all()
     ]

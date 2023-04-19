@@ -7224,6 +7224,53 @@
   letter-spacing: -0.5px;
   text-align: center; }
 
+.app-register__add-row {
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.14286;
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  background-color: #f3f2f1;
+  color: #0b0c0c;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: .5rem 1rem;
+  border-radius: .25rem;
+  text-decoration: none;
+  -webkit-transition: all .1s ease-in-out;
+  -o-transition: all .1s ease-in-out;
+  transition: all .1s ease-in-out; }
+  @media print {
+    .app-register__add-row {
+      font-family: sans-serif; } }
+  @media (min-width: 40.0625em) {
+    .app-register__add-row {
+      font-size: 16px;
+      font-size: 1rem;
+      line-height: 1.25; } }
+  @media print {
+    .app-register__add-row {
+      font-size: 14pt;
+      line-height: 1.2; } }
+  .app-register__add-row:hover {
+    cursor: pointer;
+    background-color: #e7e5e3; }
+  .app-register__add-row i {
+    margin-right: 5px;
+    font-style: normal;
+    font-weight: 900; }
+
 .app-plan-reference {
   color: #505a5f; }
 

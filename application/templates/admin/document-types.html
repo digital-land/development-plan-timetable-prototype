@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+
+{% block beforeContent %}
+{{ super() }}
+<div class="govuk-breadcrumbs">
+  <ol class="govuk-breadcrumbs__list">
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{{ url_for('base.index') }}">Home</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{{ url_for('admin.index') }}">Data registers</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">Document types</li>
+  </ol>
+</div>
+{% endblock beforeContent %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <span class="govuk-caption-xl">Development plan data register</span>
+    <h1 class="govuk-heading-xl">Document types</h1>
+
+    <table class="dl-data-table app-register-table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Entry date</th>
+          <th>Start date</th>
+          <th>End date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doc in document_types %}
+        <tr>
+          <td class="app-register__reference-cell">{{ doc.reference }}</td>
+          <td>{{ doc.name }}</td>
+          <td>{{ doc.description }}</td>
+          <td>{{ doc.entry_date if doc.entry_date }}</td>
+          <td>{{ doc.start_date if doc.start_date }}</td>
+          <td>{{ doc.end_date if doc.end_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock content %}

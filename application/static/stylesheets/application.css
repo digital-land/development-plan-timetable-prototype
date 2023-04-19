@@ -7212,6 +7212,18 @@
   .app-summary-card__actions {
     display: none; } }
 
+.app-register-table th {
+  --header-background-colour: #1d70b8;
+  --header-text-colour: #ffffff;
+  background: var(--header-background-colour);
+  color: var(--header-text-colour);
+  font-weight: 700; }
+
+.app-register-table .app-register__reference-cell {
+  font-family: monospace;
+  letter-spacing: -0.5px;
+  text-align: center; }
+
 .app-plan-reference {
   color: #505a5f; }
 

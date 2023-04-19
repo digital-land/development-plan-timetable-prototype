@@ -24,6 +24,7 @@ def create_app(config_filename):
 
 
 def register_blueprints(app):
+    from application.blueprints.admin.views import admin_bp
     from application.blueprints.base.views import base
     from application.blueprints.development_plan.views import development_plan
     from application.blueprints.organisation.views import organisation_bp
@@ -31,6 +32,7 @@ def register_blueprints(app):
     app.register_blueprint(base)
     app.register_blueprint(development_plan)
     app.register_blueprint(organisation_bp)
+    app.register_blueprint(admin_bp)
 
 
 def register_context_processors(app):

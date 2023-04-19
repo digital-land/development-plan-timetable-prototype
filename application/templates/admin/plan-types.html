@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+
+{% block beforeContent %}
+{{ super() }}
+<div class="govuk-breadcrumbs">
+  <ol class="govuk-breadcrumbs__list">
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{{ url_for('base.index') }}">Home</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{{ url_for('admin.index') }}">Data registers</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">Plan types</li>
+  </ol>
+</div>
+{% endblock beforeContent %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <span class="govuk-caption-xl">Development plan data register</span>
+    <h1 class="govuk-heading-xl">Plan types</h1>
+
+    <table class="dl-data-table app-register-table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Entry date</th>
+          <th>Start date</th>
+          <th>End date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for type_ in plan_types %}
+        <tr>
+          <td class="app-register__reference-cell">{{ type_.reference }}</td>
+          <td>{{ type_.name }}</td>
+          <td>{{ type_.description if type_.description }}</td>
+          <td>{{ type_.entry_date if type_.entry_date }}</td>
+          <td>{{ type_.start_date if type_.start_date }}</td>
+          <td>{{ type_.end_date if type_.end_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock content %}

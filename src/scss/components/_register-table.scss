@@ -1,0 +1,15 @@
+.app-register-table {
+ th {
+    --header-background-colour: #{govuk-colour("blue")};
+    --header-text-colour: #{govuk-colour('white')};
+    background: var(--header-background-colour);
+    color: var(--header-text-colour);
+    font-weight: 700;
+  }
+
+  .app-register__reference-cell {
+    font-family: monospace;
+    letter-spacing: -0.5px;
+    text-align: center;
+  }
+}

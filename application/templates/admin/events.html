@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+
+{% block beforeContent %}
+{{ super() }}
+<div class="govuk-breadcrumbs">
+  <ol class="govuk-breadcrumbs__list">
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{{ url_for('base.index') }}">Home</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{{ url_for('admin.index') }}">Data registers</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">Events</li>
+  </ol>
+</div>
+{% endblock beforeContent %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <span class="govuk-caption-xl">Development plan data register</span>
+    <h1 class="govuk-heading-xl">Events</h1>
+
+    <table class="dl-data-table app-register-table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Entry date</th>
+          <th>Start date</th>
+          <th>End date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in events %}
+        <tr>
+          <td class="app-register__reference-cell">{{ event.reference }}</td>
+          <td>{{ event.name }}</td>
+          <td>{{ event.description }}</td>
+          <td>{{ event.entry_date if event.entry_date }}</td>
+          <td>{{ event.start_date if event.start_date }}</td>
+          <td>{{ event.end_date if event.end_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock content %}

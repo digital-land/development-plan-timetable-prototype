@@ -8,9 +8,11 @@ from application.blueprints.development_plan.forms import (
 from application.extensions import db
 from application.models import (
     DevelopmentPlan,
+    DevelopmentPlanDocument,
     DevelopmentPlanEvent,
     DevelopmentPlanTimetable,
     DevelopmentPlanType,
+    DocumentType,
     Organisation,
 )
 
@@ -89,18 +91,31 @@ def add_event(reference):
     return render_template("plan/add-event.html", development_plan=plan, form=form)
 
 
-@development_plan.route("/<string:reference>/document/add")
+@development_plan.route("/<string:reference>/document/add", methods=["GET", "POST"])
 def add_document(reference):
-    development_plan = DevelopmentPlan.query.get(reference)
+    plan = DevelopmentPlan.query.get(reference)
 
     form = DocumentForm()
-    if form.validate_on_submit():
-        # handle form
-        pass
+    form.organisations.choices = _get_organisation_choices()
+    form.document_type.choices = _get_document_type_choices()
 
-    return render_template(
-        "plan/add-document.html", development_plan=development_plan, form=form
-    )
+    if form.validate_on_submit():
+        document = DevelopmentPlanDocument()
+        document.reference = f"{form.name.data.lower().replace(' ', '-')}"
+
+        organisations = form.organisations.data
+        del form.organisations
+        form.populate_obj(document)
+        for org in organisations:
+            organisation = Organisation.query.get(org)
+            document.organisations.append(organisation)
+
+        plan.documents.append(document)
+        db.session.add(plan)
+        db.session.commit()
+        return redirect(url_for("development_plan.plan", reference=reference))
+
+    return render_template("plan/add-document.html", development_plan=plan, form=form)
 
 
 def _populate_plan(form, plan):
@@ -132,3 +147,7 @@ def _get_event_choices():
         (evt.reference, evt.name)
         for evt in DevelopmentPlanEvent.query.order_by(DevelopmentPlanEvent.name).all()
     ]
+
+
+def _get_document_type_choices():
+    return [(doc.reference, doc.name) for doc in DocumentType.query.all()]

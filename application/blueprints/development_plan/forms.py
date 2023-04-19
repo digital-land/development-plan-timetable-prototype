@@ -31,7 +31,7 @@ class EventForm(FlaskForm):
 class DocumentForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     description = TextAreaField("Description")
-    document_type = StringField("Document type", validators=[DataRequired()])
+    document_type = SelectField("Document type", validators=[DataRequired()])
     documentation_url = StringField("Documentation URL", validators=[DataRequired()])
     document_url = StringField("Document URL", validators=[DataRequired()])
-    organisation = StringField("Organisation", validators=[DataRequired()])
+    organisations = SelectMultipleField("Organisation", validators=[DataRequired()])

@@ -12,8 +12,16 @@ class PlanForm(FlaskForm):
     description = TextAreaField("Description")
     notes = TextAreaField("Notes")
     development_plan_type = SelectField("Plan type", validators=[DataRequired()])
-    period_start_date = StringField("Plan start date", validators=[DataRequired()])
-    period_end_date = StringField("Plan end date", validators=[DataRequired()])
+    period_start_date = StringField(
+        "Plan start date",
+        validators=[DataRequired()],
+        description="The year the plan starts, for example, 2022",
+    )
+    period_end_date = StringField(
+        "Plan end date",
+        validators=[DataRequired()],
+        description="The year the plan ends, for example, 2045",
+    )
     documentation_url = StringField("URL", validators=[DataRequired()])
 
 

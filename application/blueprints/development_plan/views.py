@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, abort, redirect, render_template, url_for
 
 from application.blueprints.development_plan.forms import (
     DocumentForm,
@@ -88,6 +88,31 @@ def add_event(reference):
         return redirect(url_for("development_plan.plan", reference=reference))
 
     return render_template("plan/add-event.html", development_plan=plan, form=form)
+
+
+@development_plan.route(
+    "/<string:reference>/timetable/<string:event_reference>/edit",
+    methods=["GET", "POST"],
+)
+def edit_event(reference, event_reference):
+    event = DevelopmentPlanTimetable.query.filter(
+        DevelopmentPlanTimetable.development_plan_reference == reference,
+        DevelopmentPlanTimetable.reference == event_reference,
+    ).one_or_none()
+
+    if event is None:
+        return abort(404)
+
+    form = EventForm(obj=event)
+    form.organisations.choices = _get_organisation_choices()
+    form.development_plan_event.choices = _get_event_choices()
+
+    if form.validate_on_submit():
+        # TODO: update event
+        return redirect(url_for("development_plan.plan", reference=reference))
+
+    # TODO: fix this as no edit event template exists yet
+    return render_template("plan/edit-event.html", development_plan=plan, form=form)
 
 
 @development_plan.route("/<string:reference>/document/add", methods=["GET", "POST"])

@@ -106,7 +106,7 @@
         <td class="govuk-table__cell app-cell--meta app-cell--actions">
           <ul class="govuk-list govuk-!-margin-bottom-0 govuk-!-font-size-16">
             <li><a href="{{ url_for('development_plan.edit_event', reference=development_plan.reference, event_reference=evt.reference) }}" class="govuk-link">Edit</a></li>
-            <li><a href="#" class="govuk-link app-link--destructive">Delete</a></li>
+            <li><a href="{{ url_for('development_plan.delete_event', reference=development_plan.reference, event_reference=evt.reference) }}" class="govuk-link app-link--destructive">Delete</a></li>
           </ul>
         </td>
       </tr>

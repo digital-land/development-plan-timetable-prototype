@@ -12,8 +12,16 @@ class PlanForm(FlaskForm):
     description = TextAreaField("Description")
     notes = TextAreaField("Notes")
     development_plan_type = SelectField("Plan type", validators=[DataRequired()])
-    period_start_date = StringField("Plan start date", validators=[DataRequired()])
-    period_end_date = StringField("Plan end date", validators=[DataRequired()])
+    period_start_date = StringField(
+        "Plan start date",
+        validators=[DataRequired()],
+        description="The year the plan starts, for example, 2022",
+    )
+    period_end_date = StringField(
+        "Plan end date",
+        validators=[DataRequired()],
+        description="The year the plan ends, for example, 2045",
+    )
     documentation_url = StringField("URL", validators=[DataRequired()])
 
 
@@ -22,7 +30,9 @@ class EventForm(FlaskForm):
         "Development plan event", validators=[DataRequired()]
     )
     organisations = SelectMultipleField("Organisation", validators=[DataRequired()])
-    event_date = StringField("Event date", validators=[DataRequired()])
+    event_date_year = StringField("Event date year", validators=[DataRequired()])
+    event_date_month = StringField("Event date month", validators=[DataRequired()])
+    event_date_day = StringField("Event date day", validators=[DataRequired()])
     notes = TextAreaField("Notes")
 
 

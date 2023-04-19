@@ -10,6 +10,7 @@
     <form class="govuk-form" method="POST">
       {{ form.csrf_token }}
       {% for field in form %}
+      {%- if field.name not in ['event_date_year', 'event_date_month', 'event_date_day', 'notes'] %}
       <div class="govuk-form-group">
         {{ field.label(class='govuk-label') }}
         {% if field.type == "TextAreaField" %}
@@ -27,7 +28,50 @@
             </ul>
         {% endif %}
       </div>
+      {% endif %}
+
       {% endfor %}
+      <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" role="group" aria-describedby="event-date-hint">
+          <legend class="govuk-fieldset__legend">
+              Event date
+          </legend>
+          <div id="event-date-hint" class="govuk-hint">
+            For example, 27 3 2007
+          </div>
+          <div class="govuk-date-input" id="event-date">
+            <div class="govuk-date-input__item">
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" for="event_date_day">
+                  Day
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="event_date_day" name="event_date_day" type="text" inputmode="numeric">
+              </div>
+            </div>
+            <div class="govuk-date-input__item">
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" for="event_date_month">
+                  Month
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="event_date_month" name="event_date_month" type="text" inputmode="numeric">
+              </div>
+            </div>
+            <div class="govuk-date-input__item">
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" for="event_date_year">
+                  Year
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="event_date_year" name="event_date_year" type="text" inputmode="numeric">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="govuk-form-group">
+        {{ form.notes.label(class='govuk-label') }}
+        <div class="govuk-hint">Add additional information if applicable</div>
+        {{ form.notes(class='govuk-textarea') }}
+      </div>
       <div class="govuk-button-group">
         <button class="govuk-button" type="submit">Create record</button>
         <a class="govuk-link" href="{{ url_for('development_plan.plan', reference=development_plan.reference) }}">Cancel</a>

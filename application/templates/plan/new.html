@@ -12,10 +12,15 @@
       {% for field in form %}
       <div class="govuk-form-group">
         {{ field.label(class='govuk-label') }}
+        {% if field.description %}
+          <div class="govuk-hint">{{ field.description }}</div>
+        {% endif %}
+        {% set extra_classes = " govuk-input--width-4" if "date" in field.name else "" %}
         {% if field.type == "TextAreaField" %}
         {{ field(class='govuk-textarea') }}
         {% else %}
-        {{ field(class='govuk-input') }}
+        {% set classes = 'govuk-input' + extra_classes %}
+        {{ field(class=classes) }}
         {% endif %}
         {% if field.errors %}
             <ul>

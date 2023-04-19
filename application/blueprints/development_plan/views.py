@@ -75,6 +75,7 @@ def add_event(reference):
         timetable = DevelopmentPlanTimetable()
         ref = f"{plan.reference}-{form.development_plan_event.data.lower().replace(' ', '-')}"
         timetable.reference = ref
+        timetable.event_date = f"{form.event_date_year.data}-{form.event_date_month.data}-{form.event_date_day.data}"
         organisations = form.organisations.data
         del form.organisations
         form.populate_obj(timetable)

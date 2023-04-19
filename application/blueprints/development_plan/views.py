@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint, abort, redirect, render_template, url_for
 
 from application.blueprints.development_plan.forms import (
@@ -114,6 +116,21 @@ def edit_event(reference, event_reference):
 
     # TODO: fix this as no edit event template exists yet
     return render_template("plan/edit-event.html", development_plan=plan, form=form)
+
+
+@development_plan.get("/<string:reference>/timetable/<string:event_reference>/delete")
+def delete_event(reference, event_reference):
+    event = DevelopmentPlanTimetable.query.filter(
+        DevelopmentPlanTimetable.development_plan_reference == reference,
+        DevelopmentPlanTimetable.reference == event_reference,
+    ).one_or_none()
+
+    if event is None:
+        return abort(404)
+    event.end_date = datetime.today()
+    db.session.add(event)
+    db.session.commit()
+    return redirect(url_for("development_plan.plan", reference=reference))
 
 
 @development_plan.route("/<string:reference>/document/add", methods=["GET", "POST"])

@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, jsonify, render_template, request
 
 from application.blueprints.admin.forms import DocumentTypeForm, EventForm, PlanTypeForm
 from application.models import DevelopmentPlanEvent, DevelopmentPlanType, DocumentType
+from application.utils import kebab_case
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -25,6 +26,17 @@ def add_event():
         pass
 
     return render_template("admin/add-record.html", register_name="event", form=form)
+
+
+@admin_bp.route("/events/add-ajax", methods=["POST"])
+def ajax_add_event():
+    data = request.json
+    # create reference if not provided
+    if "reference" not in data.keys() or data["reference"] is None:
+        data["reference"] = kebab_case(data["name"])
+
+    result = {"status": "success", "record": data}
+    return jsonify(result)
 
 
 @admin_bp.route("/document-types")

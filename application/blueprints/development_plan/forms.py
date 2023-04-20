@@ -1,14 +1,15 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SelectMultipleField, StringField, TextAreaField
+from wtforms import SelectField, StringField, TextAreaField
 from wtforms.validators import DataRequired
 
 
 class PlanForm(FlaskForm):
     reference = StringField("Reference", validators=[DataRequired()])
     name = StringField("Name", validators=[DataRequired()])
-    organisations = SelectMultipleField(
+    organisations = SelectField(
         "Organisation", validators=[DataRequired()], validate_choice=False
     )
+    # organisations = TextAreaField("Organisation", validators=[DataRequired()])
     description = TextAreaField("Description")
     notes = TextAreaField("Notes")
     development_plan_type = SelectField("Plan type", validators=[DataRequired()])
@@ -29,7 +30,7 @@ class EventForm(FlaskForm):
     development_plan_event = SelectField(
         "Development plan event", validators=[DataRequired()]
     )
-    organisations = SelectMultipleField("Organisation", validators=[DataRequired()])
+    organisations = SelectField("Organisation", validators=[DataRequired()])
     event_date_year = StringField("Event date year", validators=[DataRequired()])
     event_date_month = StringField("Event date month", validators=[DataRequired()])
     event_date_day = StringField("Event date day", validators=[DataRequired()])
@@ -42,4 +43,4 @@ class DocumentForm(FlaskForm):
     document_type = SelectField("Document type", validators=[DataRequired()])
     documentation_url = StringField("Documentation URL", validators=[DataRequired()])
     document_url = StringField("Document URL", validators=[DataRequired()])
-    organisations = SelectMultipleField("Organisation", validators=[DataRequired()])
+    organisations = SelectField("Organisation", validators=[DataRequired()])

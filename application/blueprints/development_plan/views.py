@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, abort, redirect, render_template, url_for
+from flask import Blueprint, abort, redirect, render_template, request, url_for
 
 from application.blueprints.development_plan.forms import (
     DocumentForm,
@@ -54,6 +54,10 @@ def new():
     form.organisations.choices = _get_organisation_choices()
     form.development_plan_type.choices = _get_plan_type_choices()
 
+    if request.method == "GET" and request.args.get("organisation"):
+        org = Organisation.query.get(request.args.get("organisation"))
+        form.organisations.data = org.organisation
+
     if form.validate_on_submit():
         plan = _populate_plan(form, DevelopmentPlan())
         db.session.add(plan)
@@ -81,9 +85,13 @@ def add_event(reference):
         organisations = form.organisations.data
         del form.organisations
         form.populate_obj(timetable)
-        for org in organisations:
-            organisation = Organisation.query.get(org)
-            timetable.organisations.append(organisation)
+        if isinstance(organisations, str):
+            org = Organisation.query.get(organisations)
+            plan.organisations.append(org)
+        else:
+            for org in organisations:
+                organisation = Organisation.query.get(org)
+                timetable.organisations.append(organisation)
 
         plan.timetable.append(timetable)
         db.session.add(plan)
@@ -148,9 +156,13 @@ def add_document(reference):
         organisations = form.organisations.data
         del form.organisations
         form.populate_obj(document)
-        for org in organisations:
-            organisation = Organisation.query.get(org)
-            document.organisations.append(organisation)
+        if isinstance(organisations, str):
+            org = Organisation.query.get(organisations)
+            plan.organisations.append(org)
+        else:
+            for org in organisations:
+                organisation = Organisation.query.get(org)
+                document.organisations.append(organisation)
 
         plan.documents.append(document)
         db.session.add(plan)
@@ -166,9 +178,14 @@ def _populate_plan(form, plan):
 
     form.populate_obj(plan)
 
-    for org in organisations:
-        organisation = Organisation.query.get(org)
-        plan.organisations.append(organisation)
+    if isinstance(organisations, str):
+        org = Organisation.query.get(organisations)
+        plan.organisations.append(org)
+
+    elif isinstance(organisations, list):
+        for org in organisations:
+            organisation = Organisation.query.get(org)
+            plan.organisations.append(organisation)
 
     return plan
 

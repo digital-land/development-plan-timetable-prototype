@@ -55,7 +55,7 @@ def new():
     form.development_plan_type.choices = _get_plan_type_choices()
 
     if form.validate_on_submit():
-        plan = _populate_plan(form, DevelopmentPlan)
+        plan = _populate_plan(form, DevelopmentPlan())
         db.session.add(plan)
         db.session.commit()
         return redirect(url_for("development_plan.plan", reference=plan.reference))

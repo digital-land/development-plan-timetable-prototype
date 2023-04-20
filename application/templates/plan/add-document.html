@@ -35,3 +35,11 @@
 </div>
 
 {% endblock %}
+
+{% block pageScripts %}
+  <script>
+    accessibleAutocomplete.enhanceSelectElement({
+      selectElement: document.querySelector('#document_type')
+    })
+  </script>
+{% endblock pageScripts %}

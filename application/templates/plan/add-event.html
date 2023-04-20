@@ -106,5 +106,9 @@
   <script>
     const $selectContainer = document.querySelector('[data-module="select-or-new"]')
     const selectModule = new dptp.SelectOrNew($selectContainer, 'development_plan_event', "action-panel-template").init()
+
+    accessibleAutocomplete.enhanceSelectElement({
+      selectElement: document.querySelector('#organisations')
+    })
   </script>
 {%- endblock %}

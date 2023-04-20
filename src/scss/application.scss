@@ -5,6 +5,11 @@
 @import "components/summary-card";
 @import "components/register-table";
 @import "components/new-register-record";
+@import "components/multi-select";
+
+.app-hidden {
+  display: none
+}
 
 // Typography tweaks
 

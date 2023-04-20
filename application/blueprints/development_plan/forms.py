@@ -6,10 +6,10 @@ from wtforms.validators import DataRequired
 class PlanForm(FlaskForm):
     reference = StringField("Reference", validators=[DataRequired()])
     name = StringField("Name", validators=[DataRequired()])
-    organisations = SelectField(
-        "Organisation", validators=[DataRequired()], validate_choice=False
-    )
-    # organisations = TextAreaField("Organisation", validators=[DataRequired()])
+    # organisations = SelectMultipleField(
+    #     "Organisation", validators=[DataRequired()], validate_choice=False
+    # )
+    organisations = StringField("Organisation", validators=[DataRequired()])
     description = TextAreaField("Description")
     notes = TextAreaField("Notes")
     development_plan_type = SelectField("Plan type", validators=[DataRequired()])

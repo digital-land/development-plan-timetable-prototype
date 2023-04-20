@@ -33,9 +33,17 @@ def plan(reference):
 def edit(reference):
     plan = DevelopmentPlan.query.get(reference)
 
+    organisation__string = ";".join([org.organisation for org in plan.organisations])
+    del plan.organisations
+
     form = PlanForm(obj=plan)
+    print(form.organisations.data)
+    if not form.organisations.data:
+        form.organisations.data = organisation__string
+
     form.organisations.choices = _get_organisation_choices()
     form.development_plan_type.choices = _get_plan_type_choices()
+
     if form.validate_on_submit():
         plan = _populate_plan(form, plan)
         db.session.add(plan)
@@ -51,7 +59,7 @@ def new():
     # requests.get...
 
     form = PlanForm()
-    form.organisations.choices = _get_organisation_choices()
+    form.organisations.choices = [(" ", " ")] + _get_organisation_choices()
     form.development_plan_type.choices = _get_plan_type_choices()
 
     if request.method == "GET" and request.args.get("organisation"):
@@ -177,10 +185,20 @@ def _populate_plan(form, plan):
     del form.organisations
 
     form.populate_obj(plan)
+    previous_orgs = [organisation.organisation for organisation in plan.organisations]
 
     if isinstance(organisations, str):
-        org = Organisation.query.get(organisations)
-        plan.organisations.append(org)
+        orgs = organisations.split(";")
+        # add any new organisations
+        for oid in orgs:
+            org = Organisation.query.get(oid)
+            plan.organisations.append(org)
+            if oid in previous_orgs:
+                previous_orgs.remove(oid)
+        # remove old organisations
+        for oid in previous_orgs:
+            org = Organisation.query.get(oid)
+            plan.organisations.remove(org)
 
     elif isinstance(organisations, list):
         for org in organisations:

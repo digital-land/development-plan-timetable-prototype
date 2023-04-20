@@ -1,5 +1,6 @@
 /* global fetch */
 import SelectOrNew from './modules/select-or-new'
+import MultiSelect from './modules/multi-select'
 
 function postRecordToRegister (url, data, onSuccess, onError) {
   fetch(url, {
@@ -28,5 +29,6 @@ function postRecordToRegister (url, data, onSuccess, onError) {
 
 window.dptp = {
   postRecordToRegister: postRecordToRegister,
+  MultiSelect: MultiSelect,
   SelectOrNew: SelectOrNew
 }

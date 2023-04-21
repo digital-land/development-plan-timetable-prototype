@@ -3,20 +3,18 @@
 {% block content %}
 
 <span class="govuk-caption-xl">Development plan: {{ development_plan.reference }}</span>
-<h1 class="govuk-heading-xl">Add event to timetable</h1>
+<h1 class="govuk-heading-xl">Edit event</h1>
 
-<p class="govuk-body">You are adding an event to the <span class="govuk-!-font-weight-bold">{{ development_plan.name }}</span> timetable.</p>
+<p class="govuk-body">You are updating the <span class="govuk-!-font-weight-bold">{{ event_type.name }}</span> event in the <span class="govuk-!-font-weight-bold">{{ development_plan.name }}</span> timetable.</p>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <form class="govuk-form" method="POST">
       {{ form.csrf_token }}
 
-      <div data-module="select-or-new">
-        <div class="govuk-form-group">
-          {{ form.development_plan_event.label(class='govuk-label') }}
-          {{ form.development_plan_event(class='govuk-select') }}
-        </div>
+      <div class="govuk-form-group">
+        <label for="#" class="govuk-label">Event</label>
+        <div class="govuk-body govuk-!-font-weight-bold">{{ event.development_plan_event }} <span class="govuk-hint">(for {{ development_plan.reference }})</span></div>
       </div>
 
       {% for field in form %}
@@ -71,7 +69,7 @@
                 <label class="govuk-label govuk-date-input__label" for="event_date_day">
                   Day
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="event_date_day" name="event_date_day" type="text" inputmode="numeric">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="event_date_day" name="event_date_day" type="text" inputmode="numeric" {% if event.event_date %}value="{{ event.event_date|date_part('DD')}}"{% endif %}>
               </div>
             </div>
             <div class="govuk-date-input__item">
@@ -79,7 +77,7 @@
                 <label class="govuk-label govuk-date-input__label" for="event_date_month">
                   Month
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="event_date_month" name="event_date_month" type="text" inputmode="numeric">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="event_date_month" name="event_date_month" type="text" inputmode="numeric" {% if event.event_date %}value="{{ event.event_date|date_part('MM')}}"{% endif %}>
               </div>
             </div>
             <div class="govuk-date-input__item">
@@ -87,7 +85,7 @@
                 <label class="govuk-label govuk-date-input__label" for="event_date_year">
                   Year
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="event_date_year" name="event_date_year" type="text" inputmode="numeric">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="event_date_year" name="event_date_year" type="text" inputmode="numeric"  {% if event.event_date %}value="{{ event.event_date|date_part('YYYY')}}"{% endif %}>
               </div>
             </div>
           </div>
@@ -99,31 +97,17 @@
         {{ form.notes(class='govuk-textarea') }}
       </div>
       <div class="govuk-button-group">
-        <button class="govuk-button" type="submit">Create record</button>
+        <button class="govuk-button" type="submit">Update record</button>
         <a class="govuk-link" href="{{ url_for('development_plan.plan', reference=development_plan.reference) }}">Cancel</a>
       </div>
     </form>
   </div>
 </div>
 
-<template id="action-panel-template">
-  <div class="new-record app-action-panel">
-    <div data-new-record="request">
-      <p class="govuk-body"><span data-new-record="name">Test test</span> isn't in the current list of events. Do you want to add it?</p>
-      <button>Yes, add it</button>
-    </div>
-    <div data-new-record="result">
-      <p class="govuk-body"><span data-new-record="name">Test test</span> has been added to the event register.</p>
-    </div>
-  </div>
-</template>
-
 {% endblock %}
 
 {% block pageScripts -%}
   <script>
-    const $selectContainer = document.querySelector('[data-module="select-or-new"]')
-    const selectModule = new dptp.SelectOrNew($selectContainer, 'development_plan_event', "action-panel-template").init()
 
     const $mulitSelectModule = document.querySelector('[data-module="multi-select"]')
     const mulitSelectModule = new dptp.MultiSelect($mulitSelectModule).init()

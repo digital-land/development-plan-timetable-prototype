@@ -47,7 +47,9 @@ def register_context_processors(app):
 
 
 def register_filters(app):
-    pass
+    from application.filters import get_date_part
+
+    app.add_template_filter(get_date_part, name="date_part")
 
 
 def register_extensions(app):

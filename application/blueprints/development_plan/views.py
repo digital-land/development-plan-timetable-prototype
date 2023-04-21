@@ -37,7 +37,7 @@ def edit(reference):
     del plan.organisations
 
     form = PlanForm(obj=plan)
-    print(form.organisations.data)
+
     if not form.organisations.data:
         form.organisations.data = organisation__string
 
@@ -108,15 +108,25 @@ def add_event(reference):
     methods=["GET", "POST"],
 )
 def edit_event(reference, event_reference):
+    plan = DevelopmentPlan.query.get(reference)
     event = DevelopmentPlanTimetable.query.filter(
         DevelopmentPlanTimetable.development_plan_reference == reference,
         DevelopmentPlanTimetable.reference == event_reference,
     ).one_or_none()
+    event_type = DevelopmentPlanEvent.query.get(event.development_plan_event)
 
     if event is None:
         return abort(404)
 
+    organisation__string = ";".join([org.organisation for org in event.organisations])
+    del event.organisations
+
     form = EventForm(obj=event)
+
+    # set to current orgs if no data provided in form
+    if not form.organisations.data:
+        form.organisations.data = organisation__string
+
     form.organisations.choices = _get_organisation_choices()
     form.development_plan_event.choices = _get_event_choices()
 
@@ -124,8 +134,13 @@ def edit_event(reference, event_reference):
         # TODO: update event
         return redirect(url_for("development_plan.plan", reference=reference))
 
-    # TODO: fix this as no edit event template exists yet
-    return render_template("plan/edit-event.html", development_plan=plan, form=form)
+    return render_template(
+        "plan/edit-event.html",
+        development_plan=plan,
+        form=form,
+        event=event,
+        event_type=event_type,
+    )
 
 
 @development_plan.get("/<string:reference>/timetable/<string:event_reference>/delete")
@@ -209,6 +224,15 @@ def _set_organisations(obj, org_str):
     for oid in previous_orgs:
         org = Organisation.query.get(oid)
         obj.organisations.remove(org)
+
+
+def _get_date_part(d_str, part):
+    parts = d_str.split("-")
+    if part == "YYYY":
+        return parts[0]
+    if part == "MM":
+        return parts[1]
+    return parts[2]
 
 
 def _get_organisation_choices():

@@ -30,7 +30,8 @@ class EventForm(FlaskForm):
     development_plan_event = SelectField(
         "Development plan event", validators=[DataRequired()]
     )
-    organisations = SelectField("Organisation", validators=[DataRequired()])
+    # organisations = SelectField("Organisation", validators=[DataRequired()])
+    organisations = StringField("Organisation", validators=[DataRequired()])
     event_date_year = StringField("Event date year", validators=[DataRequired()])
     event_date_month = StringField("Event date month", validators=[DataRequired()])
     event_date_day = StringField("Event date day", validators=[DataRequired()])

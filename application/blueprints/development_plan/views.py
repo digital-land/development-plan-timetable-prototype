@@ -80,7 +80,7 @@ def add_event(reference):
     plan = DevelopmentPlan.query.get(reference)
 
     form = EventForm()
-    form.organisations.choices = _get_organisation_choices()
+    form.organisations.choices = [(" ", " ")] + _get_organisation_choices()
     form.development_plan_event.choices = _get_event_choices()
 
     if form.validate_on_submit():
@@ -90,16 +90,17 @@ def add_event(reference):
         ref = f"{plan.reference}-{form.development_plan_event.data.lower().replace(' ', '-')}"
         timetable.reference = ref
         timetable.event_date = f"{form.event_date_year.data}-{form.event_date_month.data}-{form.event_date_day.data}"
-        organisations = form.organisations.data
+        organisation_str = form.organisations.data
         del form.organisations
         form.populate_obj(timetable)
-        if isinstance(organisations, str):
-            org = Organisation.query.get(organisations)
-            plan.organisations.append(org)
-        else:
-            for org in organisations:
-                organisation = Organisation.query.get(org)
-                timetable.organisations.append(organisation)
+        _set_organisations(timetable, organisation_str)
+        # if isinstance(organisations, str):
+        #     org = Organisation.query.get(organisations)
+        #     plan.organisations.append(org)
+        # else:
+        #     for org in organisations:
+        #         organisation = Organisation.query.get(org)
+        #         timetable.organisations.append(organisation)
 
         plan.timetable.append(timetable)
         db.session.add(plan)
@@ -206,6 +207,21 @@ def _populate_plan(form, plan):
             plan.organisations.append(organisation)
 
     return plan
+
+
+def _set_organisations(obj, org_str):
+    previous_orgs = [organisation.organisation for organisation in obj.organisations]
+    orgs = org_str.split(";")
+    # add any new organisations
+    for oid in orgs:
+        org = Organisation.query.get(oid)
+        obj.organisations.append(org)
+        if oid in previous_orgs:
+            previous_orgs.remove(oid)
+    # remove old organisations
+    for oid in previous_orgs:
+        org = Organisation.query.get(oid)
+        obj.organisations.remove(org)
 
 
 def _get_organisation_choices():

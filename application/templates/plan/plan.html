@@ -100,7 +100,7 @@
       <tr class="govuk-table__row" data-timetable-entry-reference="{{ evt.reference }}" data-timetable-entry-plan="{{ evt.development_plan.reference }}">
         <th scope="row" class="govuk-table__header">{{ evt.development_plan_event }}</th>
         <td class="govuk-table__cell">{{ evt.event_date }}</td>
-        <td class="govuk-table__cell">{{ evt.organisation }}</td>
+        <td class="govuk-table__cell">{% for org in evt.organisations %}{{ org.name }}{{ ', ' if not loop.last }}{% endfor %}</td>
         <td class="govuk-table__cell app-cell--meta">{{ evt.entry_date }}</td>
         <td class="govuk-table__cell app-cell--meta">{{ evt.end_date if evt.end_date }}</td>
         <td class="govuk-table__cell app-cell--meta app-cell--actions">

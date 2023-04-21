@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 
 from application.blueprints.admin.forms import DocumentTypeForm, EventForm, PlanTypeForm
 from application.extensions import db
@@ -19,12 +19,25 @@ def events():
     return render_template("admin/events.html", events=evts)
 
 
-@admin_bp.route("/events/add")
+@admin_bp.route("/events/add", methods=["GET", "POST"])
 def add_event():
     form = EventForm()
 
     if form.validate_on_submit():
-        pass
+        name = form.name.data
+        reference = name.replace(" ", "-").lower()
+        if DevelopmentPlanEvent.query.get(reference) is not None:
+            flash(
+                f"Event type {name} with reference: {reference} already exists", "error"
+            )
+            return render_template(
+                "admin/add-record.html", register_name="event", form=form
+            )
+        event = DevelopmentPlanEvent()
+        event.reference = reference
+        event.name = name
+        event.description = form.description.data
+        return redirect(url_for("admin.events"))
 
     return render_template("admin/add-record.html", register_name="event", form=form)
 
@@ -55,12 +68,26 @@ def document_types():
     return render_template("admin/document-types.html", document_types=document_types)
 
 
-@admin_bp.route("/document-types/add")
+@admin_bp.route("/document-types/add", methods=["GET", "POST"])
 def add_document_type():
     form = DocumentTypeForm()
 
     if form.validate_on_submit():
-        pass
+        name = form.name.data
+        reference = name.replace(" ", "-").lower()
+        if DocumentType.query.get(reference) is not None:
+            flash(f"Document type {name} {reference} already exists", "error")
+            return render_template(
+                "admin/add-record.html", register_name="document_type", form=form
+            )
+        document_type = DocumentType()
+        document_type.reference = reference
+        document_type.name = form.name.data
+        document_type.description = form.description.data
+
+        db.session.add(document_type)
+        db.session.commit()
+        return redirect(url_for("admin.document_types"))
 
     return render_template(
         "admin/add-record.html", register_name="document_type", form=form
@@ -73,12 +100,27 @@ def plan_types():
     return render_template("admin/plan-types.html", plan_types=plan_types)
 
 
-@admin_bp.route("/plan-types/add")
+@admin_bp.route("/plan-types/add", methods=["GET", "POST"])
 def add_plan_type():
     form = PlanTypeForm()
 
     if form.validate_on_submit():
-        pass
+        name = form.name.data
+        reference = name.replace(" ", "-").lower()
+        if DevelopmentPlanType.query.get(reference) is not None:
+            flash(
+                f"Plan type {name} with reference: {reference} already exists", "error"
+            )
+            return render_template(
+                "admin/add-record.html", register_name="plan_type", form=form
+            )
+        plan_type = DevelopmentPlanType()
+        plan_type.reference = reference
+        plan_type.name = name
+        plan_type.description = form.description.data
+        db.session.add(plan_type)
+        db.session.commit()
+        return redirect(url_for("admin.plan_types"))
 
     return render_template(
         "admin/add-record.html", register_name="plan_type", form=form

@@ -5,6 +5,20 @@
 <span class="govuk-caption-xl">Development plan data register</span>
 <h1 class="govuk-heading-xl">Add {{ register_name|replace('_', ' ') }}</h1>
 
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <ul class="govuk-list govuk-list--bullet">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+{% endwith %}
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <form class="govuk-form" method="POST">

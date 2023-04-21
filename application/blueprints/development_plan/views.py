@@ -94,13 +94,6 @@ def add_event(reference):
         del form.organisations
         form.populate_obj(timetable)
         _set_organisations(timetable, organisation_str)
-        # if isinstance(organisations, str):
-        #     org = Organisation.query.get(organisations)
-        #     plan.organisations.append(org)
-        # else:
-        #     for org in organisations:
-        #         organisation = Organisation.query.get(org)
-        #         timetable.organisations.append(organisation)
 
         plan.timetable.append(timetable)
         db.session.add(plan)
@@ -155,23 +148,17 @@ def add_document(reference):
     plan = DevelopmentPlan.query.get(reference)
 
     form = DocumentForm()
-    form.organisations.choices = _get_organisation_choices()
+    form.organisations.choices = [(" ", " ")] + _get_organisation_choices()
     form.document_type.choices = _get_document_type_choices()
 
     if form.validate_on_submit():
         document = DevelopmentPlanDocument()
         document.reference = f"{form.name.data.lower().replace(' ', '-')}"
 
-        organisations = form.organisations.data
+        organisations_str = form.organisations.data
         del form.organisations
         form.populate_obj(document)
-        if isinstance(organisations, str):
-            org = Organisation.query.get(organisations)
-            plan.organisations.append(org)
-        else:
-            for org in organisations:
-                organisation = Organisation.query.get(org)
-                document.organisations.append(organisation)
+        _set_organisations(document, organisations_str)
 
         plan.documents.append(document)
         db.session.add(plan)

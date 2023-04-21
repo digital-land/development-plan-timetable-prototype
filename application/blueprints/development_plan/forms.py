@@ -44,4 +44,5 @@ class DocumentForm(FlaskForm):
     document_type = SelectField("Document type", validators=[DataRequired()])
     documentation_url = StringField("Documentation URL", validators=[DataRequired()])
     document_url = StringField("Document URL", validators=[DataRequired()])
-    organisations = SelectField("Organisation", validators=[DataRequired()])
+    organisations = StringField("Organisation", validators=[DataRequired()])
+    # organisations = SelectField("Organisation", validators=[DataRequired()])

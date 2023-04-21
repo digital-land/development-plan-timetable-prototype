@@ -226,15 +226,6 @@ def _set_organisations(obj, org_str):
         obj.organisations.remove(org)
 
 
-def _get_date_part(d_str, part):
-    parts = d_str.split("-")
-    if part == "YYYY":
-        return parts[0]
-    if part == "MM":
-        return parts[1]
-    return parts[2]
-
-
 def _get_organisation_choices():
     return [(org.organisation, org.name) for org in Organisation.query.all()]
 

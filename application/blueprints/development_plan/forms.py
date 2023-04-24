@@ -5,13 +5,13 @@ from wtforms.validators import DataRequired
 
 class PlanForm(FlaskForm):
     reference = StringField("Reference", validators=[DataRequired()])
-    name = StringField("Name", validators=[DataRequired()])
+    name = StringField("Name of plan", validators=[DataRequired()])
     # organisations = SelectMultipleField(
     #     "Organisation", validators=[DataRequired()], validate_choice=False
     # )
     organisations = StringField("Organisation", validators=[DataRequired()])
-    description = TextAreaField("Description")
-    notes = TextAreaField("Notes")
+    description = TextAreaField("Brief description of plan")
+    # notes = TextAreaField("Notes")
     development_plan_type = SelectField("Plan type", validators=[DataRequired()])
     period_start_date = StringField(
         "Plan start date",
@@ -23,7 +23,9 @@ class PlanForm(FlaskForm):
         validators=[DataRequired()],
         description="The year the plan ends, for example, 2045",
     )
-    documentation_url = StringField("URL", validators=[DataRequired()])
+    documentation_url = StringField(
+        "URL for plan information", validators=[DataRequired()]
+    )
 
 
 class EventForm(FlaskForm):
@@ -39,10 +41,12 @@ class EventForm(FlaskForm):
 
 
 class DocumentForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
-    description = TextAreaField("Description")
+    name = StringField("Name of supporting document", validators=[DataRequired()])
+    description = TextAreaField("Brief description of supporting document")
     document_type = SelectField("Document type", validators=[DataRequired()])
-    documentation_url = StringField("Documentation URL", validators=[DataRequired()])
+    documentation_url = StringField(
+        "URL for document information", validators=[DataRequired()]
+    )
     document_url = StringField("Document URL", validators=[DataRequired()])
     organisations = StringField("Organisation", validators=[DataRequired()])
     # organisations = SelectField("Organisation", validators=[DataRequired()])

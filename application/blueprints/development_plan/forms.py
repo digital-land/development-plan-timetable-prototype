@@ -6,12 +6,8 @@ from wtforms.validators import DataRequired
 class PlanForm(FlaskForm):
     reference = StringField("Reference", validators=[DataRequired()])
     name = StringField("Name of plan", validators=[DataRequired()])
-    # organisations = SelectMultipleField(
-    #     "Organisation", validators=[DataRequired()], validate_choice=False
-    # )
     organisations = StringField("Organisation", validators=[DataRequired()])
     description = TextAreaField("Brief description of plan")
-    # notes = TextAreaField("Notes")
     development_plan_type = SelectField("Plan type", validators=[DataRequired()])
     period_start_date = StringField(
         "Plan start date",
@@ -32,12 +28,10 @@ class EventForm(FlaskForm):
     development_plan_event = SelectField(
         "Development plan event", validators=[DataRequired()]
     )
-    # organisations = SelectField("Organisation", validators=[DataRequired()])
     organisations = StringField("Organisation", validators=[DataRequired()])
     event_date_year = StringField("Event date year", validators=[DataRequired()])
     event_date_month = StringField("Event date month", validators=[DataRequired()])
     event_date_day = StringField("Event date day", validators=[DataRequired()])
-    notes = TextAreaField("Notes")
 
 
 class DocumentForm(FlaskForm):
@@ -49,4 +43,3 @@ class DocumentForm(FlaskForm):
     )
     document_url = StringField("Document URL", validators=[DataRequired()])
     organisations = StringField("Organisation", validators=[DataRequired()])
-    # organisations = SelectField("Organisation", validators=[DataRequired()])

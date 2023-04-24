@@ -10,20 +10,21 @@
     <form class="govuk-form" method="POST">
       {{ form.csrf_token }}
       {% for field in form %}
+        {% if field.name not in ['period_start_date', 'period_end_date'] %}
         {%- if field.name == 'organisations' %}
-          <div class="app-organisation-select" data-module="multi-select">
-            <div class="govuk-form-group" data-mulit-select="form-group">
-              {{ field.label(class='govuk-label') }}
-              {{ field(class='govuk-input') }}
-            </div>
-            <div class="app-hidden">
-              <select name="organisation_select" id="organisation_select" data-mulit-select="select">
-                {% for organisation in field.choices %}
-                <option value="{{ organisation[0] }}">{{ organisation[1] }}</option>
-                {% endfor %}
-              </select>
-            </div>
+        <div class="app-organisation-select" data-module="multi-select">
+          <div class="govuk-form-group" data-mulit-select="form-group">
+            {{ field.label(class='govuk-label') }}
+            {{ field(class='govuk-input') }}
           </div>
+          <div class="app-hidden">
+            <select name="organisation_select" id="organisation_select" data-mulit-select="select">
+              {% for organisation in field.choices %}
+              <option value="{{ organisation[0] }}">{{ organisation[1] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
         {% else %}
         <div class="govuk-form-group">
           {{ field.label(class='govuk-label') }}
@@ -36,19 +37,27 @@
           {% else %}
           {% set classes = 'govuk-input' + extra_classes %}
           {{ field(class=classes) }}
-          {% endif %}
-          {% if field.errors %}
-              <ul>
-              {% for error in field.errors %}
-                  <li>{{ error }}</li>
-              {% endfor %}
-              </ul>
-          {% endif %}
+          {%- endif %}
+          {% if field.errors -%}
+            <ul>
+            {% for error in field.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+          {%- endif %}
         </div>
         {% endif -%}{# end of if organisation #}
+        {% endif -%}{# end if not period dates #}
       {% endfor %}
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="period_date">Period covered by plan</label>
+        <div class="govuk-hint">For example, 2016 to 2033</div>
+        <input class="govuk-input govuk-input--width-4" id="period_start_date" name="period_start_date" required="" type="text" value="{{ form.period_start_date.data if form.period_start_date.data }}">
+        <span class="app-govuk-text">to</span>
+        <input class="govuk-input govuk-input--width-4" id="period_end_date" name="period_end_date" required="" type="text" value="{{ form.period_end_date.data if form.period_end_date.data }}">
+      </div>
       <div class="govuk-button-group">
-        <button class="govuk-button" type="submit">Create record</button>
+        <button class="govuk-button" type="submit">Create plan record</button>
         <a class="govuk-link" href="{{ url_for('base.index') }}">Cancel</a>
       </div>
     </form>

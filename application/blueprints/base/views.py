@@ -7,5 +7,5 @@ base = Blueprint("base", __name__)
 
 @base.route("/")
 def index():
-    development_plans = DevelopmentPlan.query.all()
+    development_plans = DevelopmentPlan.query.limit(5)
     return render_template("index.html", development_plans=development_plans)

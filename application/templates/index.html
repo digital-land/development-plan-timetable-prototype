@@ -20,7 +20,7 @@
       </div>
     </details>
 
-    <p class="govuk-body">We have seeded the prototype with these plans:</p>
+    <p class="govuk-body">To get started we have add some example data. This includes:</p>
     <ul class="govuk-list govuk-list--bullet">
       {% for plan in development_plans %}
         <li><a class="govuk-link" href="{{ url_for('development_plan.plan', reference=plan.reference) }}">{{ plan.name }}</a></li>

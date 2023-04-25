@@ -5,6 +5,21 @@
   <div class="govuk-grid-column-three-quarters">
     <h1 class="govuk-heading-xl">Development plan timetable prototype</h1>
 
+    <p class="govuk-body">This prototype allows you to create data that meets the <a href="" class="govuk-link">development plan data standard</a>. It allows you to record as data all the different development plans a local planning authority makes, including local plans and neighbourhood plans.</p>
+    <p class="govuk-body">For each plan you can capture the events that happen and any documents that are produced during the plan-making process.</p>
+
+    <details class="govuk-details" data-module="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          What should we record as a development plan?
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+        <p class="govuk-body">A development plan is a set of policies and proposals that a planning authority creates to set out a vision for the future of an area. It is used to guide future planning decisions.</p>
+        <p class="govuk-body">Record each bundle of policies a planning authority works on, that gets examined by PINs and, eventually, adopted.</p>
+      </div>
+    </details>
+
     <p class="govuk-body">We have seeded the prototype with these plans:</p>
     <ul class="govuk-list govuk-list--bullet">
       {% for plan in development_plans %}
@@ -15,7 +30,7 @@
     <a href="{{ url_for('development_plan.new') }}" class="govuk-button govuk-button--secondary">+ add new plan record</a>
     <p class="govuk-body">or</p>
     <p class="govuk-body">
-      <a href="{{ url_for('organisation.organisations') }}" class="govuk-link">Find an organisation</a>
+      <a href="{{ url_for('organisation.organisations') }}" class="govuk-link">Find by organisation</a>
     </p>
   </div>
 </div>

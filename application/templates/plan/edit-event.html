@@ -10,7 +10,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <form class="govuk-form" method="POST">
-      {{ form.csrf_token }}
+      {{ form.hidden_tag() }}
 
       <div class="govuk-form-group">
         <label for="#" class="govuk-label">Event</label>
@@ -18,7 +18,7 @@
       </div>
 
       {% for field in form %}
-      {%- if field.name not in ['event_date_year', 'event_date_month', 'event_date_day', 'notes', 'development_plan_event'] %}
+      {%- if field.name not in ['event_date_year', 'event_date_month', 'event_date_day', 'notes', 'development_plan_event', 'csrf_token'] %}
         {%- if field.name == 'organisations' %}
         <div class="app-organisation-select" data-module="multi-select">
           <div class="govuk-form-group" data-mulit-select="form-group">

@@ -91,11 +91,6 @@
           </div>
         </fieldset>
       </div>
-      <div class="govuk-form-group">
-        {{ form.notes.label(class='govuk-label') }}
-        <div class="govuk-hint">Add additional information if applicable</div>
-        {{ form.notes(class='govuk-textarea') }}
-      </div>
       <div class="govuk-button-group">
         <button class="govuk-button" type="submit">Update record</button>
         <a class="govuk-link" href="{{ url_for('development_plan.plan', reference=development_plan.reference) }}">Cancel</a>

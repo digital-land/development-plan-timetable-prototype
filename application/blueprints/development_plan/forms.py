@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, StringField, TextAreaField
+from wtforms import RadioField, SelectField, StringField, TextAreaField
 from wtforms.validators import DataRequired
 
 
@@ -8,7 +8,7 @@ class PlanForm(FlaskForm):
     name = StringField("Name of plan", validators=[DataRequired()])
     organisations = StringField("Organisation", validators=[DataRequired()])
     description = TextAreaField("Brief description of plan")
-    development_plan_type = SelectField("Plan type", validators=[DataRequired()])
+    development_plan_type = RadioField("Plan type", validators=[DataRequired()])
     period_start_date = StringField(
         "Plan start date",
         validators=[DataRequired()],

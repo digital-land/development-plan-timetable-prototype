@@ -43,6 +43,10 @@
               <dd class="govuk-summary-list__value"><a href="{{ plan.documentation_url }}" class="govuk-link">{{ plan.documentation_url }}</a></dd>
             </div>
             <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">Type</dt>
+              <dd class="govuk-summary-list__value">{{ plan.development_plan_type}}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key">Period</dt>
               <dd class="govuk-summary-list__value">{{ plan.period_start_date }} - {{ plan.period_end_date }}</dd>
             </div>

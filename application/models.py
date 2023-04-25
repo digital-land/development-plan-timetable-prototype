@@ -90,7 +90,9 @@ class DevelopmentPlan(DateModel):
     )
 
     timetable = db.relationship(
-        "DevelopmentPlanTimetable", back_populates="development_plan"
+        "DevelopmentPlanTimetable",
+        back_populates="development_plan",
+        order_by="DevelopmentPlanTimetable.entry_date",
     )
 
     documents = db.relationship(

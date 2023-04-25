@@ -8,7 +8,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <form class="govuk-form" method="POST">
-      {{ form.csrf_token }}
+      {{ form.hidden_tag() }}
       {% for field in form %}
       {%- if field.name == 'organisations' %}
         <div class="app-organisation-select" data-module="multi-select">
@@ -46,6 +46,7 @@
           </div>
         </div>
         {% else %}
+        {%- if field.name != 'csrf_token' %}
         <div class="govuk-form-group">
           {{ field.label(class='govuk-label') }}
           {% if field.type == "TextAreaField" %}
@@ -61,6 +62,7 @@
               </ul>
           {% endif %}
         </div>
+        {% endif %}{# end if not csrf_token #}
         {% endif %}
       {% endfor %}
       <div class="govuk-button-group">

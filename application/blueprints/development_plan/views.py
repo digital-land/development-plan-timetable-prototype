@@ -91,7 +91,7 @@ def add_event(reference):
 
         t = DevelopmentPlanTimetable.query.get(ref)
         if t is not None:
-            ref = f"{ref}-{datetime.now().strftime('%Y%m%d')}"
+            ref = f"{ref}-{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}"
         timetable.reference = ref
         timetable.event_date = f"{form.event_date_year.data}-{form.event_date_month.data}-{form.event_date_day.data}"
         organisation_str = form.organisations.data

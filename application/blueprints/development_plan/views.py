@@ -131,7 +131,12 @@ def edit_event(reference, event_reference):
     form.development_plan_event.choices = _get_event_choices()
 
     if form.validate_on_submit():
-        # TODO: update event
+        organisation_str = form.organisations.data
+        del form.organisations
+        event.event_date = f"{form.event_date_year.data}-{form.event_date_month.data}-{form.event_date_day.data}"
+        _set_organisations(event, organisation_str)
+        db.session.add(event)
+        db.session.commit()
         return redirect(url_for("development_plan.plan", reference=reference))
 
     return render_template(

@@ -88,6 +88,10 @@ def add_event(reference):
         # one timetable which has many events.
         timetable = DevelopmentPlanTimetable()
         ref = f"{plan.reference}-{form.development_plan_event.data.lower().replace(' ', '-')}"
+
+        t = DevelopmentPlanTimetable.query.get(ref)
+        if t is not None:
+            ref = f"{ref}-{datetime.now().strftime('%Y%m%d')}"
         timetable.reference = ref
         timetable.event_date = f"{form.event_date_year.data}-{form.event_date_month.data}-{form.event_date_day.data}"
         organisation_str = form.organisations.data

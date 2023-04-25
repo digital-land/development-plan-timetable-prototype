@@ -24,6 +24,27 @@
             </select>
           </div>
         </div>
+        {% elif field.name == 'document_type' %}
+        <div class="govuk-form-group">
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend">
+                Document type
+              </legend>
+              <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                {% for choice in field.choices %}
+                <div class="govuk-radios__item">
+                  {%- set radioID = field.name + ('-'+loop.index|string) if loop.index %}
+                  <input class="govuk-radios__input" id="{{ radioID }}" name="{{ field.name }}" type="radio" value="{{ choice[0] }}"{% if field.data == choice[0] %} checked{% endif %}>
+                  <label class="govuk-label govuk-radios__label" for="{{ radioID }}">
+                    {{ choice[1] }}
+                  </label>
+                </div>
+                {% endfor %}
+              </div>
+            </fieldset>
+          </div>
+        </div>
         {% else %}
         <div class="govuk-form-group">
           {{ field.label(class='govuk-label') }}
@@ -54,11 +75,6 @@
 
 {% block pageScripts %}
   <script>
-    // use accessible autocomplete for document type
-    accessibleAutocomplete.enhanceSelectElement({
-      selectElement: document.querySelector('#document_type')
-    })
-
     // set up multi select for organisations
     const $mulitSelectModule = document.querySelector('[data-module="multi-select"]')
     const mulitSelectModule = new dptp.MultiSelect($mulitSelectModule).init()

@@ -37,7 +37,7 @@ class EventForm(FlaskForm):
 class DocumentForm(FlaskForm):
     name = StringField("Name of supporting document", validators=[DataRequired()])
     description = TextAreaField("Brief description of supporting document")
-    document_type = SelectField("Document type", validators=[DataRequired()])
+    document_type = RadioField("Document type", validators=[DataRequired()])
     documentation_url = StringField(
         "URL for document information", validators=[DataRequired()]
     )

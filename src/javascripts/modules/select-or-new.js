@@ -149,7 +149,7 @@ SelectOrNew.prototype.setUpActionPanel = function () {
 
 SelectOrNew.prototype.setUpTypeAhead = function () {
   const labelText = this.$label.textContent
-  this.$typeAheadContainer = this.createTypeAheadContainer(labelText + ' (enhancement)')
+  this.$typeAheadContainer = this.createTypeAheadContainer(labelText)
   this.$selectContainer.insertBefore(this.$typeAheadContainer, this.$actionPanel)
 
   this.initAccessibleAutocomplete()

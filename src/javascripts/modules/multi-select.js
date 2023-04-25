@@ -159,7 +159,7 @@ MultiSelect.prototype.setupSelectedPanel = function () {
 
 MultiSelect.prototype.setUpTypeAhead = function () {
   const labelText = this.$formGroup.querySelector('label').textContent
-  this.$typeAheadContainer = utils.createTypeAheadContainer(labelText + ' (enhancement)', this.$hiddenSelect.id)
+  this.$typeAheadContainer = utils.createTypeAheadContainer(labelText, this.$hiddenSelect.id)
   this.$module.append(this.$typeAheadContainer)
 
   this.initAccessibleAutocomplete(this.$typeAheadContainer)

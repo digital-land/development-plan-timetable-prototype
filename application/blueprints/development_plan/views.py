@@ -267,7 +267,24 @@ def _populate_plan(form, plan):
     organisations = form.organisations.data
     del form.organisations
 
+    period_start = form.period_start_date.data
+    period_end = form.period_end_date.data
+
+    if period_start:
+        plan.period_start_date = int(period_start)
+    else:
+        plan.period_start_date = None
+
+    if period_end:
+        plan.period_end_date = int(period_end)
+    else:
+        plan.period_end_date = None
+
+    del form.period_start_date
+    del form.period_end_date
+
     form.populate_obj(plan)
+
     previous_orgs = [organisation.organisation for organisation in plan.organisations]
 
     if isinstance(organisations, str):

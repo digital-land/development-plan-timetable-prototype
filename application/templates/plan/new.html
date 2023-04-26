@@ -72,9 +72,9 @@
       <div class="govuk-form-group">
         <label class="govuk-label" for="period_date">Period covered by plan</label>
         <div class="govuk-hint">For example, 2016 to 2033</div>
-        <input class="govuk-input govuk-input--width-4" id="period_start_date" name="period_start_date" required="" type="text" value="{{ form.period_start_date.data if form.period_start_date.data }}">
+        <input class="govuk-input govuk-input--width-4" id="period_start_date" name="period_start_date" type="text" value="{{ form.period_start_date.data if form.period_start_date.data }}">
         <span class="app-govuk-text">to</span>
-        <input class="govuk-input govuk-input--width-4" id="period_end_date" name="period_end_date" required="" type="text" value="{{ form.period_end_date.data if form.period_end_date.data }}">
+        <input class="govuk-input govuk-input--width-4" id="period_end_date" name="period_end_date" type="text" value="{{ form.period_end_date.data if form.period_end_date.data }}">
       </div>
       <div class="govuk-button-group">
         <button class="govuk-button" type="submit">Create plan record</button>

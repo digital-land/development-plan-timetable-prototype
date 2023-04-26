@@ -1,3 +1,6 @@
+# import uuid
+
+# from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
 from application.extensions import db
@@ -10,6 +13,13 @@ class DateModel(db.Model):
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
 
+    def as_dict(self):
+        return {
+            "entry-date": self.entry_date,
+            "start-date": self.start_date,
+            "end-date": self.end_date,
+        }
+
 
 class DevelopmentPlanType(DateModel):
     __tablename__ = "development_plan_type"
@@ -17,6 +27,13 @@ class DevelopmentPlanType(DateModel):
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
+
+    def as_dict(self):
+        return {
+            "reference": self.reference,
+            "name": self.name,
+            "description": self.description,
+        } | super().as_dict()
 
 
 class DevelopmentPlanEvent(DateModel):
@@ -26,12 +43,12 @@ class DevelopmentPlanEvent(DateModel):
     name = db.Column(db.Text)
     notes = db.Column(db.Text)
 
-    def to_dict(self):
+    def as_dict(self):
         return {
             "reference": self.reference,
             "name": self.name,
-            "description": self.notes,
-        }
+            "notes": self.notes,
+        } | super().as_dict()
 
 
 class DocumentType(DateModel):
@@ -40,6 +57,13 @@ class DocumentType(DateModel):
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     category = db.Column(db.Text)
+
+    def as_dict(self):
+        return {
+            "reference": self.reference,
+            "name": self.name,
+            "category": self.category,
+        } | super().as_dict()
 
 
 development_plan_organisation = db.Table(
@@ -73,6 +97,7 @@ development_plan_timetable_organisation = db.Table(
 class DevelopmentPlan(DateModel):
     __tablename__ = "development_plan"
 
+    # id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
@@ -99,10 +124,25 @@ class DevelopmentPlan(DateModel):
         "DevelopmentPlanDocument", back_populates="development_plan"
     )
 
+    def as_dict(self):
+        orgs = ";".join([org.organisation for org in self.organisations])
+        return {
+            "reference": self.reference,
+            "name": self.name,
+            "description": self.description,
+            "development-plan-type": self.development_plan_type,
+            "period-start-date": self.period_start_date,
+            "period-end-date": self.period_end_date,
+            "documentation-url": self.documentation_url,
+            "notes": self.notes,
+            "organisations": orgs,
+        } | super().as_dict()
+
 
 class DevelopmentPlanTimetable(DateModel):
     __tablename__ = "development_plan_timetable"
 
+    # id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     development_plan_event = db.Column(db.Text)
@@ -121,10 +161,22 @@ class DevelopmentPlanTimetable(DateModel):
     )
     development_plan = db.relationship("DevelopmentPlan")
 
+    def as_dict(self):
+        orgs = ";".join([org.organisation for org in self.organisations])
+        return {
+            "reference": self.reference,
+            "name": self.name,
+            "development-plan-event": self.development_plan_event,
+            "event-date": self.event_date,
+            "notes": self.notes,
+            "organisations": orgs,
+        } | super().as_dict()
+
 
 class DevelopmentPlanDocument(DateModel):
     __tablename__ = "development_plan_document"
 
+    # id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
@@ -144,6 +196,19 @@ class DevelopmentPlanDocument(DateModel):
         db.ForeignKey("development_plan.reference")
     )
     development_plan = db.relationship("DevelopmentPlan")
+
+    def as_dict(self):
+        orgs = ";".join([org.organisation for org in self.organisations])
+        return {
+            "reference": self.reference,
+            "name": self.name,
+            "description": self.description,
+            "document-type": self.document_type,
+            "documentation-url": self.documentation_url,
+            "document-url": self.document_url,
+            "notes": self.notes,
+            "organisations": orgs,
+        } | super().as_dict()
 
 
 class Organisation(DateModel):

@@ -1,6 +1,22 @@
+import csv
+import glob
+import io
+import shutil
+import time
+import zipfile
 from datetime import datetime
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from flask import Blueprint, abort, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    Response,
+    abort,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 
 from application.blueprints.development_plan.forms import (
     DocumentForm,
@@ -190,6 +206,61 @@ def add_document(reference):
         return redirect(url_for("development_plan.plan", reference=reference))
 
     return render_template("plan/add-document.html", development_plan=plan, form=form)
+
+
+@development_plan.route("/download", methods=["GET"])
+def get_data():
+    tempdir = _export_data()
+    zipname = "development-plan-data.zip"
+    files = glob.glob(f"{tempdir.name}/*.csv")
+    file_handle = io.BytesIO()
+    with zipfile.ZipFile(file_handle, "w") as zip:
+        for file in files:
+            p = Path(file)
+            info = zipfile.ZipInfo(p.name)
+            info.date_time = time.localtime(time.time())[:6]
+            info.compress_type = zipfile.ZIP_DEFLATED
+            with open(p, "rb") as fd:
+                zip.writestr(info, fd.read())
+    file_handle.seek(0)
+    shutil.rmtree(tempdir.name)
+
+    return Response(
+        file_handle.getvalue(),
+        mimetype="application/zip",
+        headers={"Content-Disposition": f"attachment;filename={zipname}"},
+    )
+
+
+def _export_data():
+    download_file_map = {
+        "development-plan-type.csv": DevelopmentPlanType,
+        "development-plan-event.csv": DevelopmentPlanEvent,
+        "development-plan.csv": DevelopmentPlan,
+        "development-plan-document.csv": DevelopmentPlanDocument,
+        "development-plan-timetable.csv": DevelopmentPlanTimetable,
+        "document-type.csv": DocumentType,
+    }
+
+    tempdir = TemporaryDirectory()
+
+    path = Path(tempdir.name)
+
+    for file, model in download_file_map.items():
+        csv_path = path / file
+        with open(csv_path, "w") as f:
+            fieldnames = [col.name.replace("_", "-") for col in model.__table__.columns]
+            if model in [
+                DevelopmentPlan,
+                DevelopmentPlanDocument,
+                DevelopmentPlanTimetable,
+            ]:
+                fieldnames.append("organisations")
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for d in model.query.all():
+                writer.writerow(d.as_dict())
+    return tempdir
 
 
 def _populate_plan(form, plan):

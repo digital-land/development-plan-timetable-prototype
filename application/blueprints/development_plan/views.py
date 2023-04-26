@@ -209,7 +209,7 @@ def add_document(reference):
 
 
 @development_plan.route("/download", methods=["GET"])
-def get_data():
+def download():
     tempdir = _export_data()
     zipname = "development-plan-data.zip"
     files = glob.glob(f"{tempdir.name}/*.csv")

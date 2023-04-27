@@ -84,6 +84,11 @@ def new():
 
     if form.validate_on_submit():
         plan = _populate_plan(form, DevelopmentPlan())
+        plan.reference = form.name.data.lower().replace(" ", "-")
+        if DevelopmentPlan.query.get(plan.reference) is not None:
+            plan.reference = (
+                f"{plan.reference}-{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}"
+            )
         db.session.add(plan)
         db.session.commit()
         return redirect(url_for("development_plan.plan", reference=plan.reference))

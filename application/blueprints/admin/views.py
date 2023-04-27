@@ -2,7 +2,11 @@ from flask import Blueprint, flash, jsonify, redirect, render_template, request,
 
 from application.blueprints.admin.forms import DocumentTypeForm, EventForm, PlanTypeForm
 from application.extensions import db
-from application.models import DevelopmentPlanEvent, DevelopmentPlanType, DocumentType
+from application.models import (
+    DevelopmentPlanEventType,
+    DevelopmentPlanType,
+    DocumentType,
+)
 from application.utils import kebab_case
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -15,7 +19,7 @@ def index():
 
 @admin_bp.route("/events")
 def events():
-    evts = DevelopmentPlanEvent.query.all()
+    evts = DevelopmentPlanEventType.query.all()
     return render_template("admin/events.html", events=evts)
 
 
@@ -26,14 +30,14 @@ def add_event():
     if form.validate_on_submit():
         name = form.name.data
         reference = name.replace(" ", "-").lower()
-        if DevelopmentPlanEvent.query.get(reference) is not None:
+        if DevelopmentPlanEventType.query.get(reference) is not None:
             flash(
                 f"Event type {name} with reference: {reference} already exists", "error"
             )
             return render_template(
                 "admin/add-record.html", register_name="event", form=form
             )
-        event = DevelopmentPlanEvent()
+        event = DevelopmentPlanEventType()
         event.reference = reference
         event.name = name
         event.description = form.description.data
@@ -52,7 +56,7 @@ def ajax_add_event():
     if "description" not in data.keys() or data["description"] is None:
         data["description"] = ""
 
-    evt = DevelopmentPlanEvent(
+    evt = DevelopmentPlanEventType(
         name=data["name"], reference=data["reference"], notes=data["description"]
     )
 

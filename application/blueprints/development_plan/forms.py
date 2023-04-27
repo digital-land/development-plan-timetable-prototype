@@ -4,7 +4,6 @@ from wtforms.validators import DataRequired, Optional
 
 
 class PlanForm(FlaskForm):
-    reference = StringField("Reference", validators=[DataRequired()])
     name = StringField("Name of plan", validators=[DataRequired()])
     organisations = StringField("Organisation", validators=[DataRequired()])
     description = TextAreaField("Brief description of plan", validators=[Optional()])

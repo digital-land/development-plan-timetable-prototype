@@ -250,6 +250,7 @@ def _export_data():
         csv_path = path / file
         with open(csv_path, "w") as f:
             fieldnames = [col.name.replace("_", "-") for col in model.__table__.columns]
+            fieldnames = [f.replace("-reference", "") for f in fieldnames]
             if model in [
                 DevelopmentPlan,
                 DevelopmentPlanDocument,

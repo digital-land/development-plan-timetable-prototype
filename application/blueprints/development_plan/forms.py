@@ -44,7 +44,19 @@ class DocumentForm(FlaskForm):
     description = TextAreaField("Brief description of supporting document")
     document_type = RadioField("Document type", validators=[DataRequired()])
     documentation_url = StringField(
-        "URL for document information", validators=[Optional()]
+        "URL for document information",
+        validators=[
+            Optional(),
+            URL(),
+            Regexp("^https?://", message="URL must start with http or https"),
+        ],
     )
-    document_url = StringField("Document URL", validators=[Optional()])
+    document_url = StringField(
+        "Document URL",
+        validators=[
+            Optional(),
+            URL(),
+            Regexp("^https?://", message="URL must start with http or https"),
+        ],
+    )
     organisations = StringField("Organisation", validators=[DataRequired()])

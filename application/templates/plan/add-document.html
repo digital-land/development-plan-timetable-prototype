@@ -47,19 +47,22 @@
         </div>
         {% else %}
         {%- if field.name != 'csrf_token' %}
-        <div class="govuk-form-group">
+        <div class="govuk-form-group{{ ' govuk-form-group--error' if field.errors }}">
           {{ field.label(class='govuk-label') }}
+          {% if field.description %}
+            <div class="govuk-hint">{{ field.description }}</div>
+          {% endif %}
+          {% if field.errors -%}
+          <p id="{{ field.name }}-error" class="govuk-error-message">
+            {% for error in field.errors %}
+            <span class="govuk-visually-hidden">Error:</span> {{ error }}
+            {% endfor %}
+          </p>
+          {%- endif %}{# end if errors #}
           {% if field.type == "TextAreaField" %}
           {{ field(class='govuk-textarea') }}
           {% else %}
           {{ field(class='govuk-input') }}
-          {% endif %}
-          {% if field.errors %}
-              <ul>
-              {% for error in field.errors %}
-                  <li>{{ error }}</li>
-              {% endfor %}
-              </ul>
           {% endif %}
         </div>
         {% endif %}{# end if not csrf_token #}

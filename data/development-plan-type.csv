@@ -1,6 +1,7 @@
-reference,name,entry-date,start-date,end-date
-local-plan,Local plan,,,
-supplementary-plan,Supplementary plan,,,
-neighbourhood-plan,Neighbourhood plan,,,
-minerals-and-waste-plan,Minerals and waste plan,,,
-spatial-development-strategy,Spatial development strategy,,,
+reference,name,description,entry-date,start-date,end-date
+local-plan,Local plan,,,,
+supplementary-plan,Supplementary plan,,,,
+neighbourhood-plan,Neighbourhood plan,,,,
+minerals-and-waste-plan,Minerals and waste plan,,,,
+spatial-development-strategy,Spatial development strategy,,,,
+area-action-plan,Area action plan,,2023-04-26,,

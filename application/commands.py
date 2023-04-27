@@ -9,7 +9,7 @@ from flask.cli import AppGroup
 from application.models import (
     DevelopmentPlan,
     DevelopmentPlanDocument,
-    DevelopmentPlanTimetable,
+    DevelopmentPlanEvent,
     Organisation,
 )
 
@@ -21,12 +21,12 @@ data_cli = AppGroup("data")
 
 ordered_tables = [
     "organisation",
-    "development_plan_event",
+    "development_plan_event_type",
     "development_plan_type",
     "document_type",
     "development_plan",
     "development_plan_document",
-    "development_plan_timetable",
+    "development_plan_event",
 ]
 
 
@@ -41,44 +41,57 @@ def load_data():
         if table.name == "organisation":
             logger.info("organisation table is loaded from datasette")
             _load_orgs(db, table)
+            continue
+        elif table_name == "development_plan_event_type":
+            data_file_name = f"{table.name.replace('_type', '').replace('_', '-')}.csv"
+            data_file_path = f"{Path(__file__).parent.parent}/data/{data_file_name}"
+        elif table_name == "development_plan_event":
+            data_file_name = (
+                f"{table.name.replace('event', 'timetable').replace('_', '-')}.csv"
+            )
+            data_file_path = f"{Path(__file__).parent.parent}/data/{data_file_name}"
         else:
             data_file_name = f"{table.name.replace('_', '-')}.csv"
             data_file_path = f"{Path(__file__).parent.parent}/data/{data_file_name}"
-            try:
-                with open(data_file_path) as data:
-                    reader = csv.DictReader(data)
-                    for row in reader:
-                        copy = _get_insert_copy(row, table.name)
-                        if table.name in [
-                            "development_plan",
-                            "development_plan_document",
-                            "development_plan_timetable",
-                        ]:
-                            orgs = copy.pop("organisation_id", "").split(";")
-                            if table.name == "development_plan":
-                                obj = DevelopmentPlan(**copy)
-                            elif table.name == "development_plan_document":
-                                obj = DevelopmentPlanDocument(**copy)
-                            else:
-                                obj = DevelopmentPlanTimetable(**copy)
-
-                            db.session.add(obj)
-                            db.session.commit()
-
-                            for org in orgs:
-                                organisation = Organisation.query.get(org)
-                                if organisation is not None:
-                                    obj.organisations.append(organisation)
-                                    db.session.add(organisation)
-                                    db.session.commit()
+        try:
+            with open(data_file_path) as data:
+                reader = csv.DictReader(data)
+                for row in reader:
+                    copy = _get_insert_copy(row, table.name)
+                    if table.name in [
+                        "development_plan",
+                        "development_plan_document",
+                        "development_plan_event",
+                    ]:
+                        orgs_str = copy.pop("organisations")
+                        if orgs_str is not None:
+                            orgs = orgs_str.split(";")
                         else:
-                            insert = table.insert().values(**copy)
-                            db.session.execute(insert)
-                            db.session.commit()
-            except Exception as e:
-                logger.info(f"error loading data for table: {table.name}")
-                logger.error(e)
-                db.session.rollback()
+                            orgs = []
+                        if table.name == "development_plan":
+                            obj = DevelopmentPlan(**copy)
+                        elif table.name == "development_plan_document":
+                            obj = DevelopmentPlanDocument(**copy)
+                        else:
+                            obj = DevelopmentPlanEvent(**copy)
+
+                        db.session.add(obj)
+                        db.session.commit()
+
+                        for org in orgs:
+                            organisation = Organisation.query.get(org)
+                            if organisation is not None:
+                                obj.organisations.append(organisation)
+                                db.session.add(organisation)
+                                db.session.commit()
+                    else:
+                        insert = table.insert().values(**copy)
+                        db.session.execute(insert)
+                        db.session.commit()
+        except Exception as e:
+            logger.info(f"error loading data for table: {table.name}")
+            logger.error(e)
+            db.session.rollback()
 
 
 @data_cli.command("drop")
@@ -99,13 +112,15 @@ def _get_insert_copy(row, table_name):
     for key, value in row.items():
         k = key.replace("-", "_")
         if (
-            table_name in ["development_plan_timetable", "development_plan_document"]
+            table_name in ["development_plan_event", "development_plan_document"]
             and k == "development_plan"
         ):
             k = "development_plan_reference"
         if k == "organisation" and table_name != "organisation":
             k = "organisation_id"
         if value:
+            if "reference" in k:
+                value = value.lower()
             copy[k] = value
         else:
             copy[k] = None

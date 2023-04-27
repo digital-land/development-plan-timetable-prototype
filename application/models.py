@@ -168,6 +168,7 @@ class DevelopmentPlanTimetable(DateModel):
             "name": self.name,
             "development-plan-event": self.development_plan_event,
             "event-date": self.event_date,
+            "development_plan_reference": self.development_plan_reference.reference,
             "notes": self.notes,
             "organisations": orgs,
         } | super().as_dict()
@@ -206,6 +207,7 @@ class DevelopmentPlanDocument(DateModel):
             "document-type": self.document_type,
             "documentation-url": self.documentation_url,
             "document-url": self.document_url,
+            "development_plan_reference": self.development_plan_reference.reference,
             "notes": self.notes,
             "organisations": orgs,
         } | super().as_dict()

@@ -47,6 +47,15 @@ MultiSelect.prototype.autoCompleteOnConfirm = function (inputValue) {
       // update the original input
       this.updateInput()
     }
+    // once processed, empty input if option set
+    if (this.options.emptyInputOnConfirm) {
+      const $typeAheadInput = this.$typeAheadContainer.querySelector('.autocomplete__input')
+      // hacky because autocomplete component calls setState after executing callback
+      // so need to wait
+      setTimeout(function () {
+        $typeAheadInput.value = ''
+      }, 150)
+    }
     console.log(option)
   }
 }
@@ -165,6 +174,7 @@ MultiSelect.prototype.setUpTypeAhead = function () {
   this.initAccessibleAutocomplete(this.$typeAheadContainer)
 }
 
+// this keeps the hidden input updated
 MultiSelect.prototype.updateInput = function () {
   this.$input.value = this.currentlySelected.join(this.options.separator)
 }
@@ -187,6 +197,7 @@ MultiSelect.prototype.setupOptions = function (params) {
   this.options.separator = params.separator || ';'
   this.options.nameOfThingSelecting = params.nameOfThingSelecting || 'organistions'
   this.options.hiddenClass = params.hiddenClass || 'app-hidden'
+  this.options.emptyInputOnConfirm = params.emptyInputOnConfirm || true
 }
 
 export default MultiSelect

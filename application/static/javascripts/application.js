@@ -206,7 +206,7 @@
 
   SelectOrNew.prototype.setUpTypeAhead = function () {
     const labelText = this.$label.textContent;
-    this.$typeAheadContainer = this.createTypeAheadContainer(labelText + ' (enhancement)');
+    this.$typeAheadContainer = this.createTypeAheadContainer(labelText);
     this.$selectContainer.insertBefore(this.$typeAheadContainer, this.$actionPanel);
 
     this.initAccessibleAutocomplete();
@@ -300,6 +300,15 @@
         }
         // update the original input
         this.updateInput();
+      }
+      // once processed, empty input if option set
+      if (this.options.emptyInputOnConfirm) {
+        const $typeAheadInput = this.$typeAheadContainer.querySelector('.autocomplete__input');
+        // hacky because autocomplete component calls setState after executing callback
+        // so need to wait
+        setTimeout(function () {
+          $typeAheadInput.value = '';
+        }, 150);
       }
       console.log(option);
     }
@@ -413,12 +422,13 @@
 
   MultiSelect.prototype.setUpTypeAhead = function () {
     const labelText = this.$formGroup.querySelector('label').textContent;
-    this.$typeAheadContainer = utils.createTypeAheadContainer(labelText + ' (enhancement)', this.$hiddenSelect.id);
+    this.$typeAheadContainer = utils.createTypeAheadContainer(labelText, this.$hiddenSelect.id);
     this.$module.append(this.$typeAheadContainer);
 
     this.initAccessibleAutocomplete(this.$typeAheadContainer);
   };
 
+  // this keeps the hidden input updated
   MultiSelect.prototype.updateInput = function () {
     this.$input.value = this.currentlySelected.join(this.options.separator);
   };
@@ -441,6 +451,7 @@
     this.options.separator = params.separator || ';';
     this.options.nameOfThingSelecting = params.nameOfThingSelecting || 'organistions';
     this.options.hiddenClass = params.hiddenClass || 'app-hidden';
+    this.options.emptyInputOnConfirm = params.emptyInputOnConfirm || true;
   };
 
   /* global fetch */

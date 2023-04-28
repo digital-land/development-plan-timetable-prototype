@@ -130,11 +130,27 @@
     </div>
   </div>
 
-  <ul class="govuk-list govuk-list--bullet">
-    {% for document in development_plan.documents %}
-      <li><a href="{{ document.documentation_url }}" class="govuk-link">{{ document.name }}</a> <span class="govuk-hint">({{ document.reference }})</span></li>
-    {% endfor %}
-  </ul>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <ul class="govuk-list app-document-list">
+        {% for document in development_plan.documents %}
+          {%- if document.end_date is none %}
+          <li class="app-document-list__item">
+            <div class="app-document-list__item__content">
+              <a href="{{ document.document_url }}" class="govuk-link">{{ document.name }}</a>
+              <br />
+              <span class="govuk-!-font-size-14"><a href="{{ document.documentation_url }}" class="govuk-link">View documentation page</a></span>
+            </div>
+            <div class="app-document-list__item__actions">
+              <a href="{{ url_for('development_plan.delete_document', reference=plan.reference, document_reference=document.reference) }}" class="govuk-!-font-size-14 govuk-link app-link--destructive">Delete</a>
+            </div>
+          </li>
+          {% endif -%}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
   <a href="{{ url_for('development_plan.add_document', reference=plan.reference) }}" class="govuk-button govuk-button--secondary">+ add supporting document</a>
 
 {% endblock content %}

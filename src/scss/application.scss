@@ -50,3 +50,16 @@
     border-left: 1px solid  govuk-colour("mid-grey");
   }
 }
+
+// styles for document list
+.app-document-list {
+  & > .app-document-list__item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .app-document-list__item__actions {
+    align-self: center;
+  }
+}

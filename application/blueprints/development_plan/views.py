@@ -217,6 +217,17 @@ def add_document(reference):
     return render_template("plan/add-document.html", development_plan=plan, form=form)
 
 
+@development_plan.get("/<string:reference>/document/<string:document_reference>/delete")
+def delete_document(reference, document_reference):
+    document = DevelopmentPlanDocument.query.get(document_reference)
+    if document is None:
+        return abort(404)
+    document.end_date = datetime.today()
+    db.session.add(document)
+    db.session.commit()
+    return redirect(url_for("development_plan.plan", reference=reference))
+
+
 @development_plan.route("/download", methods=["GET"])
 def download():
     tempdir = _export_data()

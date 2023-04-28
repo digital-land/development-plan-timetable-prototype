@@ -28,7 +28,7 @@ from application.models import (
     DevelopmentPlan,
     DevelopmentPlanDocument,
     DevelopmentPlanEvent,
-    DevelopmentPlanTimetable,
+    DevelopmentPlanEventType,
     DevelopmentPlanType,
     DocumentType,
     Organisation,
@@ -84,6 +84,11 @@ def new():
 
     if form.validate_on_submit():
         plan = _populate_plan(form, DevelopmentPlan())
+        plan.reference = form.name.data.lower().replace(" ", "-")
+        if DevelopmentPlan.query.get(plan.reference) is not None:
+            plan.reference = (
+                f"{plan.reference}-{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}"
+            )
         db.session.add(plan)
         db.session.commit()
         return redirect(url_for("development_plan.plan", reference=plan.reference))
@@ -100,22 +105,20 @@ def add_event(reference):
     form.development_plan_event.choices = _get_event_choices()
 
     if form.validate_on_submit():
-        # model might need changing - this might be better modelled as plan has
-        # one timetable which has many events.
-        timetable = DevelopmentPlanTimetable()
+        event = DevelopmentPlanEvent()
         ref = f"{plan.reference}-{form.development_plan_event.data.lower().replace(' ', '-')}"
 
-        t = DevelopmentPlanTimetable.query.get(ref)
+        t = DevelopmentPlanEvent.query.get(ref)
         if t is not None:
             ref = f"{ref}-{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}"
-        timetable.reference = ref
-        timetable.event_date = f"{form.event_date_year.data}-{form.event_date_month.data}-{form.event_date_day.data}"
+        event.reference = ref
+        event.event_date = f"{form.event_date_year.data}-{form.event_date_month.data}-{form.event_date_day.data}"
         organisation_str = form.organisations.data
         del form.organisations
-        form.populate_obj(timetable)
-        _set_organisations(timetable, organisation_str)
+        form.populate_obj(event)
+        _set_organisations(event, organisation_str)
 
-        plan.timetable.append(timetable)
+        plan.timetable.append(event)
         db.session.add(plan)
         db.session.commit()
         return redirect(url_for("development_plan.plan", reference=reference))
@@ -129,9 +132,9 @@ def add_event(reference):
 )
 def edit_event(reference, event_reference):
     plan = DevelopmentPlan.query.get(reference)
-    event = DevelopmentPlanTimetable.query.filter(
-        DevelopmentPlanTimetable.development_plan_reference == reference,
-        DevelopmentPlanTimetable.reference == event_reference,
+    event = DevelopmentPlanEvent.query.filter(
+        DevelopmentPlanEvent.development_plan_reference == reference,
+        DevelopmentPlanEvent.reference == event_reference,
     ).one_or_none()
     event_type = DevelopmentPlanEvent.query.get(event.development_plan_event)
 
@@ -170,9 +173,9 @@ def edit_event(reference, event_reference):
 
 @development_plan.get("/<string:reference>/timetable/<string:event_reference>/delete")
 def delete_event(reference, event_reference):
-    event = DevelopmentPlanTimetable.query.filter(
-        DevelopmentPlanTimetable.development_plan_reference == reference,
-        DevelopmentPlanTimetable.reference == event_reference,
+    event = DevelopmentPlanEvent.query.filter(
+        DevelopmentPlanEvent.development_plan_reference == reference,
+        DevelopmentPlanEvent.reference == event_reference,
     ).one_or_none()
 
     if event is None:
@@ -192,8 +195,14 @@ def add_document(reference):
     form.document_type.choices = _get_document_type_choices()
 
     if form.validate_on_submit():
-        document = DevelopmentPlanDocument()
-        document.reference = f"{form.name.data.lower().replace(' ', '-')}"
+        ref = f"{form.name.data.lower().replace(' ', '-')}"
+        document = DevelopmentPlanDocument.query.get(ref)
+        if document is not None:
+            ref = f"{ref}-{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}"
+        else:
+            document = DevelopmentPlanDocument()
+
+        document.reference = ref
 
         organisations_str = form.organisations.data
         del form.organisations
@@ -235,10 +244,10 @@ def download():
 def _export_data():
     download_file_map = {
         "development-plan-type.csv": DevelopmentPlanType,
-        "development-plan-event.csv": DevelopmentPlanEvent,
+        "development-plan-event.csv": DevelopmentPlanEventType,
         "development-plan.csv": DevelopmentPlan,
         "development-plan-document.csv": DevelopmentPlanDocument,
-        "development-plan-timetable.csv": DevelopmentPlanTimetable,
+        "development-plan-timetable.csv": DevelopmentPlanEvent,
         "document-type.csv": DocumentType,
     }
 
@@ -254,7 +263,7 @@ def _export_data():
             if model in [
                 DevelopmentPlan,
                 DevelopmentPlanDocument,
-                DevelopmentPlanTimetable,
+                DevelopmentPlanEvent,
             ]:
                 fieldnames.append("organisations")
             writer = csv.DictWriter(f, fieldnames=fieldnames)

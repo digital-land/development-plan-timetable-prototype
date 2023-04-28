@@ -1,6 +1,3 @@
-# import uuid
-
-# from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
 from application.extensions import db
@@ -36,8 +33,8 @@ class DevelopmentPlanType(DateModel):
         } | super().as_dict()
 
 
-class DevelopmentPlanEvent(DateModel):
-    __tablename__ = "development_plan_event"
+class DevelopmentPlanEventType(DateModel):
+    __tablename__ = "development_plan_event_type"
 
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
@@ -83,12 +80,12 @@ development_plan_document_organisation = db.Table(
     db.Column("organisation", db.Text, db.ForeignKey("organisation.organisation")),
 )
 
-development_plan_timetable_organisation = db.Table(
-    "development_plan_timetable_organisation",
+development_plan_event_organisation = db.Table(
+    "development_plan_event_organisation",
     db.Column(
-        "development_plan_timetable",
+        "development_plan_event",
         db.Text,
-        db.ForeignKey("development_plan_timetable.reference"),
+        db.ForeignKey("development_plan_event.reference"),
     ),
     db.Column("organisation", db.Text, db.ForeignKey("organisation.organisation")),
 )
@@ -97,7 +94,6 @@ development_plan_timetable_organisation = db.Table(
 class DevelopmentPlan(DateModel):
     __tablename__ = "development_plan"
 
-    # id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
@@ -115,9 +111,9 @@ class DevelopmentPlan(DateModel):
     )
 
     timetable = db.relationship(
-        "DevelopmentPlanTimetable",
+        "DevelopmentPlanEvent",
         back_populates="development_plan",
-        order_by="DevelopmentPlanTimetable.entry_date",
+        order_by="DevelopmentPlanEvent.entry_date",
     )
 
     documents = db.relationship(
@@ -139,10 +135,9 @@ class DevelopmentPlan(DateModel):
         } | super().as_dict()
 
 
-class DevelopmentPlanTimetable(DateModel):
-    __tablename__ = "development_plan_timetable"
+class DevelopmentPlanEvent(DateModel):
+    __tablename__ = "development_plan_event"
 
-    # id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     development_plan_event = db.Column(db.Text)
@@ -151,7 +146,7 @@ class DevelopmentPlanTimetable(DateModel):
 
     organisations = db.relationship(
         "Organisation",
-        secondary=development_plan_timetable_organisation,
+        secondary=development_plan_event_organisation,
         lazy="subquery",
         back_populates="development_plan_timetables",
     )
@@ -166,7 +161,7 @@ class DevelopmentPlanTimetable(DateModel):
         return {
             "reference": self.reference,
             "name": self.name,
-            "development-plan-event": self.development_plan_event,
+            "development-plan-event": self.event_type,
             "event-date": self.event_date,
             "development-plan": self.development_plan_reference,
             "notes": self.notes,
@@ -177,7 +172,6 @@ class DevelopmentPlanTimetable(DateModel):
 class DevelopmentPlanDocument(DateModel):
     __tablename__ = "development_plan_document"
 
-    # id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
@@ -254,8 +248,8 @@ class Organisation(DateModel):
     )
 
     development_plan_timetables = db.relationship(
-        "DevelopmentPlanTimetable",
-        secondary=development_plan_timetable_organisation,
+        "DevelopmentPlanEvent",
+        secondary=development_plan_event_organisation,
         lazy="subquery",
         back_populates="organisations",
     )

@@ -1,5 +1,7 @@
-reference,name,entry-date,start-date,end-date
-local-plan,Local plan,,,
-adoption-statement,Adoption statement,,,
-supplementary-planning-documents,Supplementary planning document,,,
-inspectors-report,Inspectors report,,,
+reference,name,category,entry-date,start-date,end-date
+local-plan,Local plan,,,,
+adoption-statement,Adoption statement,,,,
+supplementary-planning-documents,Supplementary planning document,,,,
+inspectors-report,Inspectors report,,,,
+policies-map,Policies map,,2023-04-26,,
+area-action-plan,Area action plan,,2023-04-26,,

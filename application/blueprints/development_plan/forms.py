@@ -26,6 +26,7 @@ class PlanForm(FlaskForm):
             Regexp("^https?://", message="URL must start with http or https"),
         ],
     )
+    notes = TextAreaField("Notes")
 
 
 class EventForm(FlaskForm):

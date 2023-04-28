@@ -1,0 +1,13 @@
+{% macro notesField(params) %}
+{%- if params.form.notes %}
+<!-- optional notes field -->
+<hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+<div class="govuk-form-group">
+  {{ params.form.notes.label(class='govuk-label') }}
+  <div class="govuk-hint">Add extra information if applicable</div>
+  {{ params.form.notes(class='govuk-textarea') }}
+</div>
+{%- else %}
+<!-- form does not have a notes field -->
+{% endif -%}
+{% endmacro %}

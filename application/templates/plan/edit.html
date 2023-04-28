@@ -79,6 +79,9 @@
         <span class="app-govuk-text">to</span>
         <input class="govuk-input govuk-input--width-4" id="period_end_date" name="period_end_date" required="" type="text" value="{{ form.period_end_date.data if form.period_end_date.data }}">
       </div>
+
+      {{ notesField({ "form": form })}}
+
       <div class="govuk-button-group">
         <button class="govuk-button" type="submit">Edit record</button>
         <a class="govuk-link" href="{{ url_for('development_plan.plan', reference=plan.reference) }}">Cancel</a>

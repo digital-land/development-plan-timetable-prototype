@@ -40,12 +40,20 @@ class DevelopmentPlanEventType(DateModel):
     name = db.Column(db.Text)
     notes = db.Column(db.Text)
 
+    # for csv export
     def as_dict(self):
         return {
             "reference": self.reference,
             "name": self.name,
             "notes": self.notes,
         } | super().as_dict()
+
+    def to_dict(self):
+        return {
+            "reference": self.reference,
+            "name": self.name,
+            "description": self.notes,
+        }
 
 
 class DocumentType(DateModel):

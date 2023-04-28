@@ -91,6 +91,9 @@
           </div>
         </fieldset>
       </div>
+
+      {{ notesField({ "form": form })}}
+
       <div class="govuk-button-group">
         <button class="govuk-button" type="submit">Update record</button>
         <a class="govuk-link" href="{{ url_for('development_plan.plan', reference=development_plan.reference) }}">Cancel</a>

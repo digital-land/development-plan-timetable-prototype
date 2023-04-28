@@ -37,6 +37,7 @@ class EventForm(FlaskForm):
     event_date_year = StringField("Event date year", validators=[Optional()])
     event_date_month = StringField("Event date month", validators=[Optional()])
     event_date_day = StringField("Event date day", validators=[Optional()])
+    notes = TextAreaField("Notes")
 
 
 class DocumentForm(FlaskForm):
@@ -60,3 +61,4 @@ class DocumentForm(FlaskForm):
         ],
     )
     organisations = StringField("Organisation", validators=[DataRequired()])
+    notes = TextAreaField("Notes")

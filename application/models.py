@@ -169,7 +169,6 @@ class DevelopmentPlanEvent(DateModel):
         return {
             "reference": self.reference,
             "name": self.name,
-            "development-plan-event": self.event_type,
             "event-date": self.event_date,
             "development-plan": self.development_plan_reference,
             "notes": self.notes,

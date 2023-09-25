@@ -267,7 +267,6 @@ dist
 .vscode
 
 .DS_Store
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
+# npm and node output
+package-lock.json

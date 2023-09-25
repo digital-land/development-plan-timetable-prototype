@@ -79,6 +79,20 @@
       </div>
 
     </div>
+
+    <div class="govuk-grid-column-two-thirds">
+      <section class="app-summary-card govuk-!-margin-top-6">
+        <header class="app-summary-card__header">
+          <h2 class="app-summary-card__title">
+            Geography
+          </h2>
+          <div class="app-summary-card__actions">
+            <a href="{{ url_for('development_plan.add_geography', reference=plan.reference) }}" class="govuk-link">Edit/Add<span class="govuk-visually-hidden"> record</span></a>
+          </div>
+        </header>
+        <div class="app-summary-card__body"></div>
+      </section>
+    </div>
   </div>
 
   <div class="govuk-grid-row">

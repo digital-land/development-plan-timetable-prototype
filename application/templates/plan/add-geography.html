@@ -1,0 +1,66 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+<span class="govuk-caption-xl">Development plan: {{ development_plan.reference }}</span>
+<h1 class="govuk-heading-xl">Add geography</h1>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form class="govuk-form" method="POST">
+
+      <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h1 class="govuk-fieldset__heading">
+              Does the plan cover an area different to the authoring organisations' administrative boundaries?
+            </h1>
+          </legend>
+          <!--<div id="contact-hint" class="govuk-hint">
+            Select one option.
+          </div>-->
+          <div class="govuk-radios" data-module="govuk-radios">
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input" id="geography-provided" name="geography-provided" type="radio" value="yes" data-aria-controls="conditional-geography">
+              <label class="govuk-label govuk-radios__label" for="geography-provided">
+                Yes
+              </label>
+            </div>
+            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-geography">
+              <div class="govuk-form-group">
+                <label class="govuk-label" for="file-upload">
+                  Upload shapefile
+                </label>
+                <input class="govuk-file-upload" id="file-upload" name="fileUpload" type="file">
+              </div>
+
+              <p class="govuk-body">or</p>
+
+              <div class="govuk-form-group">
+                <label class="govuk-label" for="endpoint">Provide URL to WFS endpoint</label>
+                <input class="govuk-input" id="endpoint" name="endpoint" type="text">
+              </div>
+            </div>
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input" id="geography-provided-2" name="geography-provided" type="radio" value="no">
+              <label class="govuk-label govuk-radios__label" for="geography-provided-2">
+                No
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+
+
+      <div class="govuk-button-group">
+        <button class="govuk-button" type="submit">Save and continue</button>
+        <a class="govuk-link" href="{{ url_for('development_plan.plan', reference=development_plan.reference) }}">Skip for now</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}{% endblock pageScripts %}

@@ -96,6 +96,27 @@ def new():
     return render_template("plan/new.html", form=form)
 
 
+@development_plan.route("/<string:reference>/geography/add", methods=["GET", "POST"])
+def add_geography(reference):
+    plan = DevelopmentPlan.query.get(reference)
+
+    if request.method == "POST":
+        # To Do: replace with proper steps
+        geography_provided = request.form.get("geography-provided")
+        if geography_provided == "yes":
+            # handle either endpoint or file upload
+            # if fetch or upload fail send back to this page with error
+            pass
+        else:
+            # handle no
+            # if single org then copy its boundary to development-plan-geography table
+            # if joint plan then create geometry with all org boundaries and add to development-plan-geography table
+            pass
+        return redirect(url_for("development_plan.plan", reference=plan.reference))
+
+    return render_template("plan/add-geography.html", development_plan=plan)
+
+
 @development_plan.route("/<string:reference>/timetable/add", methods=["GET", "POST"])
 def add_event(reference):
     plan = DevelopmentPlan.query.get(reference)

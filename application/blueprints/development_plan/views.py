@@ -91,7 +91,9 @@ def new():
             )
         db.session.add(plan)
         db.session.commit()
-        return redirect(url_for("development_plan.plan", reference=plan.reference))
+        return redirect(
+            url_for("development_plan.add_geography", reference=plan.reference)
+        )
 
     return render_template("plan/new.html", form=form)
 

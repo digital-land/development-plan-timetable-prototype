@@ -238,6 +238,36 @@ def add_document(reference):
     return render_template("plan/add-document.html", development_plan=plan, form=form)
 
 
+@development_plan.get("/<string:reference>/document/<string:document_reference>/edit")
+def edit_document(reference, document_reference):
+    plan = DevelopmentPlan.query.get(reference)
+    document = DevelopmentPlanDocument.query.get(document_reference)
+    if document is None or plan is None:
+        return abort(404)
+
+    form = DocumentForm()
+    form.organisations.choices = [(" ", " ")] + _get_organisation_choices()
+    form.document_type.choices = _get_document_type_choices()
+
+    # populate with existing values from document record
+    form.name.data = document.name
+    form.document_url.data = document.document_url
+    form.documentation_url.data = document.documentation_url
+    form.description.data = document.description
+    form.document_type.data = document.document_type
+    form.notes.data = document.notes
+    selected_orgs = [org.organisation for org in document.organisations]
+    form.organisations.data = ";".join(selected_orgs)
+
+    if form.validate_on_submit():
+        # handle form submit
+        pass
+
+    return render_template(
+        "plan/add-document.html", development_plan=plan, form=form, document=document
+    )
+
+
 @development_plan.get("/<string:reference>/document/<string:document_reference>/delete")
 def delete_document(reference, document_reference):
     document = DevelopmentPlanDocument.query.get(document_reference)

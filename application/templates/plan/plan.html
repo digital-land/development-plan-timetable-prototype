@@ -95,9 +95,11 @@
     </div>
   </div>
 
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h2 id="timetable" class="govuk-heading-m govuk-!-margin-top-9">Event log</h2>
+      <h2 id="timetable" class="govuk-heading-m">Event log</h2>
       <p class="govuk-body">This data should be a collection of events that happen during the plan-making process. Event records may have already happened or might happen on a future date.</p>
       <p class="govuk-body">This data can be used to create a timetable for the plan.</p>
     </div>
@@ -137,9 +139,11 @@
 
   <a href="{{ url_for('development_plan.add_event', reference=plan.reference) }}" class="govuk-button govuk-button--secondary">+ add event</a>
 
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h2 id="documents" class="govuk-heading-m govuk-!-margin-top-9">Supporting documents</h2>
+      <h2 id="documents" class="govuk-heading-m">Supporting documents</h2>
       <p class="govuk-body">Record any supporting documents. These can be documents that contain relevant policies, documents outlining activities or publication notices.</p>
     </div>
   </div>
@@ -156,6 +160,7 @@
               <span class="govuk-!-font-size-14"><a href="{{ document.documentation_url }}" class="govuk-link">View documentation page</a></span>
             </div>
             <div class="app-document-list__item__actions">
+              <a href="{{ url_for('development_plan.edit_document', reference=plan.reference, document_reference=document.reference) }}" class="govuk-!-font-size-14 govuk-link app-link--destructive">Edit</a>
               <a href="{{ url_for('development_plan.delete_document', reference=plan.reference, document_reference=document.reference) }}" class="govuk-!-font-size-14 govuk-link app-link--destructive">Delete</a>
             </div>
           </li>

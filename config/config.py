@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 
+
+def _to_boolean(val):
+    if val is not None and val.lower() in ["true", "t", "on", "y", "yes"]:
+        return True
+    return False
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -13,6 +20,10 @@ class Config:
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://")
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
+    AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
+    AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
+    AUTHENTICATION_ON = _to_boolean(os.getenv("AUTHENTICATION_ON"))
 
 
 class DevelopmentConfig(Config):

@@ -25,6 +25,7 @@ def create_app(config_filename):
 
 def register_blueprints(app):
     from application.blueprints.admin.views import admin_bp
+    from application.blueprints.auth.views import auth
     from application.blueprints.base.views import base
     from application.blueprints.development_plan.views import development_plan
     from application.blueprints.organisation.views import organisation_bp
@@ -33,6 +34,7 @@ def register_blueprints(app):
     app.register_blueprint(development_plan)
     app.register_blueprint(organisation_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(auth)
 
 
 def register_context_processors(app):
@@ -53,7 +55,7 @@ def register_filters(app):
 
 
 def register_extensions(app):
-    from application.extensions import db, migrate
+    from application.extensions import db, migrate, oauth
 
     db.init_app(app)
     migrate.init_app(app)
@@ -61,6 +63,17 @@ def register_extensions(app):
     from flask_sslify import SSLify
 
     sslify = SSLify(app)  # noqa
+
+    oauth.init_app(app)
+    oauth.register(
+        "auth0",
+        client_id=app.config.get("AUTH0_CLIENT_ID"),
+        client_secret=app.config.get("AUTH0_CLIENT_SECRET"),
+        client_kwargs={
+            "scope": "openid profile email",
+        },
+        server_metadata_url=f'https://{app.config.get("AUTH0_DOMAIN")}/.well-known/openid-configuration',
+    )
 
 
 def register_templates(app):

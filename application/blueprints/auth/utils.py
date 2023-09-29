@@ -7,7 +7,7 @@ from werkzeug.utils import redirect
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if "user" not in session and current_app.config["AUTHENTICATION_ON"]:
+        if "user" not in session and current_app.config.get("AUTHENTICATION_ON", False):
             return redirect(url_for("auth.login", redirect_url=request.path))
         return f(*args, **kwargs)
 

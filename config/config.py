@@ -23,7 +23,8 @@ class Config:
     AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
     AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
     AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
-    AUTHENTICATION_ON = _to_boolean(os.getenv("AUTHENTICATION_ON"))
+    AUTHENTICATION_ON = _to_boolean(os.getenv("AUTHENTICATION_ON", None))
+    MAX_DEVELOPMENT_PLANS = int(os.getenv("MAX_DEVELOPMENT_PLANS", 10))
 
 
 class DevelopmentConfig(Config):

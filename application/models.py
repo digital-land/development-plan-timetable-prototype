@@ -121,7 +121,7 @@ class DevelopmentPlan(DateModel):
     timetable = db.relationship(
         "DevelopmentPlanEvent",
         back_populates="development_plan",
-        order_by="DevelopmentPlanEvent.entry_date",
+        order_by="DevelopmentPlanEvent.event_date",
     )
 
     documents = db.relationship(

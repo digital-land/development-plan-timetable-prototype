@@ -26,6 +26,9 @@ class PlanForm(FlaskForm):
             Regexp("^https?://", message="URL must start with http or https"),
         ],
     )
+    adopted_date_year = StringField("Adopted date year", validators=[Optional()])
+    adopted_date_month = StringField("Adopted date month", validators=[Optional()])
+    adopted_date_day = StringField("Adopted date day", validators=[Optional()])
     notes = TextAreaField("Notes")
 
 

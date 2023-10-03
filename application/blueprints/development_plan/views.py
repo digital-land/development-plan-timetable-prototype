@@ -89,6 +89,7 @@ def new():
             plan.reference = (
                 f"{plan.reference}-{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}"
             )
+        plan.adopted_date = f"{form.adopted_date_year.data}-{form.adopted_date_month.data}-{form.adopted_date_day.data}"
         db.session.add(plan)
         db.session.commit()
         return redirect(
@@ -356,6 +357,12 @@ def _populate_plan(form, plan):
 
     del form.period_start_date
     del form.period_end_date
+
+    plan.adopted_date = f"{form.adopted_date_year.data}-{form.adopted_date_month.data}-{form.adopted_date_day.data}"
+
+    del form.adopted_date_year
+    del form.adopted_date_month
+    del form.adopted_date_day
 
     form.populate_obj(plan)
 

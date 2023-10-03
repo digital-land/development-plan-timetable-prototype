@@ -51,8 +51,12 @@
               <dd class="govuk-summary-list__value">{{ plan.period_start_date }} - {{ plan.period_end_date }}</dd>
             </div>
             <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">Adopted date</dt>
+              <dd class="govuk-summary-list__value">{{ plan.adopted_date if plan.adopted_date }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key">Description</dt>
-              <dd class="govuk-summary-list__value">{{ plan.description }}</dd>
+              <dd class="govuk-summary-list__value">{{ plan.description if plan.description }}</dd>
             </div>
           </dl>
         </div>

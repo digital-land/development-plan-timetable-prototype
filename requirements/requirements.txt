@@ -20,7 +20,7 @@ cryptography==41.0.4
     # via authlib
 decorator==5.1.1
     # via validators
-digital_land_frontend @ git+https://github.com/digital-land/digital-land-frontend.git
+digital-land-frontend @ git+https://github.com/digital-land/digital-land-frontend.git
     # via -r requirements/requirements.in
 flask==2.2.3
     # via
@@ -41,8 +41,6 @@ flask-wtf==1.1.1
     # via -r requirements/requirements.in
 govuk-frontend-jinja==2.5.0
     # via digital-land-frontend
-greenlet==2.0.2
-    # via sqlalchemy
 gunicorn==20.1.0
     # via -r requirements/requirements.in
 idna==3.4

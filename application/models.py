@@ -110,6 +110,7 @@ class DevelopmentPlan(DateModel):
     period_end_date = db.Column(db.Integer)
     documentation_url = db.Column(db.Text)
     notes = db.Column(db.Text)
+    adopted_date = db.Column(db.String)
 
     organisations = db.relationship(
         "Organisation",
@@ -138,6 +139,7 @@ class DevelopmentPlan(DateModel):
             "period-start-date": self.period_start_date,
             "period-end-date": self.period_end_date,
             "documentation-url": self.documentation_url,
+            "adopted-date": self.adopted_date,
             "notes": self.notes,
             "organisations": orgs,
         } | super().as_dict()

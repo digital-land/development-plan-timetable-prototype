@@ -137,7 +137,7 @@
     </tbody>
   </table>
 
-  <a href="{{ url_for('development_plan.add_event', reference=plan.reference) }}" class="govuk-button govuk-button--secondary">+ add event</a>
+  <a href="{{ url_for('development_plan.add_event', reference=plan.reference) }}" class="govuk-button govuk-button--secondary"><span class="govuk-!-margin-right-1">✚ </span> Add event</a>
 
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
@@ -170,6 +170,6 @@
     </div>
   </div>
 
-  <a href="{{ url_for('development_plan.add_document', reference=plan.reference) }}" class="govuk-button govuk-button--secondary">+ add supporting document</a>
+  <a href="{{ url_for('development_plan.add_document', reference=plan.reference) }}" class="govuk-button govuk-button--secondary"><span class="govuk-!-margin-right-1">✚ </span> add supporting document</a>
 
 {% endblock content %}

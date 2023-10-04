@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from application.models import Organisation
+from application.utils import get_organisations_expected_to_publish_plan
 
 organisation_bp = Blueprint("organisation", __name__, url_prefix="/organisation")
 
@@ -15,11 +16,7 @@ def organisations():
         )
 
     # TODO: how do I get all orgs that should be publishing a plan?
-    orgs = (
-        Organisation.query.filter(Organisation.organisation.contains("local-authority"))
-        .order_by(Organisation.name.asc())
-        .all()
-    )
+    orgs = get_organisations_expected_to_publish_plan()
     return render_template("organisation/index.html", organisations=orgs)
 
 

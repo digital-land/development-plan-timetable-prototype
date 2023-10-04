@@ -7355,6 +7355,40 @@
   .multi-select__select-panel.multi-select__select-panel--selection .govuk-hint, .multi-select__select-panel.multi-select__select-panel--selection .multi-select__item-value {
     display: none; }
 
+:root {
+  --progress-bar-panel-background-colour: #f3f2f1;
+  --progress-bar-background-colour: #b1b4b6;
+  --progress-bar-complete-colour: #1d70b8;
+  --progress-bar-height: 30px;
+  --progress-bar-spacing: calc(var(--progress-bar-height) / 2);
+  --progress-bar-target: 200;
+  --progress-bar-progress: 100; }
+
+.app-progress-banner {
+  padding: var(--progress-bar-spacing);
+  margin-bottom: 30px;
+  background: var(--progress-bar-panel-background-colour); }
+  .app-progress-banner p {
+    margin-bottom: var(--progress-bar-spacing); }
+    .app-progress-banner p:last-child {
+      margin-bottom: 0; }
+
+.app-progress__bar {
+  position: relative;
+  display: block;
+  height: var(--progress-bar-height);
+  width: 100%;
+  margin-bottom: var(--progress-bar-spacing);
+  background: var(--progress-bar-background-colour); }
+
+.app-progress__bar__completed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: var(--progress-bar-height);
+  width: calc((var(--progress-bar-progress) / var(--progress-bar-target)) * 100%);
+  background: var(--progress-bar-complete-colour); }
+
 .app-hidden {
   display: none; }
 

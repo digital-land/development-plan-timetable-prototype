@@ -11,6 +11,12 @@
   display: none
 }
 
+.js-enabled {
+  .app-hide-if-js {
+    display: none
+  }
+}
+
 // Typography tweaks
 
 .app-govuk-text {

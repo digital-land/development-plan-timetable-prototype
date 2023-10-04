@@ -109,21 +109,21 @@
     </div>
   </div>
 
-  <table class="govuk-table app-timetable">
+  <table class="govuk-table app-timetable app-table--sortable">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header">Event</th>
-        <th scope="col" class="govuk-table__header">Event date</th>
-        <th scope="col" class="govuk-table__header">Organisation</th>
-        <th scope="col" class="govuk-table__header app-cell--meta">Entered</th>
-        <th scope="col" class="govuk-table__header app-cell--meta">Ended</th>
+        <th scope="col" class="govuk-table__header" data-sort="none">Event</th>
+        <th scope="col" class="govuk-table__header" data-sort="none">Event date</th>
+        <th scope="col" class="govuk-table__header" data-sort="none">Organisation</th>
+        <th scope="col" class="govuk-table__header app-cell--meta" data-sort="none">Entered</th>
+        <th scope="col" class="govuk-table__header app-cell--meta" data-sort="none">Ended</th>
         <th scope="col" class="govuk-table__header app-cell--meta app-cell--actions"></th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
       {% for evt in development_plan.timetable %}
       <tr class="govuk-table__row" data-timetable-entry-reference="{{ evt.reference }}" data-timetable-entry-plan="{{ evt.development_plan.reference }}">
-        <th scope="row" class="govuk-table__header">{{ evt.development_plan_event }}</th>
+        <td scope="row" class="govuk-table__header">{{ evt.development_plan_event }}</td>
         <td class="govuk-table__cell">{{ evt.event_date }}</td>
         <td class="govuk-table__cell">{% for org in evt.organisations %}{{ org.name }}{{ ', ' if not loop.last }}{% endfor %}</td>
         <td class="govuk-table__cell app-cell--meta">{{ evt.entry_date }}</td>
@@ -177,3 +177,8 @@
   <a href="{{ url_for('development_plan.add_document', reference=plan.reference) }}" class="govuk-button govuk-button--secondary"><span class="govuk-!-margin-right-1">✚ </span> add supporting document</a>
 
 {% endblock content %}
+
+{% block digitalLandScripts -%}
+  {{ super() }}
+  <script src="{{ assetPath | default('/static') }}/javascripts/table.js"></script>
+{%- endblock %}

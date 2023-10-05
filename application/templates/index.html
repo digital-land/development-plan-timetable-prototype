@@ -16,27 +16,18 @@
 
     <h1 class="govuk-heading-xl">Development plan data collector</h1>
 
-    <p class="govuk-body">This prototype allows you to create data that meets the <a href="https://digital-land.github.io/specification/specification/development-plan/" class="govuk-link">development plan data standard</a>. It allows you to record as data all the different development plans a local planning authority makes, including local plans and neighbourhood plans.</p>
-    <p class="govuk-body">For each plan you can capture the events that happen and any documents that are produced during the plan-making process.</p>
+    <p class="govuk-body">You can create data that meets the <a href="https://digital-land.github.io/specification/specification/development-plan/" class="govuk-link">development plan data standard</a> with this prototype. You can record all the different development plans a local planning authority (LPA) makes (including local plans and neighbourhood plans) as data.</p>
+    <p class="govuk-body">For each plan you can capture the events that happen and any documents that are published online during the plan-making process.</p>
 
-    <details class="govuk-details" data-module="govuk-details">
-      <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">
-          What should we record as a development plan?
-        </span>
-      </summary>
-      <div class="govuk-details__text">
-        <p class="govuk-body">A development plan is a set of policies and proposals that a planning authority creates to set out a vision for the future of an area. It is used to guide future planning decisions.</p>
-        <p class="govuk-body">Record each bundle of policies a planning authority works on, that gets examined by PINs and, eventually, adopted.</p>
-      </div>
-    </details>
+    <h2 class="govuk-heading-l">The process for collecting local plans</h2>
+    <ol class="govuk-list govuk-list--number">
+      <li>You enter data into this prototype</li>
+      <li>We use this data to seed a dataset of development plans</li>
+      <li>LPAs can let us know if there are any issues with the dataset through Github discussions</li>
+      <li>We continue to develop a data standard based on what we learn from this exercise</li>
+    </ol>
 
-    <p class="govuk-body">To get started we have add some example data. This includes:</p>
-    <ul class="govuk-list govuk-list--bullet">
-      {% for plan in development_plans %}
-        <li><a class="govuk-link" href="{{ url_for('development_plan.plan', reference=plan.reference) }}">{{ plan.name }}</a></li>
-      {% endfor %}
-    </ul>
+    <h2 class="govuk-heading-l">Get started</h2>
 
     <a href="{{ url_for('development_plan.new') }}" class="govuk-button govuk-button--secondary"><span class="govuk-!-margin-right-1">✚ </span>Add new plan record</a>
     <p class="govuk-body">or</p>
@@ -52,7 +43,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
     <h2 class="govuk-heading-m">Supporting data</h2>
-    <p class="govuk-body"><a href="{{ url_for('admin.index') }}" class="govuk-link">View the supporting datasets</a>.</p>
+    <p class="govuk-body"><a href="{{ url_for('admin.index') }}" class="govuk-link">View the supporting datasets</a></p>
   </div>
 </div>
 
@@ -61,7 +52,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
     <h2 class="govuk-heading-m">Download</h2>
-    <p class="govuk-body"><a href="{{ url_for('development_plan.download') }}" class="govuk-link">Download a zip file of the data collected</a>.</p>
+    <p class="govuk-body"><a href="{{ url_for('development_plan.download') }}" class="govuk-link">Download a zip file of the data collected</a></p>
   </div>
 </div>
 {% endblock content %}

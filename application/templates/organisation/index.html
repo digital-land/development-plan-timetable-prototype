@@ -2,6 +2,16 @@
 
 {% block content %}
 
+<section class="app-progress-banner">
+  <div class="app-progress__bar" style="--progress-bar-target: {{ organisations|length }}; --progress-bar-progress: {{ adopted_plans|length }};">
+    <p class="govuk-visually-hidden">We expect to collect adopted local plans from {{ organisations|length }} planning authorities</p>
+    <span class="app-progress__bar__completed">
+      <p class="govuk-visually-hidden">So far we have collected {{ adopted_plans|length }}</p>
+    </span>
+  </div>
+  <p class="govuk-body">{{ adopted_plans|length }} of {{ organisations|length }} adopted local plans {{ 'has' if adopted_plans|length == 1 else 'have' }} been collected</p>
+</section>
+
   <span class="govuk-caption-xl">Development plans</span>
   <h1 class="govuk-heading-xl">Find a plan by organisation</h1>
 

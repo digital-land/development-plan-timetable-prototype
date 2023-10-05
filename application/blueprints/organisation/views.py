@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
-from application.models import Organisation
+from application.models import DevelopmentPlan, Organisation
 from application.utils import get_organisations_expected_to_publish_plan
 
 organisation_bp = Blueprint("organisation", __name__, url_prefix="/organisation")
@@ -17,7 +17,12 @@ def organisations():
 
     # TODO: how do I get all orgs that should be publishing a plan?
     orgs = get_organisations_expected_to_publish_plan()
-    return render_template("organisation/index.html", organisations=orgs)
+    adopted_plans = DevelopmentPlan.query.filter(
+        DevelopmentPlan.adopted_date.isnot(None)
+    ).all()
+    return render_template(
+        "organisation/index.html", organisations=orgs, adopted_plans=adopted_plans
+    )
 
 
 @organisation_bp.route("/<string:reference>")

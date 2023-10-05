@@ -19,7 +19,13 @@ def get_organisations_expected_to_publish_plan():
 
     # this only returns current local-authorities
     orgs = (
-        Organisation.query.filter(Organisation.organisation.contains("local-authority"))
+        Organisation.query.filter(
+            or_(
+                Organisation.organisation.contains("local-authority"),
+                Organisation.organisation.contains("national-park"),
+                Organisation.organisation.contains("development-corporation"),
+            )
+        )
         .filter(
             or_(
                 Organisation.end_date.is_(None),

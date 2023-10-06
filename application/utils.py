@@ -1,6 +1,6 @@
 from sqlalchemy import Date, cast, null, or_
 
-from application.models import Organisation
+from application.models import DevelopmentPlan, Organisation
 
 
 def kebab_case(s):
@@ -36,3 +36,15 @@ def get_organisations_expected_to_publish_plan():
         .all()
     )
     return orgs
+
+
+def get_adopted_plans(with_org_list=True):
+    adopted_plans = DevelopmentPlan.query.filter(
+        DevelopmentPlan.adopted_date.isnot(None)
+    ).all()
+    orgs_with_adopted_plan = [
+        organisation for plan in adopted_plans for organisation in plan.organisations
+    ]
+    if with_org_list:
+        return adopted_plans, orgs_with_adopted_plan
+    return adopted_plans

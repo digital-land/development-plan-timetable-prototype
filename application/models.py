@@ -110,6 +110,8 @@ class DevelopmentPlan(DateModel):
     period_end_date = db.Column(db.Integer)
     documentation_url = db.Column(db.Text)
     notes = db.Column(db.Text)
+
+    # use string as date may be incomplete - e.g. 2023-10
     adopted_date = db.Column(db.String)
 
     organisations = db.relationship(

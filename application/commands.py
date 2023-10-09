@@ -1,6 +1,8 @@
+import codecs
 import csv
 import logging
 import sys
+from contextlib import closing
 from pathlib import Path
 
 import requests
@@ -10,6 +12,7 @@ from application.models import (
     DevelopmentPlan,
     DevelopmentPlanDocument,
     DevelopmentPlanEvent,
+    DevelopmentPlanEventType,
     Organisation,
 )
 
@@ -149,3 +152,58 @@ def _load_orgs(db, table):
             logger.exception(e)
             logger.exception(f"error loading {table} with data {org}")
             db.session.rollback()
+
+
+@data_cli.command("migrate-event-types")
+def migrate_event_types():
+    from application.extensions import db
+
+    url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-event.csv"
+
+    references = set([])
+
+    with closing(requests.get(url, stream=True)) as r:
+        reader = csv.DictReader(
+            codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
+        )
+
+        for row in reader:
+            reference = row["reference"]
+            event_type = DevelopmentPlanEventType.query.get(reference)
+            if event_type is None:
+                print("adding event type", reference, row["name"])
+                event_type = DevelopmentPlanEventType(
+                    reference=reference,
+                    name=row["name"],
+                    notes=row["notes"],
+                )
+            else:
+                event_type.name = row["name"]
+                event_type.notes = row["notes"]
+
+            db.session.add(event_type)
+            db.session.commit()
+            references.add(reference)
+
+
+@data_cli.command("remove-old-event-types")
+def remove_old_event_types():
+    from application.extensions import db
+
+    url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-event.csv"
+
+    references = set([])
+
+    with closing(requests.get(url, stream=True)) as r:
+        reader = csv.DictReader(
+            codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
+        )
+        for row in reader:
+            references.add(row["reference"])
+
+    event_types = DevelopmentPlanEventType.query.all()
+    for event_type in event_types:
+        if event_type.reference not in references:
+            print("deleting event type", event_type.reference)
+            db.session.delete(event_type)
+            db.session.commit()

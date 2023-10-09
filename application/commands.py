@@ -13,6 +13,7 @@ from application.models import (
     DevelopmentPlanDocument,
     DevelopmentPlanEvent,
     DevelopmentPlanEventType,
+    DevelopmentPlanType,
     Organisation,
 )
 
@@ -45,9 +46,6 @@ def load_data():
             logger.info("organisation table is loaded from datasette")
             _load_orgs(db, table)
             continue
-        elif table_name == "development_plan_event_type":
-            data_file_name = f"{table.name.replace('_type', '').replace('_', '-')}.csv"
-            data_file_path = f"{Path(__file__).parent.parent}/data/{data_file_name}"
         elif table_name == "development_plan_event":
             data_file_name = (
                 f"{table.name.replace('event', 'timetable').replace('_', '-')}.csv"
@@ -206,4 +204,26 @@ def remove_old_event_types():
         if event_type.reference not in references:
             print("deleting event type", event_type.reference)
             db.session.delete(event_type)
+            db.session.commit()
+
+
+@data_cli.command("migrate-plan-types")
+def migrate_plan_types():
+    from application.extensions import db
+
+    url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-type.csv"
+
+    with closing(requests.get(url, stream=True)) as r:
+        reader = csv.DictReader(
+            codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
+        )
+
+        for row in reader:
+            reference = row["reference"]
+            plan_type = DevelopmentPlanType.query.get(reference)
+            if plan_type is None:
+                print("adding plan type", reference, row["name"])
+                plan_type = DevelopmentPlanType(reference=reference, name=row["name"])
+
+            db.session.add(plan_type)
             db.session.commit()

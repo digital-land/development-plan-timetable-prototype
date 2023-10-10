@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import requests
 from flask import (
     Blueprint,
     Response,
@@ -117,7 +118,11 @@ def add_geography(reference):
             pass
         return redirect(url_for("development_plan.plan", reference=plan.reference))
 
-    return render_template("plan/add-geography.html", development_plan=plan)
+    geographies = _get_geographies(plan)
+
+    return render_template(
+        "plan/choose-geography.html", development_plan=plan, geographies=geographies
+    )
 
 
 @development_plan.route("/<string:reference>/timetable/add", methods=["GET", "POST"])
@@ -426,3 +431,36 @@ def _get_event_choices():
 
 def _get_document_type_choices():
     return [(doc.reference, doc.name) for doc in DocumentType.query.all()]
+
+
+def _get_geographies(plan):
+    from flask import current_app
+    from shapely import wkt
+
+    geographies = []
+    for org in plan.organisations:
+        curie = f"statistical-geography:{org.statistical_geography}"
+        url = f"{current_app.config['PLANNING_DATA_API_URL']}/entity.json"
+        params = {"curie": curie}
+        resp = requests.get(url, params=params)
+        if resp.status_code == 200:
+            data = resp.json()
+            if len(data["entities"]) == 0:
+                continue
+            prefix = data["entities"][0].get("prefix")
+            reference = data["entities"][0].get("reference")
+            point = wkt.loads(data["entities"][0].get("point"))
+            geojson_url = (
+                f"{current_app.config['PLANNING_DATA_API_URL']}/entity.geojson"
+            )
+            resp = requests.get(geojson_url, params=params)
+            if resp.status_code == 200:
+                geography = {
+                    "geometry": resp.json(),
+                    "prefix": prefix,
+                    "reference": reference,
+                    "point": point,
+                }
+                geographies.append(geography)
+
+    return geographies

@@ -25,12 +25,16 @@ class Config:
     AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
     AUTHENTICATION_ON = _to_boolean(os.getenv("AUTHENTICATION_ON", None))
     MAX_DEVELOPMENT_PLANS = int(os.getenv("MAX_DEVELOPMENT_PLANS", 10))
+    PLANNING_DATA_API_URL = os.getenv(
+        "PLANNING_DATA_API_URL", "https://www.planning.data.gov.uk"
+    )
+    WTF_CSRF_ENABLED = True
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
     ENV = "development"
-    WTF_CSRF_ENABLED = True
+    WTF_CSRF_ENABLED = False
 
 
 class TestConfig(Config):

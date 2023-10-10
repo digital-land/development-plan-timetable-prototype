@@ -20,7 +20,7 @@ cryptography==41.0.4
     # via authlib
 decorator==5.1.1
     # via validators
-digital-land-frontend @ git+https://github.com/digital-land/digital-land-frontend.git
+digital_land_frontend @ git+https://github.com/digital-land/digital-land-frontend.git
     # via -r requirements/requirements.in
 flask==2.2.3
     # via
@@ -41,6 +41,8 @@ flask-wtf==1.1.1
     # via -r requirements/requirements.in
 govuk-frontend-jinja==2.5.0
     # via digital-land-frontend
+greenlet==3.0.0
+    # via sqlalchemy
 gunicorn==20.1.0
     # via -r requirements/requirements.in
 idna==3.4
@@ -61,6 +63,8 @@ markupsafe==2.1.2
     #   mako
     #   werkzeug
     #   wtforms
+numpy==1.26.0
+    # via shapely
 psycopg2-binary==2.9.6
     # via -r requirements/requirements.in
 pycparser==2.21
@@ -68,6 +72,8 @@ pycparser==2.21
 python-dotenv==1.0.0
     # via -r requirements/requirements.in
 requests==2.28.2
+    # via -r requirements/requirements.in
+shapely==2.0.1
     # via -r requirements/requirements.in
 sqlalchemy==2.0.9
     # via

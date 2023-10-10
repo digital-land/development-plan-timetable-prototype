@@ -99,6 +99,21 @@ development_plan_event_organisation = db.Table(
 )
 
 
+class DevelopmentPlanGeography(DateModel):
+    reference = db.Column(db.Text, primary_key=True)
+    prefix = db.Column(db.Text)
+    name = db.Column(db.Text)
+    notes = db.Column(db.Text)
+    geometry = db.Column(db.Text)
+    point = db.Column(db.Text)
+    development_plan_geography_type = db.Column(db.Text)
+    development_plan_reference = mapped_column(
+        db.ForeignKey("development_plan.reference")
+    )
+    development_plan = db.relationship("DevelopmentPlan")
+    point = db.Column(db.Text)
+
+
 class DevelopmentPlan(DateModel):
     __tablename__ = "development_plan"
 
@@ -129,6 +144,10 @@ class DevelopmentPlan(DateModel):
 
     documents = db.relationship(
         "DevelopmentPlanDocument", back_populates="development_plan"
+    )
+
+    geographies = db.relationship(
+        "DevelopmentPlanGeography", back_populates="development_plan"
     )
 
     def as_dict(self):

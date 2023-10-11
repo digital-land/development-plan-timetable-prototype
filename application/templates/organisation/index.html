@@ -76,23 +76,23 @@
         <span class="js-list-filter__count" aria-hidden="true">{{ organisations|length }}</span>
        planning authorities</div>
 
-      <dl class="govuk-summary-list govuk-!-margin-bottom-0" data-filter="list">
+      <dl class="govuk-summary-list app-summary-list govuk-!-margin-bottom-0" data-filter="list">
       {% for organisation in organisations %}
 
-        <div class="govuk-summary-list__row" data-filter="item">
-          <dt class="govuk-summary-list__key">
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-0"><a href="{{ url_for('organisation.organisation', reference=organisation.organisation)}}" class="govuk-link govuk-link--text-colour">{{ organisation.name }}</a></h3>
-            <span class="govuk-hint govuk-!-font-size-16">{{ organisation.organisation }}</span>
+        <div class="govuk-summary-list__row app-summary-list__row" data-filter="item">
+          <dt class="govuk-summary-list__key app-summary-list__key">
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a href="{{ url_for('organisation.organisation', reference=organisation.organisation)}}" class="govuk-link govuk-link--text-colour">{{ organisation.name }}</a></h3>
+            <span class="app-code govuk-hint app-code--block app-code--s govuk-!-margin-bottom-0">{{ organisation.organisation }}</span>
           </dt>
-          <dd class="govuk-summary-list__value">
+          <dd class="govuk-summary-list__value app-summary-list__value">
             {% if organisation.development_plans | length > 0 %}
-            <ul class="govuk-list govuk-!-margin-bottom-1">
+            <ul class="govuk-list govuk-!-margin-bottom-3">
               {% for plan in organisation.development_plans %}
                 <li><a href="{{ url_for('development_plan.plan', reference=plan.reference) }}" class="govuk-link">{{ plan.name }}</a> <span class="govuk-hint">({{plan.reference}})</span></li>
               {% endfor %}
             </ul>
             {% endif %}
-            <a href="{{ url_for('development_plan.new', organisation=organisation.organisation) }}" class="govuk-button govuk-button--secondary app-button--s govuk-!-margin-top-2">Add plan</a>
+            <a href="{{ url_for('development_plan.new', organisation=organisation.organisation) }}" class="govuk-button govuk-button--secondary app-button--s">Add plan</a>
           </dd>
         </div>
 
@@ -104,10 +104,6 @@
 
   </div>
 </div>
-
-
-
-
 
 {% endblock content %}
 

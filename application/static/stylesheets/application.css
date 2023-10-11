@@ -7557,7 +7557,7 @@
   content: " ▲"; }
 
 .app-button--s {
-  padding: 5px;
+  padding: 10px;
   font-family: "GDS Transport", arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -7577,6 +7577,23 @@
     .app-button--s {
       font-size: 14pt;
       line-height: 1.2; } }
+
+.app-summary-list__row {
+  border: 1px solid #b1b4b6;
+  display: block;
+  border-radius: 2px;
+  margin-bottom: 15px; }
+
+.app-summary-list__key, .app-summary-list__value {
+  display: block;
+  width: auto; }
+
+.app-summary-list__key {
+  background: #f3f2f1;
+  padding: 15px; }
+
+.app-summary-list__value {
+  padding: 15px; }
 
 .app-hidden {
   display: none; }
@@ -7652,3 +7669,12 @@
 
 .app-document-list .app-document-list__item__actions {
   align-self: center; }
+
+.app-code {
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace !important; }
+  .app-code--inline {
+    display: inline-block; }
+  .app-code--block {
+    display: block; }
+  .app-code--s {
+    font-size: 0.75em; }

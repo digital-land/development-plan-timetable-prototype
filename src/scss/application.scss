@@ -9,6 +9,7 @@
 @import "components/progress-banner";
 @import "components/table";
 @import "components/button";
+@import "components/summary-list";
 
 .app-hidden {
   display: none
@@ -71,4 +72,17 @@
   .app-document-list__item__actions {
     align-self: center;
   }
+}
+
+.app-code {
+  &--inline {
+    display: inline-block;
+  }
+  &--block {
+    display: block;
+  }
+  &--s {
+    font-size: 0.75em;
+  }
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace !important;
 }

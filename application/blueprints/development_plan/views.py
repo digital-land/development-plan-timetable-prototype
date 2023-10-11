@@ -462,7 +462,8 @@ def _get_geographies(plan):
     for org in plan.organisations:
         curie = f"statistical-geography:{org.statistical_geography}"
         geography = _get_geography(curie)
-        geographies.append(geography)
+        if geography is not None:
+            geographies.append(geography)
     return geographies
 
 

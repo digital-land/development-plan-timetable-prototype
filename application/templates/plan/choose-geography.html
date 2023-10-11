@@ -23,18 +23,19 @@
           </legend>
             {% for geography in geographies %}
             <div>
-              {% set geojson = geography["geometry"]|tojson %}
-              {% set point_x = geography["point"].x %}
-              {% set point_y = geography["point"].y %}
+              {% set geojson = geography["geojson"] | tojson %}
+              {% set point_x = geography["lat"] %}
+              {% set point_y = geography["long"] %}
               {% set map_id = "map-" + geography["reference"] %}
                <div id="map-{{geography['reference']}}" style="height: 45vh;">
               </div>
               <script>
-                let map_{{ loop.index }} = L.map('{{map_id}}').setView([{{point_y}}, {{point_x}}], 11);
+                let map_{{ loop.index }} = L.map('{{map_id}}').setView([{{ point_x }}, {{ point_y }}], 11);
                 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map_{{ loop.index }})
                 L.geoJSON({{geojson}}, {}).addTo(map_{{ loop.index }})
               </script>
               <div>
+              <input type="hidden" name="geography-reference" value="{{geography['prefix']}}:{{geography['reference']}}">
               <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
             {% endfor %}
           </div>
@@ -42,15 +43,15 @@
             Select one option.
           </div>-->
           <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="geography-provided-2" name="geography-provided" type="radio" value="yes">
-            <label class="govuk-label govuk-radios__label" for="geography-provided-2">
+            <input class="govuk-radios__input" id="geography-provided-1" name="geography-provided" type="radio" value="yes">
+            <label class="govuk-label govuk-radios__label" for="geography-provided-1">
               Yes
             </label>
           </div>
           <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input" id="geography-provided" name="geography-provided" type="radio" value="no" data-aria-controls="conditional-geography">
-              <label class="govuk-label govuk-radios__label" for="geography-provided">
+              <input class="govuk-radios__input" id="geography-provided-2" name="geography-provided" type="radio" value="no" data-aria-controls="conditional-geography">
+              <label class="govuk-label govuk-radios__label" for="geography-provided-2">
                 No
               </label>
             </div>

@@ -30,6 +30,7 @@ from application.models import (
     DevelopmentPlanDocument,
     DevelopmentPlanEvent,
     DevelopmentPlanEventType,
+    DevelopmentPlanGeography,
     DevelopmentPlanType,
     DocumentType,
     Organisation,
@@ -108,9 +109,20 @@ def add_geography(reference):
         # To Do: replace with proper steps
         geography_provided = request.form.get("geography-provided")
         if geography_provided == "yes":
-            # handle either endpoint or file upload
-            # if fetch or upload fail send back to this page with error
-            pass
+            geography_reference = request.form.get("geography-reference")
+            geography = _get_geography(geography_reference)
+            prefix, reference = geography_reference.split(":")
+            g = DevelopmentPlanGeography(
+                prefix=prefix,
+                reference=reference,
+                geojson=geography["geojson"],
+                geometry=geography["geometry"],
+                point=geography["point"],
+            )
+            plan.geographies.append(g)
+            db.session.add(plan)
+            db.session.commit()
+            return redirect(url_for("development_plan.plan", reference=plan.reference))
         else:
             # handle no
             # if single org then copy its boundary to development-plan-geography table
@@ -434,33 +446,40 @@ def _get_document_type_choices():
 
 
 def _get_geographies(plan):
-    from flask import current_app
-    from shapely import wkt
-
     geographies = []
     for org in plan.organisations:
         curie = f"statistical-geography:{org.statistical_geography}"
-        url = f"{current_app.config['PLANNING_DATA_API_URL']}/entity.json"
-        params = {"curie": curie}
-        resp = requests.get(url, params=params)
-        if resp.status_code == 200:
-            data = resp.json()
-            if len(data["entities"]) == 0:
-                continue
-            prefix = data["entities"][0].get("prefix")
-            reference = data["entities"][0].get("reference")
-            point = wkt.loads(data["entities"][0].get("point"))
-            geojson_url = (
-                f"{current_app.config['PLANNING_DATA_API_URL']}/entity.geojson"
-            )
-            resp = requests.get(geojson_url, params=params)
-            if resp.status_code == 200:
-                geography = {
-                    "geometry": resp.json(),
-                    "prefix": prefix,
-                    "reference": reference,
-                    "point": point,
-                }
-                geographies.append(geography)
-
+        geography = _get_geography(curie)
+        geographies.append(geography)
     return geographies
+
+
+def _get_geography(reference):
+    from flask import current_app
+    from shapely import wkt
+
+    url = f"{current_app.config['PLANNING_DATA_API_URL']}/entity.json"
+    params = {"curie": reference}
+    resp = requests.get(url, params=params)
+    if resp.status_code == 200:
+        data = resp.json()
+        if len(data["entities"]) == 0:
+            return None
+        prefix = data["entities"][0].get("prefix")
+        reference = data["entities"][0].get("reference")
+        point = data["entities"][0].get("point")
+        point_obj = wkt.loads(point)
+        geojson_url = f"{current_app.config['PLANNING_DATA_API_URL']}/entity.geojson"
+        resp = requests.get(geojson_url, params=params)
+        if resp.status_code == 200:
+            geography = {
+                "geojson": resp.json(),
+                "geometry": data["entities"][0].get("geometry"),
+                "prefix": prefix,
+                "reference": reference,
+                "point": point,
+                "lat": point_obj.y,
+                "long": point_obj.x,
+            }
+        return geography
+    return None

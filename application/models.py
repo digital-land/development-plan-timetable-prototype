@@ -1,3 +1,4 @@
+from sqlalchemy import JSON
 from sqlalchemy.orm import mapped_column
 
 from application.extensions import db
@@ -105,6 +106,7 @@ class DevelopmentPlanGeography(DateModel):
     name = db.Column(db.Text)
     notes = db.Column(db.Text)
     geometry = db.Column(db.Text)
+    geojson = db.Column(JSON)
     point = db.Column(db.Text)
     development_plan_geography_type = db.Column(db.Text)
     development_plan_reference = mapped_column(

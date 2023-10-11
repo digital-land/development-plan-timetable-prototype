@@ -1,0 +1,6 @@
+.app-button {
+  &--s {
+    @include govuk-responsive-padding(1);
+    @include govuk-font(16);
+  }
+}

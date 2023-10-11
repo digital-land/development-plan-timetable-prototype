@@ -175,7 +175,13 @@ class DevelopmentPlanEvent(DateModel):
     name = db.Column(db.Text)
     development_plan_event = db.Column(db.Text)
     event_date = db.Column(db.String)
+
     notes = db.Column(db.Text)
+
+    development_plan_event_type_reference = mapped_column(
+        db.ForeignKey("development_plan_event_type.reference")
+    )
+    development_plan_event_type = db.relationship("DevelopmentPlanEventType")
 
     organisations = db.relationship(
         "Organisation",

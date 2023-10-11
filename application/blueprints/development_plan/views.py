@@ -112,6 +112,15 @@ def add_geography(reference):
             geography_reference = request.form.get("geography-reference")
             geography = _get_geography(geography_reference)
             prefix, reference = geography_reference.split(":")
+            g = DevelopmentPlanGeography.query.filter(
+                DevelopmentPlanGeography.reference == reference,
+                DevelopmentPlanGeography.development_plan_reference == plan.reference,
+            ).one_or_none()
+            if g is not None:
+                # nothing to do
+                return redirect(
+                    url_for("development_plan.plan", reference=plan.reference)
+                )
             g = DevelopmentPlanGeography(
                 prefix=prefix,
                 reference=reference,
@@ -156,6 +165,9 @@ def add_event(reference):
         event.event_date = f"{form.event_date_year.data}-{form.event_date_month.data}-{form.event_date_day.data}"
         organisation_str = form.organisations.data
         del form.organisations
+        development_plan_event_ref = form.development_plan_event.data
+        del form.development_plan_event
+        event.development_plan_event_type_reference = development_plan_event_ref
         form.populate_obj(event)
         _set_organisations(event, organisation_str)
 

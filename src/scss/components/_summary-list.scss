@@ -1,0 +1,20 @@
+.app-summary-list {
+  &__row {
+    border: 1px solid $govuk-border-colour;
+    display: block;
+    border-radius: 2px;
+    @include govuk-responsive-margin(3, "bottom");
+  }
+  &__key,
+  &__value {
+    display: block;
+    width: auto;
+  }
+  &__key {
+    background: govuk-colour('light-grey');
+    @include govuk-responsive-padding(3);
+  }
+  &__value {
+    @include govuk-responsive-padding(3);
+  }
+}

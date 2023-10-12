@@ -227,3 +227,50 @@ def migrate_plan_types():
 
             db.session.add(plan_type)
             db.session.commit()
+
+
+@data_cli.command("get-geographies")
+def get_geometries():
+    from application.extensions import db
+
+    orgs = Organisation.query.all()
+    for org in orgs:
+        curie = f"statistical-geography:{org.statistical_geography}"
+        g = _get_geography(curie)
+        if g is not None:
+            org.geometry = g["geometry"]
+            org.geojson = g["geojson"]
+            org.point = g["point"]
+            db.session.add(org)
+            db.session.commit()
+
+
+def _get_geography(reference):
+    from flask import current_app
+    from shapely import wkt
+
+    url = f"{current_app.config['PLANNING_DATA_API_URL']}/entity.json"
+    params = {"curie": reference}
+    resp = requests.get(url, params=params)
+    if resp.status_code == 200:
+        data = resp.json()
+        if len(data["entities"]) == 0:
+            return None
+        prefix = data["entities"][0].get("prefix")
+        reference = data["entities"][0].get("reference")
+        point = data["entities"][0].get("point")
+        point_obj = wkt.loads(point)
+        geojson_url = f"{current_app.config['PLANNING_DATA_API_URL']}/entity.geojson"
+        resp = requests.get(geojson_url, params=params)
+        if resp.status_code == 200:
+            geography = {
+                "geojson": resp.json(),
+                "geometry": data["entities"][0].get("geometry"),
+                "prefix": prefix,
+                "reference": reference,
+                "point": point,
+                "lat": point_obj.y,
+                "long": point_obj.x,
+            }
+        return geography
+    return None

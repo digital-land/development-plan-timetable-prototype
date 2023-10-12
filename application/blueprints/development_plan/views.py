@@ -8,7 +8,6 @@ from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import requests
 from flask import (
     Blueprint,
     Response,
@@ -109,28 +108,28 @@ def add_geography(reference):
         # To Do: replace with proper steps
         geography_provided = request.form.get("geography-provided")
         if geography_provided == "yes":
-            geography_reference = request.form.get("geography-reference")
-            geography = _get_geography(geography_reference)
-            prefix, reference = geography_reference.split(":")
-            g = DevelopmentPlanGeography.query.filter(
-                DevelopmentPlanGeography.reference == reference,
-                DevelopmentPlanGeography.development_plan_reference == plan.reference,
-            ).one_or_none()
-            if g is not None:
-                # nothing to do
-                return redirect(
-                    url_for("development_plan.plan", reference=plan.reference)
-                )
-            g = DevelopmentPlanGeography(
-                prefix=prefix,
-                reference=reference,
-                geojson=geography["geojson"],
-                geometry=geography["geometry"],
-                point=geography["point"],
-            )
-            plan.geographies.append(g)
-            db.session.add(plan)
-            db.session.commit()
+            geography_references = request.form.getlist("geography-reference")
+            for reference in geography_references:
+                prefix, reference = reference.split(":")
+                g = DevelopmentPlanGeography.query.filter(
+                    DevelopmentPlanGeography.reference == reference,
+                    DevelopmentPlanGeography.development_plan_reference
+                    == plan.reference,
+                ).one_or_none()
+                if g is None:
+                    org = Organisation.query.filter(
+                        Organisation.statistical_geography == reference
+                    ).one()
+                    g = DevelopmentPlanGeography(
+                        prefix=prefix,
+                        reference=reference,
+                        geojson=org.geojson,
+                        geometry=org.geometry,
+                        point=org.point,
+                    )
+                    plan.geographies.append(g)
+                    db.session.add(plan)
+                    db.session.commit()
             return redirect(url_for("development_plan.plan", reference=plan.reference))
         else:
             # handle no
@@ -139,7 +138,12 @@ def add_geography(reference):
             pass
         return redirect(url_for("development_plan.plan", reference=plan.reference))
 
-    geographies = _get_geographies(plan)
+    geographies = {}
+    for org in plan.organisations:
+        if org.geometry is not None:
+            geographies[org.organisation] = org
+        else:
+            geographies[org.organisation] = None
 
     return render_template(
         "plan/choose-geography.html", development_plan=plan, geographies=geographies
@@ -455,44 +459,3 @@ def _get_event_choices():
 
 def _get_document_type_choices():
     return [(doc.reference, doc.name) for doc in DocumentType.query.all()]
-
-
-def _get_geographies(plan):
-    geographies = []
-    for org in plan.organisations:
-        curie = f"statistical-geography:{org.statistical_geography}"
-        geography = _get_geography(curie)
-        if geography is not None:
-            geographies.append(geography)
-    return geographies
-
-
-def _get_geography(reference):
-    from flask import current_app
-    from shapely import wkt
-
-    url = f"{current_app.config['PLANNING_DATA_API_URL']}/entity.json"
-    params = {"curie": reference}
-    resp = requests.get(url, params=params)
-    if resp.status_code == 200:
-        data = resp.json()
-        if len(data["entities"]) == 0:
-            return None
-        prefix = data["entities"][0].get("prefix")
-        reference = data["entities"][0].get("reference")
-        point = data["entities"][0].get("point")
-        point_obj = wkt.loads(point)
-        geojson_url = f"{current_app.config['PLANNING_DATA_API_URL']}/entity.geojson"
-        resp = requests.get(geojson_url, params=params)
-        if resp.status_code == 200:
-            geography = {
-                "geojson": resp.json(),
-                "geometry": data["entities"][0].get("geometry"),
-                "prefix": prefix,
-                "reference": reference,
-                "point": point,
-                "lat": point_obj.y,
-                "long": point_obj.x,
-            }
-        return geography
-    return None

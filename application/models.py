@@ -1,3 +1,4 @@
+from shapely import wkt
 from sqlalchemy import JSON
 from sqlalchemy.orm import mapped_column
 
@@ -270,6 +271,14 @@ class Organisation(DateModel):
     website = db.Column(db.Text)
     wikidata = db.Column(db.Text)
     wikipedia = db.Column(db.Text)
+    geometry = db.Column(db.Text)
+    geojson = db.Column(JSON)
+    point = db.Column(db.Text)
+
+    def lat_long(self):
+        if self.point is None:
+            return None
+        return (wkt.loads(self.point).y, wkt.loads(self.point).x)
 
     development_plans = db.relationship(
         "DevelopmentPlan",

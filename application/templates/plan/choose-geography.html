@@ -8,9 +8,10 @@
 {% block content %}
 
 <span class="govuk-caption-xl">Development plan: {{ development_plan.reference }}</span>
-<h1 class="govuk-heading-xl">Choose geography</h1>
+<h1 class="govuk-heading-xl">Area covered by this plan</h1>
 
 <div class="govuk-grid-row">
+
   <div class="govuk-grid-column-two-thirds">
     <form class="govuk-form" method="POST" action="{{url_for('development_plan.add_geography', reference=development_plan.reference)}}">
 
@@ -18,9 +19,10 @@
         <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
             <h1 class="govuk-fieldset__heading">
-              Does the plan cover the authoring organisations' administrative boundaries shown below?
+              Is the area shown correct?
             </h1>
           </legend>
+          <!--{{ geographies }}-->
             {% for org in development_plan.organisations %}
               {% if org.geometry %}
                 <div>
@@ -29,15 +31,15 @@
                   {% set point_y = geographies[org.organisation].lat_long()[1] %}
                   {% set map_id = "map-" + geographies[org.organisation].statistical_geography %}
                   <div id="map-{{geographies[org.organisation].statistical_geography}}" style="height: 45vh;">
-                  </div>
+                </div>
                   <script>
                     let map_{{ loop.index }} = L.map('{{map_id}}').setView([{{ point_x }}, {{ point_y }}], 11);
                     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map_{{ loop.index }})
                     L.geoJSON({{geojson}}, {}).addTo(map_{{ loop.index }})
                   </script>
-                  <div>
+                <div>
                   <input type="hidden" name="geography-reference" value="statistical-geography:{{geographies[org.organisation].statistical_geography}}">
-                  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
               {% endif %}
             {% endfor %}
             {% for org in development_plan.organisations %}
@@ -50,32 +52,34 @@
            <!--<div id="contact-hint" class="govuk-hint">
             Select one option.
           </div>-->
-          <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="geography-provided-1" name="geography-provided" type="radio" value="yes">
-            <label class="govuk-label govuk-radios__label" for="geography-provided-1">
-              Yes
-            </label>
-          </div>
-          <div class="govuk-radios" data-module="govuk-radios">
+          <div class="govuk-!-margin-top-6">
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input" id="geography-provided-2" name="geography-provided" type="radio" value="no" data-aria-controls="conditional-geography">
-              <label class="govuk-label govuk-radios__label" for="geography-provided-2">
-                No
+              <input class="govuk-radios__input" id="geography-provided-1" name="geography-provided" type="radio" value="yes">
+              <label class="govuk-label govuk-radios__label" for="geography-provided-1">
+                Yes
               </label>
             </div>
-            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-geography">
-              <div class="govuk-form-group">
-                <label class="govuk-label" for="file-upload">
-                  Upload shapefile
+            <div class="govuk-radios" data-module="govuk-radios">
+              <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="geography-provided-2" name="geography-provided" type="radio" value="no" data-aria-controls="conditional-geography">
+                <label class="govuk-label govuk-radios__label" for="geography-provided-2">
+                  No
                 </label>
-                <input class="govuk-file-upload" id="file-upload" name="fileUpload" type="file">
               </div>
+              <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-geography">
+                <div class="govuk-form-group">
+                  <label class="govuk-label" for="file-upload">
+                    Upload shapefile
+                  </label>
+                  <input class="govuk-file-upload" id="file-upload" name="fileUpload" type="file">
+                </div>
 
-              <p class="govuk-body">or</p>
+                <p class="govuk-body">or</p>
 
-              <div class="govuk-form-group">
-                <label class="govuk-label" for="endpoint">Provide URL to WFS endpoint</label>
-                <input class="govuk-input" id="endpoint" name="endpoint" type="text">
+                <div class="govuk-form-group">
+                  <label class="govuk-label" for="endpoint">URL to WFS endpoint</label>
+                  <input class="govuk-input" id="endpoint" name="endpoint" type="text">
+                </div>
               </div>
             </div>
           </div>

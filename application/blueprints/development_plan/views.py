@@ -1,13 +1,17 @@
 import csv
 import glob
 import io
+import json
+import os
 import shutil
 import time
+import uuid
 import zipfile
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import geopandas
 from flask import (
     Blueprint,
     Response,
@@ -17,6 +21,7 @@ from flask import (
     request,
     url_for,
 )
+from werkzeug.utils import secure_filename
 
 from application.blueprints.development_plan.forms import (
     DocumentForm,
@@ -132,11 +137,27 @@ def add_geography(reference):
                     db.session.commit()
             return redirect(url_for("development_plan.plan", reference=plan.reference))
         else:
-            # handle no
-            # if single org then copy its boundary to development-plan-geography table
-            # if joint plan then create geometry with all org boundaries and add to development-plan-geography table
-            pass
-        return redirect(url_for("development_plan.plan", reference=plan.reference))
+            if "fileUpload" in request.files:
+                file = request.files["fileUpload"]
+                if file and allowed_file(file.filename):
+                    with TemporaryDirectory() as tempdir:
+                        filename = secure_filename(file.filename)
+                        shapefile_path = os.path.join(tempdir, filename)
+                        file.save(shapefile_path)
+                        gdf = geopandas.read_file(shapefile_path)
+                        geojson = gdf.to_crs(epsg="4326").to_json()
+                        g = DevelopmentPlanGeography(
+                            prefix="bespoke-geography",
+                            reference=str(uuid.uuid4()),
+                            geojson=json.loads(geojson),
+                        )
+                        plan.geographies.append(g)
+                        db.session.add(plan)
+                        db.session.commit()
+
+                return redirect(
+                    url_for("development_plan.plan", reference=plan.reference)
+                )
 
     geographies = {}
     for org in plan.organisations:
@@ -459,3 +480,10 @@ def _get_event_choices():
 
 def _get_document_type_choices():
     return [(doc.reference, doc.name) for doc in DocumentType.query.all()]
+
+
+def allowed_file(filename):
+    from flask import current_app
+
+    ALLOWED_EXTENSIONS = current_app.config["ALLOWED_EXTENSIONS"]
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS

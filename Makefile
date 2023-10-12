@@ -12,9 +12,7 @@ reqs:
 	python -m piptools compile requirements/requirements.in
 	python -m piptools sync requirements/requirements.txt requirements/dev-requirements.txt
 
-reqs:
-	python -m piptools compile requirements/dev-requirements.in
-	python -m piptools compile requirements/requirements.in
+sync:
 	python -m piptools sync requirements/requirements.txt requirements/dev-requirements.txt
 
 upgrade:

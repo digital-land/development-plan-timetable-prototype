@@ -10,3 +10,4 @@ flask-sslify
 requests
 authlib
 shapely
+geopandas

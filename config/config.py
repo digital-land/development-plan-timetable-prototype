@@ -29,6 +29,8 @@ class Config:
         "PLANNING_DATA_API_URL", "https://www.planning.data.gov.uk"
     )
     WTF_CSRF_ENABLED = True
+    MAX_CONTENT_LENGTH = 1024 * 1024
+    ALLOWED_EXTENSIONS = ["zip"]
 
 
 class DevelopmentConfig(Config):

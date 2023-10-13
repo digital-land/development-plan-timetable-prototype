@@ -34,10 +34,12 @@ from application.models import (
     DevelopmentPlanEvent,
     DevelopmentPlanEventType,
     DevelopmentPlanGeography,
+    DevelopmentPlanGeographyType,
     DevelopmentPlanType,
     DocumentType,
     Organisation,
 )
+from application.utils import combine_feature_collections
 
 development_plan = Blueprint(
     "development_plan", __name__, url_prefix="/development-plan"
@@ -111,21 +113,41 @@ def add_geography(reference):
     if request.method == "POST":
         geography_provided = request.form.get("geography-provided")
         if geography_provided == "yes":
-            for org in plan.organisations:
-                g = (
-                    DevelopmentPlanGeography.query.filter()
-                    .filter_by(prefix=org.prefix, reference=org.statistical_geography)
-                    .one_or_none()
+            feature_collection = [
+                org.geojson for org in plan.organisations if org.geojson is not None
+            ]
+
+            if len(plan.organisations) == 1:
+                reference = (
+                    plan.organisations[0].statistical_geography
+                    if plan.organisations[0].geojson is not None
+                    else None
                 )
-                if g is None:
-                    g = DevelopmentPlanGeography(
-                        prefix=org.prefix,
-                        reference=org.statistical_geography,
-                        geojson=org.geojson,
-                        geometry=org.geometry,
-                        point=org.point,
-                    )
-                    plan.geographies.append(g)
+                geography_type = DevelopmentPlanGeographyType.query.get(
+                    "planning-authority-district"
+                )
+            else:
+                reference = ":".join(
+                    [
+                        org.statistical_geography
+                        for org in plan.organisations
+                        if org.geojson is not None
+                    ]
+                )
+                geography_type = DevelopmentPlanGeographyType.query.get(
+                    "combined-planning-authority-district"
+                )
+
+            geojson = combine_feature_collections(feature_collection)
+            g = DevelopmentPlanGeography.query.get(reference)
+            if g is None:
+                g = DevelopmentPlanGeography(
+                    prefix="development-plan-geography",
+                    reference=reference,
+                    geojson=geojson,
+                    development_plan_geography_type_reference=geography_type.reference,
+                )
+                plan.geography = g
             db.session.add(plan)
             db.session.commit()
             return redirect(url_for("development_plan.plan", reference=plan.reference))
@@ -142,12 +164,16 @@ def add_geography(reference):
                         file.save(shapefile_path)
                         gdf = geopandas.read_file(shapefile_path)
                         geojson = gdf.to_crs(epsg="4326").to_json()
+                        geography_type = DevelopmentPlanGeographyType.query.get(
+                            "combined-planning-authority-district"
+                        )
                         g = DevelopmentPlanGeography(
                             prefix="designated‑plan‑area",
                             reference=reference,
                             geojson=json.loads(geojson),
+                            development_plan_geography_type_reference=geography_type.reference,
                         )
-                        plan.geographies.append(g)
+                        plan.geography = g
                         db.session.add(plan)
                         db.session.commit()
 

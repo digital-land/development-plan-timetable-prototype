@@ -173,8 +173,8 @@ class DevelopmentPlan(DateModel):
         "DevelopmentPlanDocument", back_populates="development_plan"
     )
 
-    geographies = db.relationship(
-        "DevelopmentPlanGeography", back_populates="development_plan"
+    geography = db.relationship(
+        "DevelopmentPlanGeography", uselist=False, back_populates="development_plan"
     )
 
     def as_dict(self):

@@ -48,3 +48,14 @@ def get_adopted_plans(with_org_list=True):
     if with_org_list:
         return adopted_plans, orgs_with_adopted_plan
     return adopted_plans
+
+
+def combine_feature_collections(feature_collections):
+    combined_features = []
+
+    for fc in feature_collections:
+        combined_features.extend(fc["features"])
+
+    combined_fc = {"type": "FeatureCollection", "features": combined_features}
+
+    return combined_fc

@@ -5,7 +5,6 @@ import json
 import os
 import shutil
 import time
-import uuid
 import zipfile
 from datetime import datetime
 from pathlib import Path
@@ -112,31 +111,30 @@ def add_geography(reference):
     if request.method == "POST":
         geography_provided = request.form.get("geography-provided")
         if geography_provided == "yes":
-            geography_references = {
-                reference.split(":")[1]
-                for reference in request.form.getlist("geography-reference")
-                if ":" in reference
-            }
-            organisations = Organisation.query.filter(
-                Organisation.statistical_geography.in_(geography_references)
-            ).all()
-            geographies = [
-                DevelopmentPlanGeography(
-                    prefix=org.prefix,
-                    reference=org.statistical_geography,
-                    geojson=org.geojson,
-                    geometry=org.geometry,
-                    point=org.point,
+            for org in plan.organisations:
+                g = (
+                    DevelopmentPlanGeography.query.filter()
+                    .filter_by(prefix=org.prefix, reference=org.statistical_geography)
+                    .one_or_none()
                 )
-                for org in organisations
-            ]
-            plan.geographies.extend(geographies)
+                if g is None:
+                    g = DevelopmentPlanGeography(
+                        prefix=org.prefix,
+                        reference=org.statistical_geography,
+                        geojson=org.geojson,
+                        geometry=org.geometry,
+                        point=org.point,
+                    )
+                    plan.geographies.append(g)
             db.session.add(plan)
             db.session.commit()
             return redirect(url_for("development_plan.plan", reference=plan.reference))
         else:
             if "fileUpload" in request.files:
                 file = request.files["fileUpload"]
+                reference = (
+                    request.form["designated-plan-area"].replace(" ", "-").lower()
+                )
                 if file and allowed_file(file.filename):
                     with TemporaryDirectory() as tempdir:
                         filename = secure_filename(file.filename)
@@ -146,7 +144,7 @@ def add_geography(reference):
                         geojson = gdf.to_crs(epsg="4326").to_json()
                         g = DevelopmentPlanGeography(
                             prefix="designated‑plan‑area",
-                            reference=str(uuid.uuid4()),
+                            reference=reference,
                             geojson=json.loads(geojson),
                         )
                         plan.geographies.append(g)

@@ -61,15 +61,19 @@ class DevelopmentPlanEventType(DateModel):
 class DocumentType(DateModel):
     __tablename__ = "document_type"
 
+    prefix = db.Column(db.Text)
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
-    category = db.Column(db.Text)
+    notes = db.Column(db.Text)
+    description = db.Column(db.Text)
 
     def as_dict(self):
         return {
+            "prefix": self.prefix,
             "reference": self.reference,
             "name": self.name,
-            "category": self.category,
+            "description": self.description,
+            "notes": self.notes,
         } | super().as_dict()
 
 
@@ -111,9 +115,10 @@ class DevelopmentPlanGeographyType(DateModel):
 
     def as_dict(self):
         return {
-            "prefix": self.reference,
+            "prefix": self.prefix,
             "reference": self.reference,
             "name": self.name,
+            "notes": self.notes,
         } | super().as_dict()
 
 
@@ -181,8 +186,8 @@ class DevelopmentPlan(DateModel):
             "development-plan-type": self.development_plan_type,
             "period-start-date": self.period_start_date,
             "period-end-date": self.period_end_date,
-            "documentation-url": self.documentation_url,
             "adopted-date": self.adopted_date,
+            "documentation-url": self.documentation_url,
             "notes": self.notes,
             "organisations": orgs,
         } | super().as_dict()

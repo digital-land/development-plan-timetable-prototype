@@ -110,31 +110,29 @@ def add_geography(reference):
     plan = DevelopmentPlan.query.get(reference)
 
     if request.method == "POST":
-        # To Do: replace with proper steps
         geography_provided = request.form.get("geography-provided")
         if geography_provided == "yes":
-            geography_references = request.form.getlist("geography-reference")
-            for reference in geography_references:
-                prefix, reference = reference.split(":")
-                g = DevelopmentPlanGeography.query.filter(
-                    DevelopmentPlanGeography.reference == reference,
-                    DevelopmentPlanGeography.development_plan_reference
-                    == plan.reference,
-                ).one_or_none()
-                if g is None:
-                    org = Organisation.query.filter(
-                        Organisation.statistical_geography == reference
-                    ).one()
-                    g = DevelopmentPlanGeography(
-                        prefix=prefix,
-                        reference=reference,
-                        geojson=org.geojson,
-                        geometry=org.geometry,
-                        point=org.point,
-                    )
-                    plan.geographies.append(g)
-                    db.session.add(plan)
-                    db.session.commit()
+            geography_references = {
+                reference.split(":")[1]
+                for reference in request.form.getlist("geography-reference")
+                if ":" in reference
+            }
+            organisations = Organisation.query.filter(
+                Organisation.statistical_geography.in_(geography_references)
+            ).all()
+            geographies = [
+                DevelopmentPlanGeography(
+                    prefix=org.prefix,
+                    reference=org.statistical_geography,
+                    geojson=org.geojson,
+                    geometry=org.geometry,
+                    point=org.point,
+                )
+                for org in organisations
+            ]
+            plan.geographies.extend(geographies)
+            db.session.add(plan)
+            db.session.commit()
             return redirect(url_for("development_plan.plan", reference=plan.reference))
         else:
             if "fileUpload" in request.files:
@@ -147,7 +145,7 @@ def add_geography(reference):
                         gdf = geopandas.read_file(shapefile_path)
                         geojson = gdf.to_crs(epsg="4326").to_json()
                         g = DevelopmentPlanGeography(
-                            prefix="bespoke-geography",
+                            prefix="designated‑plan‑area",
                             reference=str(uuid.uuid4()),
                             geojson=json.loads(geojson),
                         )

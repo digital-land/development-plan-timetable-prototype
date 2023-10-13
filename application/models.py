@@ -101,6 +101,22 @@ development_plan_event_organisation = db.Table(
 )
 
 
+class DevelopmentPlanGeographyType(DateModel):
+    __tablename__ = "development_plan_geography_type"
+
+    prefix = db.Column(db.Text)
+    reference = db.Column(db.Text, primary_key=True)
+    name = db.Column(db.Text)
+    notes = db.Column(db.Text)
+
+    def as_dict(self):
+        return {
+            "prefix": self.reference,
+            "reference": self.reference,
+            "name": self.name,
+        } | super().as_dict()
+
+
 class DevelopmentPlanGeography(DateModel):
     reference = db.Column(db.Text, primary_key=True)
     prefix = db.Column(db.Text)
@@ -109,7 +125,10 @@ class DevelopmentPlanGeography(DateModel):
     geometry = db.Column(db.Text)
     geojson = db.Column(JSON)
     point = db.Column(db.Text)
-    development_plan_geography_type = db.Column(db.Text)
+    development_plan_geography_type_reference = db.Column(
+        db.Text, db.ForeignKey("development_plan_geography_type.reference")
+    )
+    development_plan_geography_type = db.relationship("DevelopmentPlanGeographyType")
     development_plan_reference = mapped_column(
         db.ForeignKey("development_plan.reference")
     )

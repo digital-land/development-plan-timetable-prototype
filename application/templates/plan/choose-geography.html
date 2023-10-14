@@ -23,25 +23,21 @@
             </h1>
           </legend>
           <!--{{ geographies }}-->
-            {% for org in development_plan.organisations %}
-              {% if org.geometry %}
-                <div>
-                  {% set geojson = geographies[org.organisation].geojson | tojson %}
-                  {% set point_x = geographies[org.organisation].lat_long()[0] %}
-                  {% set point_y = geographies[org.organisation].lat_long()[1] %}
-                  {% set map_id = "map-" + geographies[org.organisation].statistical_geography %}
-                  <div id="map-{{geographies[org.organisation].statistical_geography}}" style="height: 45vh;">
-                </div>
-                  <script>
-                    let map_{{ loop.index }} = L.map('{{map_id}}').setView([{{ point_x }}, {{ point_y }}], 11);
-                    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map_{{ loop.index }})
-                    L.geoJSON({{geojson}}, {}).addTo(map_{{ loop.index }})
-                  </script>
-                <div>
-                  <input type="hidden" name="geography-reference" value="statistical-geography:{{geographies[org.organisation].statistical_geography}}">
 
-              {% endif %}
-            {% endfor %}
+            {% if geography and geography_reference %}
+              <div>
+                {% set geojson = geography | tojson %}
+                {% set lat = coords["lat"] %}
+                {% set long = coords["long"]%}
+                <div id="map" style="height: 45vh;">
+              </div>
+                <script>
+                    let map = L.map('map').setView([{{lat}}, {{long}}], 10);
+                    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map)
+                    L.geoJSON({{ geojson }}, {}).addTo(map)
+                </script>
+            {% endif %}
+
             {% for org in development_plan.organisations %}
               {% if not org.geometry %}
                     <p>No geometry found for {{org.name}}</p>

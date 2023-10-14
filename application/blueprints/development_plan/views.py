@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import geopandas
+import geopandas as gpd
 from flask import (
     Blueprint,
     Response,
@@ -162,7 +162,7 @@ def add_geography(reference):
                         filename = secure_filename(file.filename)
                         shapefile_path = os.path.join(tempdir, filename)
                         file.save(shapefile_path)
-                        gdf = geopandas.read_file(shapefile_path)
+                        gdf = gpd.read_file(shapefile_path)
                         geojson = gdf.to_crs(epsg="4326").to_json()
                         geography_type = DevelopmentPlanGeographyType.query.get(
                             "combined-planning-authority-district"
@@ -181,15 +181,23 @@ def add_geography(reference):
                     url_for("development_plan.plan", reference=plan.reference)
                 )
 
-    geographies = {}
+    geographies = []
+    references = []
     for org in plan.organisations:
-        if org.geometry is not None:
-            geographies[org.organisation] = org
-        else:
-            geographies[org.organisation] = None
+        if org.geojson is not None:
+            references.append(org.statistical_geography)
+            geographies.append(org.geojson)
 
+    geography = combine_feature_collections(geographies)
+    geography_reference = ":".join(references)
+    gdf = gpd.read_file(json.dumps(geography), driver="GeoJSON")
+    coords = {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}
     return render_template(
-        "plan/choose-geography.html", development_plan=plan, geographies=geographies
+        "plan/choose-geography.html",
+        development_plan=plan,
+        geography=geography,
+        geography_reference=geography_reference,
+        coords=coords,
     )
 
 

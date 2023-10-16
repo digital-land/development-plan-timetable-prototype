@@ -8,7 +8,7 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if "user" not in session and current_app.config.get("AUTHENTICATION_ON", False):
-            return redirect(url_for("auth.login", redirect_url=request.path))
+            return redirect(url_for("auth.login", redirect_url=request.url))
         return f(*args, **kwargs)
 
     return decorated

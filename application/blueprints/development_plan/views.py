@@ -22,6 +22,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
+from application.blueprints.auth.utils import requires_auth
 from application.blueprints.development_plan.forms import (
     DocumentForm,
     EventForm,
@@ -64,6 +65,7 @@ def plan(reference):
 
 
 @development_plan.route("/<string:reference>/edit", methods=["GET", "POST"])
+@requires_auth
 def edit(reference):
     plan = DevelopmentPlan.query.get(reference)
 
@@ -88,6 +90,7 @@ def edit(reference):
 
 
 @development_plan.route("/add", methods=["GET", "POST"])
+@requires_auth
 def new():
     # check if creating record for a given LPA
     # requests.get...
@@ -118,6 +121,7 @@ def new():
 
 
 @development_plan.route("/<string:reference>/geography/add", methods=["GET", "POST"])
+@requires_auth
 def add_geography(reference):
     plan = DevelopmentPlan.query.get(reference)
 
@@ -219,6 +223,7 @@ def add_geography(reference):
 
 
 @development_plan.route("/<string:reference>/geography/edit", methods=["GET", "POST"])
+@requires_auth
 def edit_geography(reference):
     plan = DevelopmentPlan.query.get(reference)
 
@@ -239,6 +244,7 @@ def edit_geography(reference):
 
 
 @development_plan.route("/<string:reference>/timetable/add", methods=["GET", "POST"])
+@requires_auth
 def add_event(reference):
     plan = DevelopmentPlan.query.get(reference)
 
@@ -275,6 +281,7 @@ def add_event(reference):
     "/<string:reference>/timetable/<string:event_reference>/edit",
     methods=["GET", "POST"],
 )
+@requires_auth
 def edit_event(reference, event_reference):
     plan = DevelopmentPlan.query.get(reference)
     event = DevelopmentPlanEvent.query.filter(
@@ -317,6 +324,7 @@ def edit_event(reference, event_reference):
 
 
 @development_plan.get("/<string:reference>/timetable/<string:event_reference>/delete")
+@requires_auth
 def delete_event(reference, event_reference):
     event = DevelopmentPlanEvent.query.filter(
         DevelopmentPlanEvent.development_plan_reference == reference,
@@ -332,6 +340,7 @@ def delete_event(reference, event_reference):
 
 
 @development_plan.route("/<string:reference>/document/add", methods=["GET", "POST"])
+@requires_auth
 def add_document(reference):
     plan = DevelopmentPlan.query.get(reference)
 
@@ -363,6 +372,7 @@ def add_document(reference):
 
 
 @development_plan.get("/<string:reference>/document/<string:document_reference>/edit")
+@requires_auth
 def edit_document(reference, document_reference):
     plan = DevelopmentPlan.query.get(reference)
     document = DevelopmentPlanDocument.query.get(document_reference)
@@ -393,6 +403,7 @@ def edit_document(reference, document_reference):
 
 
 @development_plan.get("/<string:reference>/document/<string:document_reference>/delete")
+@requires_auth
 def delete_document(reference, document_reference):
     document = DevelopmentPlanDocument.query.get(document_reference)
     if document is None:

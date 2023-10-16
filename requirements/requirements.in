@@ -11,3 +11,4 @@ requests
 authlib
 shapely
 geopandas
+is-safe-url

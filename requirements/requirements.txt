@@ -64,6 +64,8 @@ gunicorn==21.2.0
     # via -r requirements/requirements.in
 idna==3.4
     # via requests
+is-safe-url==1.0
+    # via -r requirements/requirements.in
 itsdangerous==2.1.2
     # via
     #   flask

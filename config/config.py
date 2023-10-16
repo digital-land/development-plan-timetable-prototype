@@ -23,6 +23,7 @@ class Config:
     AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
     AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
     AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
+    SAFE_URLS = set(os.getenv("SAFE_URLS", "").split(","))
     AUTHENTICATION_ON = _to_boolean(os.getenv("AUTHENTICATION_ON", None))
     MAX_DEVELOPMENT_PLANS = int(os.getenv("MAX_DEVELOPMENT_PLANS", 10))
     PLANNING_DATA_API_URL = os.getenv(

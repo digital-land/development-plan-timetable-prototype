@@ -17,6 +17,7 @@ def create_app(config_filename):
     register_context_processors(app)
     register_templates(app)
     register_filters(app)
+    register_globals(app)
     register_extensions(app)
     register_commands(app)
 
@@ -52,6 +53,16 @@ def register_filters(app):
     from application.filters import get_date_part
 
     app.add_template_filter(get_date_part, name="date_part")
+
+    from digital_land_frontend.filters import is_list_filter
+
+    app.add_template_filter(is_list_filter, name="is_list")
+
+
+def register_globals(app):
+    from digital_land_frontend.globals import random_int
+
+    app.jinja_env.globals.update(random_int=random_int)
 
 
 def register_extensions(app):

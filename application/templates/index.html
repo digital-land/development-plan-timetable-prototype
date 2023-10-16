@@ -26,12 +26,11 @@
 
     <h2 class="govuk-heading-l">Get started</h2>
 
-    {% if session["user"] %}
-      <a href="{{ url_for('development_plan.new') }}" class="govuk-button govuk-button--secondary"><span class="govuk-!-margin-right-1">✚ </span>Add new plan</a>
+    {% if config['AUTHENTICATION_ON'] and session["user"] %}
+      <a href="{{ url_for('development_plan.new') }}" class="govuk-button govuk-button--secondary"><span class="govuk-!-margin-right-1">✚ </span>Add new plan record</a>
       <p class="govuk-body">or</p>
     {% else %}
-    <a href="{{ url_for('auth.login') }}" class="govuk-button govuk-button--secondary">Sign in to add a plan</a>
-
+      <a href="{{ url_for('auth.login') }}" class="govuk-button">Sign in to add a plan</a>
     {% endif %}
     <p class="govuk-body">
       <a href="{{ url_for('organisation.organisations') }}" class="govuk-link">Find by organisation</a>

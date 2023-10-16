@@ -23,7 +23,7 @@
               Is the area shown correct?
             </h1>
           </legend>
-          {% if geographies|length %}
+          {% if geographies|length and geography and geography_reference %}
             {% set map_id = "map-" + random_int(5) %}
             <div class="app-map-wrapper">
               <div id="{{ map_id }}" style="height: 450px;">
@@ -32,6 +32,13 @@
               const AppMap = {}
               AppMap.mapID = '{{map_id}}';
               AppMap.features = []
+              AppMap.geography = {
+                'featureCollection': {{geography | tojson}},
+                'centrePoint': {
+                  'lat': {{ coords["lat"] }},
+                  'long': {{ coords["long"] }}
+                }
+              }
               {% for geog in geographies %}
               {% set geojson = geog | tojson %}
               let features_{{loop.index}} = {{ geojson }}['features']
@@ -42,25 +49,11 @@
           {% endif %}
           <!--{{ geographies }}-->
 
-            {% if geography and geography_reference %}
-              <div>
-                {% set geojson = geography | tojson %}
-                {% set lat = coords["lat"] %}
-                {% set long = coords["long"]%}
-                <div id="map" style="height: 45vh;">
-              </div>
-                <script>
-                    let map1 = L.map('map').setView([{{lat}}, {{long}}], 10);
-                    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map1)
-                    L.geoJSON({{ geojson }}, {}).addTo(map1)
-                </script>
+          {% for org in development_plan.organisations %}
+            {% if not org.geometry %}
+                  <p>No geometry found for {{org.name}}</p>
             {% endif %}
-
-            {% for org in development_plan.organisations %}
-              {% if not org.geometry %}
-                    <p>No geometry found for {{org.name}}</p>
-              {% endif %}
-            {% endfor %}
+          {% endfor %}
 
           </div>
            <!--<div id="contact-hint" class="govuk-hint">
@@ -111,10 +104,10 @@
 
 {% block pageScripts %}
 <script>
-  let map = L.map(AppMap.mapID).setView([52.561928, -1.464854], 6);
+  let map = L.map(AppMap.mapID).setView([AppMap.geography.centrePoint.lat, AppMap.geography.centrePoint.long], 6);
   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map)
   var boundary_layer = L.geoJSON(AppMap.features, {}).addTo(map)
-  const bbox = dptp.getBoundingBox(AppMap.features)
+  const bbox = dptp.getBoundingBox(AppMap.geography.featureCollection)
   map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
 </script>
 {% endblock pageScripts %}

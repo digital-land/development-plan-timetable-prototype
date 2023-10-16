@@ -29,7 +29,13 @@ function postRecordToRegister (url, data, onSuccess, onError) {
 
 function getBoundingBox(features, units) {
   const _units = units || 1
-  const collection = turf.featureCollection(features)
+
+  // check if features param is already a FeatureCollection
+  let collection = features
+  if (!Object.prototype.hasOwnProperty.call(features, 'type') || features.type !== 'FeatureCollection') {
+    collection = turf.featureCollection(features)
+  }
+
   const bufferedCollection = turf.buffer(collection, _units)
   const envelope = turf.envelope(bufferedCollection)
   return envelope.bbox

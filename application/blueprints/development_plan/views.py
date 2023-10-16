@@ -184,14 +184,9 @@ def add_geography(reference):
     geographies = []
     references = []
     missing_geographies = []
-    for org in plan.organisations:
-        if org.geojson is not None:
-            references.append(org.statistical_geography)
-            geographies.append(org.geojson)
-    
+
     for org in plan.organisations:
         if org.geometry is not None:
-            # geographies[org.organisation] = org
             references.append(org.statistical_geography)
             geographies.append(org.geojson)
         else:

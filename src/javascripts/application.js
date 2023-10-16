@@ -1,4 +1,4 @@
-/* global fetch */
+/* global fetch, turf */
 import SelectOrNew from './modules/select-or-new'
 import MultiSelect from './modules/multi-select'
 
@@ -27,7 +27,16 @@ function postRecordToRegister (url, data, onSuccess, onError) {
     })
 }
 
+function getBoundingBox(features, units) {
+  const _units = units || 1
+  const collection = turf.featureCollection(features)
+  const bufferedCollection = turf.buffer(collection, _units)
+  const envelope = turf.envelope(bufferedCollection)
+  return envelope.bbox
+}
+
 window.dptp = {
+  getBoundingBox: getBoundingBox,
   postRecordToRegister: postRecordToRegister,
   MultiSelect: MultiSelect,
   SelectOrNew: SelectOrNew

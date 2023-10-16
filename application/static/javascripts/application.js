@@ -454,7 +454,7 @@
     this.options.emptyInputOnConfirm = params.emptyInputOnConfirm || true;
   };
 
-  /* global fetch */
+  /* global fetch, turf */
 
   function postRecordToRegister (url, data, onSuccess, onError) {
     fetch(url, {
@@ -481,7 +481,16 @@
       });
   }
 
+  function getBoundingBox(features, units) {
+    const _units = units || 1;
+    const collection = turf.featureCollection(features);
+    const bufferedCollection = turf.buffer(collection, _units);
+    const envelope = turf.envelope(bufferedCollection);
+    return envelope.bbox
+  }
+
   window.dptp = {
+    getBoundingBox: getBoundingBox,
     postRecordToRegister: postRecordToRegister,
     MultiSelect: MultiSelect,
     SelectOrNew: SelectOrNew

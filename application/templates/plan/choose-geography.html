@@ -3,6 +3,7 @@
 {% block pageStylesheets %}
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+  <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
 {% endblock pageStylesheets %}
 
 {% block content %}
@@ -22,6 +23,23 @@
               Is the area shown correct?
             </h1>
           </legend>
+          {% if geographies|length %}
+            {% set map_id = "map-" + random_int(5) %}
+            <div class="app-map-wrapper">
+              <div id="{{ map_id }}" style="height: 450px;">
+            </div>
+            <script>
+              const AppMap = {}
+              AppMap.mapID = '{{map_id}}';
+              AppMap.features = []
+              {% for geog in geographies %}
+              {% set geojson = geog | tojson %}
+              let features_{{loop.index}} = {{ geojson }}['features']
+              AppMap.features.push(...features_{{loop.index}})
+              {% endfor %}
+            </script>
+
+          {% endif %}
           <!--{{ geographies }}-->
 
             {% if geography and geography_reference %}
@@ -32,9 +50,9 @@
                 <div id="map" style="height: 45vh;">
               </div>
                 <script>
-                    let map = L.map('map').setView([{{lat}}, {{long}}], 10);
-                    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map)
-                    L.geoJSON({{ geojson }}, {}).addTo(map)
+                    let map1 = L.map('map').setView([{{lat}}, {{long}}], 10);
+                    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map1)
+                    L.geoJSON({{ geojson }}, {}).addTo(map1)
                 </script>
             {% endif %}
 
@@ -75,19 +93,11 @@
                   </label>
                   <input class="govuk-input" id="designated-plan-area" name="designated-plan-area" type="text">
                 </div>
-                <p class="govuk-body">or</p>
-
-                <div class="govuk-form-group">
-                  <label class="govuk-label" for="endpoint">URL to WFS endpoint</label>
-                  <input class="govuk-input" id="endpoint" name="endpoint" type="text">
-                </div>
               </div>
             </div>
           </div>
         </fieldset>
       </div>
-
-
 
       <div class="govuk-button-group">
         <button class="govuk-button" type="submit">Save and continue</button>
@@ -99,4 +109,12 @@
 
 {% endblock %}
 
-{% block pageScripts %}{% endblock pageScripts %}
+{% block pageScripts %}
+<script>
+  let map = L.map(AppMap.mapID).setView([52.561928, -1.464854], 6);
+  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map)
+  var boundary_layer = L.geoJSON(AppMap.features, {}).addTo(map)
+  const bbox = dptp.getBoundingBox(AppMap.features)
+  map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
+</script>
+{% endblock pageScripts %}

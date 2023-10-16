@@ -92,7 +92,7 @@
           </h2>
           <div class="app-summary-card__actions">
             {%- if plan.geography %}
-            <a href="{{ url_for('development_plan.add_geography', reference=plan.reference) }}" class="govuk-link">Edit<span class="govuk-visually-hidden"> record</span></a>
+            <a href="{{ url_for('development_plan.edit_geography', reference=plan.reference) }}" class="govuk-link">Edit<span class="govuk-visually-hidden"> record</span></a>
             {% else %}
             <a href="{{ url_for('development_plan.add_geography', reference=plan.reference) }}" class="govuk-link">Add<span class="govuk-visually-hidden"> record</span></a>
             {% endif -%}

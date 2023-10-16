@@ -46,17 +46,20 @@ development_plan = Blueprint(
 )
 
 
+def _get_plan_geography_centre(geography):
+    if geography is not None:
+        gdf = gpd.GeoDataFrame.from_features(geography.geojson["features"])
+        return {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}
+    return None
+
+
 @development_plan.route("/<string:reference>")
 def plan(reference):
     development_plan = DevelopmentPlan.query.get(reference)
-    coords = None
-    if development_plan.geography is not None:
-        gdf = gpd.GeoDataFrame.from_features(
-            development_plan.geography.geojson["features"]
-        )
-        coords = {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}
     return render_template(
-        "plan/plan.html", development_plan=development_plan, coords=coords
+        "plan/plan.html",
+        development_plan=development_plan,
+        coords=_get_plan_geography_centre(development_plan.geography),
     )
 
 
@@ -155,7 +158,7 @@ def add_geography(reference):
                     geojson=geojson,
                     development_plan_geography_type_reference=geography_type.reference,
                 )
-                plan.geography = g
+            plan.geography = g
             db.session.add(plan)
             db.session.commit()
             return redirect(url_for("development_plan.plan", reference=plan.reference))
@@ -212,6 +215,26 @@ def add_geography(reference):
         coords=coords,
         geographies=geographies,
         missing_geographies=missing_geographies,
+    )
+
+
+@development_plan.route("/<string:reference>/geography/edit", methods=["GET", "POST"])
+def edit_geography(reference):
+    plan = DevelopmentPlan.query.get(reference)
+
+    if request.method == "POST":
+        change_geography = request.form.get("change-geography")
+        if change_geography == "yes":
+            plan.geography = None
+            db.session.add(plan)
+            db.session.commit()
+            return redirect(
+                url_for("development_plan.add_geography", reference=reference)
+            )
+    return render_template(
+        "plan/remove-geography.html",
+        development_plan=plan,
+        coords=_get_plan_geography_centre(plan.geography),
     )
 
 

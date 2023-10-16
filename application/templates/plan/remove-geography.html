@@ -1,0 +1,78 @@
+{% extends 'layouts/base-with-map.html' %}
+
+{% block content %}
+
+<span class="govuk-caption-xl">Development plan: {{ development_plan.reference }}</span>
+<h1 class="govuk-heading-xl">Change area covered by this plan</h1>
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-two-thirds">
+    <form class="govuk-form" method="POST" action="{{url_for('development_plan.edit_geography', reference=development_plan.reference)}}" enctype="multipart/form-data">
+
+      <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h1 class="govuk-fieldset__heading">
+              Are you sure you want to change this area?
+            </h1>
+          </legend>
+          {%- if development_plan.geography %}
+          {%- set map_id = "map-" + development_plan.geography.reference %}
+          <p class="govuk-hint govuk-!-margin-top-0">Reference: {{ development_plan.geography.reference }}</p>
+          <div class="app-map-wrapper">
+            <div id="{{ map_id }}" style="height: 400px;">
+          </div>
+          <script>
+            const AppMap = {}
+            AppMap.mapID = '{{map_id}}';
+            AppMap.geography = {
+              'featureCollection': {{development_plan.geography.geojson | tojson}},
+              'centrePoint': {
+                'lat': {{ coords["lat"] }},
+                'long': {{ coords["long"] }}
+              }
+            }
+          </script>
+          {%- else %}
+          <p class="govuk-hint govuk-!-margin-bottom-0">No geography captured for this plan</p>
+          {% endif -%}
+
+          </div>
+          <div class="govuk-!-margin-top-6">
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input" id="change-geography-1" name="change-geography" type="radio" value="yes">
+              <label class="govuk-label govuk-radios__label" for="change-geography-1">
+                Yes
+              </label>
+            </div>
+            <div class="govuk-radios" data-module="govuk-radios">
+              <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="change-geography-2" name="change-geography" type="radio" value="no">
+                <label class="govuk-label govuk-radios__label" for="change-geography-2">
+                  No
+                </label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="govuk-button-group">
+        <button class="govuk-button govuk-button--warning" type="submit">Remove and add new area</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}
+<script>
+  let map = L.map(AppMap.mapID).setView([AppMap.geography.centrePoint.lat, AppMap.geography.centrePoint.long], 6);
+  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map)
+  var boundary_layer = L.geoJSON(AppMap.geography.featureCollection, {}).addTo(map)
+  const bbox = dptp.getBoundingBox(AppMap.geography.featureCollection)
+  map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
+</script>
+{% endblock pageScripts %}

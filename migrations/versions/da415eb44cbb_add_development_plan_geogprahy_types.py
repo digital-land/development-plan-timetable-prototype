@@ -15,7 +15,7 @@ import sqlalchemy as sa
 
 from sqlalchemy.orm.session import Session
 
-from application.models import DocumentType, DevelopmentPlanGeographyType
+from application.models import DevelopmentPlanGeographyType
 
 
 # revision identifiers, used by Alembic.
@@ -53,32 +53,7 @@ def upgrade():
         batch_op.drop_column("development_plan_geography_type")
 
     session = Session(bind=op.get_bind())
-    doc_types_url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-document-type.csv"
     geo_types_url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-geography-type.csv"
-
-    with closing(requests.get(doc_types_url, stream=True)) as r:
-        reader = csv.DictReader(
-            codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
-        )
-
-        for row in reader:
-            reference = row["reference"]
-            doc_type = session.query(DocumentType).get(reference)
-            if doc_type is None:
-                entry_date = (
-                    datetime.datetime.strptime(row["entry-date"], "%Y-%m-%d").date()
-                    if row["entry-date"]
-                    else None
-                )
-                print("adding doc type", reference, row["name"])
-                doc_type = DocumentType(
-                    reference=reference,
-                    name=row["name"],
-                    entry_date=entry_date,
-                )
-
-                session.add(doc_type)
-                session.commit()
 
     with closing(requests.get(geo_types_url, stream=True)) as r:
         reader = csv.DictReader(

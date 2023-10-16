@@ -5,7 +5,12 @@ Revises: da415eb44cbb
 Create Date: 2023-10-13 15:15:00.470196
 
 """
+import codecs
+from contextlib import closing
+import csv
+from datetime import datetime
 from alembic import op
+import requests
 import sqlalchemy as sa
 from sqlalchemy.orm.session import Session
 
@@ -29,9 +34,35 @@ def upgrade():
     session = Session(bind=op.get_bind())
     document_types = session.query(DocumentType).all()
     for document_type in document_types:
-        document_type.prefix = "developoment-plan-document-type"
+        document_type.prefix = "development-plan-document-type"
         session.add(document_type)
     session.commit()
+
+    doc_types_url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-document-type.csv"
+
+    with closing(requests.get(doc_types_url, stream=True)) as r:
+        reader = csv.DictReader(
+            codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
+        )
+
+        for row in reader:
+            reference = row["reference"]
+            doc_type = session.query(DocumentType).get(reference)
+            if doc_type is None:
+                entry_date = (
+                    datetime.datetime.strptime(row["entry-date"], "%Y-%m-%d").date()
+                    if row["entry-date"]
+                    else None
+                )
+                print("adding doc type", reference, row["name"])
+                doc_type = DocumentType(
+                    reference=reference,
+                    name=row["name"],
+                    entry_date=entry_date,
+                )
+
+                session.add(doc_type)
+                session.commit()
 
     # ### end Alembic commands ###
 

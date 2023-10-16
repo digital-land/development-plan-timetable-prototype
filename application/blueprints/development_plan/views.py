@@ -49,7 +49,15 @@ development_plan = Blueprint(
 @development_plan.route("/<string:reference>")
 def plan(reference):
     development_plan = DevelopmentPlan.query.get(reference)
-    return render_template("plan/plan.html", development_plan=development_plan)
+    coords = None
+    if development_plan.geography is not None:
+        gdf = gpd.GeoDataFrame.from_features(
+            development_plan.geography.geojson["features"]
+        )
+        coords = {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}
+    return render_template(
+        "plan/plan.html", development_plan=development_plan, coords=coords
+    )
 
 
 @development_plan.route("/<string:reference>/edit", methods=["GET", "POST"])

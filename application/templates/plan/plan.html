@@ -1,4 +1,4 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/base-with-map.html' %}
 {%- set plan = development_plan -%}
 
 {% block content %}
@@ -88,14 +88,37 @@
       <section class="app-summary-card govuk-!-margin-top-6">
         <header class="app-summary-card__header">
           <h2 class="app-summary-card__title">
-            Geography
+            Plan geography
           </h2>
           <div class="app-summary-card__actions">
-            <a href="{{ url_for('development_plan.add_geography', reference=plan.reference) }}" class="govuk-link">Edit/Add<span class="govuk-visually-hidden"> record</span></a>
+            {%- if plan.geography %}
+            <a href="{{ url_for('development_plan.add_geography', reference=plan.reference) }}" class="govuk-link">Edit<span class="govuk-visually-hidden"> record</span></a>
+            {% else %}
+            <a href="{{ url_for('development_plan.add_geography', reference=plan.reference) }}" class="govuk-link">Add<span class="govuk-visually-hidden"> record</span></a>
+            {% endif -%}
           </div>
         </header>
         <div class="app-summary-card__body">
-          {{ plan.geography.reference if plan.geography }}
+        {%- if plan.geography %}
+          {%- set map_id = "map-" + plan.geography.reference %}
+          <p class="govuk-hint govuk-!-margin-top-0">Reference: {{ plan.geography.reference }}</p>
+          <div class="app-map-wrapper">
+            <div id="{{ map_id }}" style="height: 400px;">
+          </div>
+          <script>
+            const AppMap = {}
+            AppMap.mapID = '{{map_id}}';
+            AppMap.geography = {
+              'featureCollection': {{plan.geography.geojson | tojson}},
+              'centrePoint': {
+                'lat': {{ coords["lat"] }},
+                'long': {{ coords["long"] }}
+              }
+            }
+          </script>
+        {%- else %}
+          <p class="govuk-hint govuk-!-margin-bottom-0">No geography captured for this plan</p>
+        {% endif -%}
         </div>
       </section>
     </div>
@@ -184,3 +207,13 @@
   {{ super() }}
   <script src="{{ assetPath | default('/static') }}/javascripts/table.js"></script>
 {%- endblock %}
+
+{% block pageScripts %}
+<script>
+  let map = L.map(AppMap.mapID).setView([AppMap.geography.centrePoint.lat, AppMap.geography.centrePoint.long], 6);
+  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map)
+  var boundary_layer = L.geoJSON(AppMap.geography.featureCollection, {}).addTo(map)
+  const bbox = dptp.getBoundingBox(AppMap.geography.featureCollection)
+  map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
+</script>
+{% endblock pageScripts %}

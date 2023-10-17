@@ -324,3 +324,9 @@ class Organisation(DateModel):
         lazy="subquery",
         back_populates="organisations",
     )
+
+    def has_adopted_local_plan(self):
+        for plan in self.development_plans:
+            if plan.development_plan_type == "local-plan" and plan.adopted_date != "":
+                return True
+        return False

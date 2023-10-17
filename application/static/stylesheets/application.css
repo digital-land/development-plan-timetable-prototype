@@ -7437,11 +7437,17 @@
   width: auto; }
 
 .app-summary-list__key {
+  position: relative;
   background: #f3f2f1;
   padding: 15px; }
 
 .app-summary-list__value {
   padding: 15px; }
+
+.app-summary-list__tag {
+  position: absolute;
+  top: 15px;
+  right: 15px; }
 
 .js-hidden {
   display: none !important; }

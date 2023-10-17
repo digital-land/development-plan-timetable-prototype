@@ -11,10 +11,18 @@
     width: auto;
   }
   &__key {
+    position: relative;
     background: govuk-colour('light-grey');
     @include govuk-responsive-padding(3);
   }
   &__value {
     @include govuk-responsive-padding(3);
+  }
+
+  &__tag {
+    position: absolute;
+    top: govuk-spacing(3);
+    right: govuk-spacing(3);
+    //transform: translate(0, -50%);
   }
 }

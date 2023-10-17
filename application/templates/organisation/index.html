@@ -83,6 +83,11 @@
           <dt class="govuk-summary-list__key app-summary-list__key">
             <h3 class="govuk-heading-s govuk-!-margin-bottom-1"><a href="{{ url_for('organisation.organisation', reference=organisation.organisation)}}" class="govuk-link govuk-link--text-colour">{{ organisation.name }}</a></h3>
             <span class="app-code govuk-hint app-code--block app-code--s govuk-!-margin-bottom-0">{{ organisation.organisation }}</span>
+            {% if organisation.has_adopted_local_plan() %}
+              <span class="govuk-tag govuk-tag--turquoise app-summary-list__tag">
+                <span class="govuk-visually-hidden">We have collected the </span>Adopted local plan &#10003;
+                <span class="govuk-visually-hidden">for {{ organisation.name }}</span></span>
+            {% endif %}
           </dt>
           <dd class="govuk-summary-list__value app-summary-list__value">
             {% if organisation.development_plans | length > 0 %}

@@ -110,7 +110,11 @@ def new():
             plan.reference = (
                 f"{plan.reference}-{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}"
             )
-        plan.adopted_date = f"{form.adopted_date_year.data}-{form.adopted_date_month.data}-{form.adopted_date_day.data}"
+        if form.adopted_date_year and form.adopted_date_month and form.adopted_date_day:
+            year = form.adopted_date_year.data
+            month = form.adopted_date_month.data
+            day = form.adopted_date_day.data
+            plan.adopted_date = f"{year}-{month}-{day}"
         db.session.add(plan)
         db.session.commit()
         return redirect(
@@ -182,11 +186,12 @@ def add_geography(reference):
                         geography_type = DevelopmentPlanGeographyType.query.get(
                             "combined-planning-authority-district"
                         )
+                        geog_type_ref = geography_type.reference
                         g = DevelopmentPlanGeography(
                             prefix="designated‑plan‑area",
                             reference=reference,
                             geojson=json.loads(geojson),
-                            development_plan_geography_type_reference=geography_type.reference,
+                            development_plan_geography_type_reference=geog_type_ref,
                         )
                         plan.geography = g
                         db.session.add(plan)
@@ -206,11 +211,15 @@ def add_geography(reference):
             geographies.append(org.geojson)
         else:
             missing_geographies.append(org)
-
-    geography = combine_feature_collections(geographies)
-    geography_reference = ":".join(references)
-    gdf = gpd.read_file(json.dumps(geography), driver="GeoJSON")
-    coords = {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}
+    if geographies:
+        geography = combine_feature_collections(geographies)
+        geography_reference = ":".join(references)
+        gdf = gpd.read_file(json.dumps(geography), driver="GeoJSON")
+        coords = {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}
+    else:
+        geography = None
+        geography_reference = None
+        coords = None
     return render_template(
         "plan/choose-geography.html",
         development_plan=plan,

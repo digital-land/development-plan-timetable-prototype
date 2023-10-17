@@ -97,5 +97,8 @@ def get_adopted_local_plans():
     )
 
 
-def plans_with_geography_count():
-    return DevelopmentPlan.query.filter(DevelopmentPlan.geography.has()).count()
+def get_plans_with_geography(count=False):
+    query = DevelopmentPlan.query.filter(DevelopmentPlan.geography.has())
+    if count:
+        return query.count()
+    return query.all()

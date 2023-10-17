@@ -9,9 +9,9 @@ from application.utils import (
     get_adopted_local_plans,
     get_adopted_plans,
     get_organisations_expected_to_publish_plan,
+    get_plans_with_geography,
     local_plan_count,
     plan_count,
-    plans_with_geography_count,
 )
 
 base = Blueprint("base", __name__)
@@ -49,12 +49,13 @@ def stats():
                 for organisation in plan.organisations
             ]
         ),
-        plans_with_geography_count=plans_with_geography_count(),
+        plans_with_geography_count=get_plans_with_geography(count=True),
     )
 
 
 @base.route("/roulette")
 def roulette():
+    development_plans = DevelopmentPlan.query.all()
     adopted_local_plans = get_adopted_local_plans()
     organisations = get_organisations_expected_to_publish_plan()
     orgs_with_adopted_lp = [
@@ -71,6 +72,14 @@ def roulette():
             return redirect(
                 url_for("organisation.organisation", reference=random_org.organisation)
             )
+        if option == "missing-geography":
+            plans_without_geography = _exclude(
+                development_plans, get_plans_with_geography()
+            )
+            random_plan = random.choice(plans_without_geography)
+            return redirect(
+                url_for("development_plan.plan", reference=random_plan.reference)
+            )
 
     return render_template("roulette.html")
 
@@ -78,3 +87,10 @@ def roulette():
 def _exclude_orgs(main_list, to_exclude):
     orgs_to_remove = [org.organisation for org in to_exclude]
     return [org for org in main_list if org.organisation not in orgs_to_remove]
+
+
+def _exclude(main_list, to_exclude, attr_name="reference"):
+    items_to_remove = [getattr(item, attr_name) for item in to_exclude]
+    return [
+        item for item in main_list if getattr(item, attr_name) not in items_to_remove
+    ]

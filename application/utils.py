@@ -59,3 +59,43 @@ def combine_feature_collections(feature_collections):
     combined_fc = {"type": "FeatureCollection", "features": combined_features}
 
     return combined_fc
+
+
+def plan_count():
+    return DevelopmentPlan.query.count()
+
+
+def adopted_plan_count():
+    return DevelopmentPlan.query.filter(
+        DevelopmentPlan.adopted_date.isnot(None)
+    ).count()
+
+
+def local_plan_count():
+    return DevelopmentPlan.query.filter(
+        DevelopmentPlan.development_plan_type == "local-plan"
+    ).count()
+
+
+def adopted_local_plan_count():
+    return (
+        DevelopmentPlan.query.filter(
+            DevelopmentPlan.development_plan_type == "local-plan"
+        )
+        .filter(DevelopmentPlan.adopted_date.isnot(None))
+        .count()
+    )
+
+
+def get_adopted_local_plans():
+    return (
+        DevelopmentPlan.query.filter(
+            DevelopmentPlan.development_plan_type == "local-plan"
+        )
+        .filter(DevelopmentPlan.adopted_date.isnot(None))
+        .all()
+    )
+
+
+def plans_with_geography_count():
+    return DevelopmentPlan.query.filter(DevelopmentPlan.geography.has()).count()

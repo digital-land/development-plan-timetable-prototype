@@ -1,0 +1,51 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+
+    <span class="govuk-caption-xl">Development plan data collector</span>
+    <h1 class="govuk-heading-xl">Collection stats</h1>
+
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plan_count }}</span>
+      <span class="dl-data-item__label">Development plans</span>
+    </div>
+
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ adopted_plan_count }}</span>
+      <span class="dl-data-item__label">Adopted development plans</span>
+    </div>
+
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ local_plan_count }}</span>
+      <span class="dl-data-item__label">Local plans</span>
+    </div>
+
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ adopted_local_plan_count }}</span>
+      <span class="dl-data-item__label">Adopted local plans</span>
+    </div>
+
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ organisation_count }}</span>
+      <span class="dl-data-item__label">Organisations expected to publish a local plan</span>
+    </div>
+
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ orgs_with_adopted_lp_count }}</span>
+      <span class="dl-data-item__label">Organisations with adopted local plans</span>
+    </div>
+
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plans_with_geography_count }}</span>
+      <span class="dl-data-item__label">Plans with geography</span>
+    </div>
+
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plan_count - plans_with_geography_count }}</span>
+      <span class="dl-data-item__label">Plans without geography</span>
+    </div>
+  </div>
+</div>
+{% endblock content %}

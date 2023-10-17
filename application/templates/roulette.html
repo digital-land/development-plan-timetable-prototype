@@ -1,0 +1,13 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+
+    <span class="govuk-caption-xl">Development plan data collector</span>
+    <h1 class="govuk-heading-xl">Roulette</h1>
+
+    <a href="{{ url_for('base.roulette', random='organisation') }}" class="govuk-button">Take me planning authority without adopted local plan</a>
+  </div>
+</div>
+{% endblock content %}

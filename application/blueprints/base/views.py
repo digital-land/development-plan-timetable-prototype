@@ -1,4 +1,6 @@
-from flask import Blueprint, current_app, render_template
+import random
+
+from flask import Blueprint, current_app, redirect, render_template, request, url_for
 
 from application.models import DevelopmentPlan
 from application.utils import (
@@ -49,3 +51,30 @@ def stats():
         ),
         plans_with_geography_count=plans_with_geography_count(),
     )
+
+
+@base.route("/roulette")
+def roulette():
+    adopted_local_plans = get_adopted_local_plans()
+    organisations = get_organisations_expected_to_publish_plan()
+    orgs_with_adopted_lp = [
+        organisation
+        for plan in adopted_local_plans
+        for organisation in plan.organisations
+    ]
+    orgs_without_adopted_lp = _exclude_orgs(organisations, orgs_with_adopted_lp)
+
+    if "random" in request.args:
+        option = request.args.get("random")
+        if option == "organisation":
+            random_org = random.choice(orgs_without_adopted_lp)
+            return redirect(
+                url_for("organisation.organisation", reference=random_org.organisation)
+            )
+
+    return render_template("roulette.html")
+
+
+def _exclude_orgs(main_list, to_exclude):
+    orgs_to_remove = [org.organisation for org in to_exclude]
+    return [org for org in main_list if org.organisation not in orgs_to_remove]

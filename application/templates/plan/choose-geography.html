@@ -16,6 +16,8 @@
   <div class="govuk-grid-column-two-thirds">
     <form class="govuk-form" method="POST" action="{{url_for('development_plan.add_geography', reference=development_plan.reference)}}" enctype="multipart/form-data">
 
+      {# if we have a geography then show on map and ask user to confirm #}
+      {% if geographies|length and geography and geography_reference %}
       <div class="govuk-form-group">
         <fieldset class="govuk-fieldset">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
@@ -23,7 +25,7 @@
               Is the area shown correct?
             </h1>
           </legend>
-          {% if geographies|length and geography and geography_reference %}
+
             {% set map_id = "map-" + random_int(5) %}
             <div class="app-map-wrapper">
               <div id="{{ map_id }}" style="height: 450px;">
@@ -45,8 +47,6 @@
               AppMap.features.push(...features_{{loop.index}})
               {% endfor %}
             </script>
-
-          {% endif %}
           <!--{{ geographies }}-->
 
           {% for org in development_plan.organisations %}
@@ -91,6 +91,31 @@
           </div>
         </fieldset>
       </div>
+      {% else %}
+      <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-warning-text__assistive">Warning</span>
+          We don't have any boundaries for the authoring planning authorities. Please provide one.
+        </strong>
+      </div>
+
+      <div class="govuk-form-group">
+        <input id="geography-provided" type="hidden" name="geography-provided" value="no">
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="file-upload">
+            Upload shapefile
+          </label>
+          <input class="govuk-file-upload" id="file-upload" name="fileUpload" type="file">
+        </div>
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="designated-plan-area">
+            Area name
+          </label>
+          <input class="govuk-input" id="designated-plan-area" name="designated-plan-area" type="text">
+        </div>
+      </div>
+      {% endif %}
 
       <div class="govuk-button-group">
         <button class="govuk-button" type="submit">Save and continue</button>

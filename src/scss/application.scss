@@ -11,6 +11,10 @@
 @import "components/button";
 @import "components/summary-list";
 
+.js-hidden {
+  display: none !important;
+}
+
 .app-hidden {
   display: none
 }

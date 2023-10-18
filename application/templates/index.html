@@ -11,8 +11,6 @@
     <p class="govuk-body">You can create data that meets the <a href="https://digital-land.github.io/specification/specification/development-plan/" class="govuk-link">development plan data standard</a> with this prototype. You can record all the different development plans a local planning authority (LPA) makes (including local plans and neighbourhood plans) as data.</p>
     <p class="govuk-body">For each plan you can capture the events that happen and any documents that are published online during the plan-making process.</p>
 
-    <p class="govuk-body">This prototype is being used for a limited time to help inform our work on data standards. Access is by invite only.</p>
-
     <h2 class="govuk-heading-l">The process for collecting local plans</h2>
     <ol class="govuk-list govuk-list--number">
       <li>You enter data into this prototype</li>
@@ -24,7 +22,7 @@
     <h2 class="govuk-heading-l">Get started</h2>
 
     {% if session["user"] %}
-      <a href="{{ url_for('development_plan.new') }}" class="govuk-button govuk-button--secondary"><span class="govuk-!-margin-right-1">✚ </span>Add new plan record</a>
+      <a href="{{ url_for('development_plan.new') }}" class="govuk-button govuk-button--secondary"><span class="govuk-!-margin-right-1">✚ </span>Add new plan</a>
       <p class="govuk-body">or</p>
     {% else %}
     <a href="{{ url_for('auth.login') }}" class="govuk-button govuk-button--secondary">Sign in to add a plan</a>
@@ -54,4 +52,8 @@
     <p class="govuk-body"><a href="{{ url_for('development_plan.download') }}" class="govuk-link">Download a zip file of the data collected</a></p>
   </div>
 </div>
+
+<hr class="govuk-section-break--l">
+
+<p class="govuk-body">This prototype is being used for a limited time to help inform our work on data standards. Access is by invite only.</p>
 {% endblock content %}

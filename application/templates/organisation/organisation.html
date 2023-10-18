@@ -20,6 +20,6 @@
   {% else %}
   <p class="govuk-body"><span class="govuk-hint">No plans recorded</span></p>
   {% endif %}
-  <a href="{{ url_for('development_plan.new', organisation=organisation.organisation) }}" class="govuk-button govuk-button--secondary">+ add new plan record</a>
+  <a href="{{ url_for('development_plan.new', organisation=organisation.organisation) }}" class="govuk-button govuk-button--secondary">+ add new plan</a>
 
 {% endblock content %}

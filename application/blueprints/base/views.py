@@ -1,6 +1,7 @@
 import random
 
 from flask import Blueprint, current_app, redirect, render_template, request, url_for
+from sqlalchemy import not_
 
 from application.models import DevelopmentPlan
 from application.utils import (
@@ -9,6 +10,7 @@ from application.utils import (
     get_adopted_local_plans,
     get_adopted_plans,
     get_organisations_expected_to_publish_plan,
+    get_plans_query,
     get_plans_with_geography,
     local_plan_count,
     plan_count,
@@ -77,6 +79,18 @@ def roulette():
                 development_plans, get_plans_with_geography()
             )
             random_plan = random.choice(plans_without_geography)
+            return redirect(
+                url_for("development_plan.plan", reference=random_plan.reference)
+            )
+        condition = None
+        if option == "no-documents":
+            condition = not_(DevelopmentPlan.documents.any())
+        if option == "no-events":
+            condition = not_(DevelopmentPlan.timetable.any())
+
+        if condition is not None:
+            filtered_plans = get_plans_query(condition)
+            random_plan = random.choice(filtered_plans)
             return redirect(
                 url_for("development_plan.plan", reference=random_plan.reference)
             )

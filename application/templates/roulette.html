@@ -7,9 +7,22 @@
     <span class="govuk-caption-xl">Development plan data collector</span>
     <h1 class="govuk-heading-xl">Roulette</h1>
 
-    <a href="{{ url_for('base.roulette', random='organisation') }}" class="govuk-button">Take me planning authority without adopted local plan</a>
+    <p class="govuk-body">
+      <a href="{{ url_for('base.roulette', random='organisation') }}" class="govuk-button">Take me planning authority without adopted local plan</a>
+    </p>
 
-    <a href="{{ url_for('base.roulette', random='missing-geography') }}" class="govuk-button">Take me to a plan missing a geography</a>
+    <p class="govuk-body">
+      <a href="{{ url_for('base.roulette', random='missing-geography') }}" class="govuk-button">Take me to a plan missing a geography</a>
+    </p>
+
+    <p class="govuk-body">
+      <a href="{{ url_for('base.roulette', random='no-documents') }}" class="govuk-button">Take me to a plan with no documents</a>
+    </p>
+
+    <p class="govuk-body">
+      <a href="{{ url_for('base.roulette', random='no-events') }}" class="govuk-button">Take me to a plan with no events</a>
+    </p>
+
   </div>
 </div>
 {% endblock content %}

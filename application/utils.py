@@ -102,3 +102,10 @@ def get_plans_with_geography(count=False):
     if count:
         return query.count()
     return query.all()
+
+
+def get_plans_query(condition, count=False):
+    query = DevelopmentPlan.query.filter(condition)
+    if count:
+        return query.count()
+    return query.all()

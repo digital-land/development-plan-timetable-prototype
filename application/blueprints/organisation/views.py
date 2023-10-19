@@ -48,4 +48,10 @@ def organisations():
 @organisation_bp.route("/<string:reference>")
 def organisation(reference):
     organisation = Organisation.query.get(reference)
-    return render_template("organisation/organisation.html", organisation=organisation)
+    plans = {}
+    for plan in organisation.development_plans:
+        plans.setdefault(plan.development_plan_type, []).append(plan)
+
+    return render_template(
+        "organisation/organisation.html", organisation=organisation, plans=plans
+    )

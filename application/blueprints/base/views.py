@@ -1,18 +1,19 @@
 import random
 
-from flask import Blueprint, current_app, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, url_for
 from sqlalchemy import not_
 
 from application.models import DevelopmentPlan
 from application.utils import (
+    _exclude_orgs,
     adopted_local_plan_count,
     adopted_plan_count,
     get_adopted_local_plans,
-    get_adopted_plans,
     get_organisations_expected_to_publish_plan,
     get_plans_query,
     local_plan_count,
     plan_count,
+    split_orgs_by_adopted_locl_plan,
 )
 
 base = Blueprint("base", __name__)
@@ -20,16 +21,18 @@ base = Blueprint("base", __name__)
 
 @base.route("/")
 def index():
-    limit = current_app.config["MAX_DEVELOPMENT_PLANS"]
-    development_plans = DevelopmentPlan.query.limit(limit).all()
-    adopted_plans, orgs_with_adopted_plan = get_adopted_plans()
+    adopted_local_plans = get_adopted_local_plans()
     organisations = get_organisations_expected_to_publish_plan()
+    with_adopted_lp, without_adopted_lp = split_orgs_by_adopted_locl_plan(
+        adopted_local_plans, organisations
+    )
+
     return render_template(
         "index.html",
-        development_plans=development_plans,
         organisations=organisations,
-        adopted_plans=adopted_plans,
-        orgs_with_adopted_plan=orgs_with_adopted_plan,
+        adopted_plans=adopted_local_plans,
+        orgs_with_adopted_plan=with_adopted_lp,
+        orgs_without_adopted_lp=without_adopted_lp,
     )
 
 
@@ -105,11 +108,6 @@ def roulette():
             )
 
     return render_template("roulette.html", counts=counts)
-
-
-def _exclude_orgs(main_list, to_exclude):
-    orgs_to_remove = [org.organisation for org in to_exclude]
-    return [org for org in main_list if org.organisation not in orgs_to_remove]
 
 
 def _exclude(main_list, to_exclude, attr_name="reference"):

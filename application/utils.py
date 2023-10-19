@@ -102,3 +102,20 @@ def get_plans_query(condition, count=False):
     if count:
         return query.count()
     return query.all()
+
+
+def split_orgs_by_adopted_locl_plan(adopted_local_plans, organisations):
+    with_adopted_lp = set(
+        [
+            organisation
+            for plan in adopted_local_plans
+            for organisation in plan.organisations
+        ]
+    )
+    without_adopted_lp = _exclude_orgs(organisations, with_adopted_lp)
+    return with_adopted_lp, without_adopted_lp
+
+
+def _exclude_orgs(main_list, to_exclude):
+    orgs_to_remove = [org.organisation for org in to_exclude]
+    return [org for org in main_list if org.organisation not in orgs_to_remove]

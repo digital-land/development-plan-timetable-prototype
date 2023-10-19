@@ -1,0 +1,12 @@
+{% macro progressBar(params) %}
+<section class="app-progress-banner">
+  <div class="app-progress__bar" style="--progress-bar-target: {{ params.organisations|length }}; --progress-bar-progress: {{ params.orgs_with_adopted_plan|length }};">
+    <p class="govuk-visually-hidden">We expect to collect adopted local plans from {{ params.organisations|length }} planning authorities</p>
+    <span class="app-progress__bar__completed">
+      <p class="govuk-visually-hidden">So far we have collected from {{ params.orgs_with_adopted_plan|length }}</p>
+    </span>
+  </div>
+  <p class="govuk-body">We have collected adopted local plans from {{ params.orgs_with_adopted_plan|length }} of {{ params.organisations|length }} planning authorities.</p>
+  <p class="govuk-body"><a href="{{ url_for('base.stats') }}" class="govuk-link">See a breakdown of what we have collected</a>.</p>
+</section>
+{% endmacro %}

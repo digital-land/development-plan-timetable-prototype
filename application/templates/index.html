@@ -4,7 +4,12 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
 
-    {% include 'partials/progress-bar.html' %}
+    {% from 'macros/progress-bar.html' import progressBar %}
+    {{ progressBar({
+        "organisations": organisations,
+        "orgs_with_adopted_plan": orgs_with_adopted_plan
+      })
+    }}
 
     <h1 class="govuk-heading-xl">Development plan data collector</h1>
 

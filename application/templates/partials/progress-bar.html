@@ -1,9 +1,0 @@
-<section class="app-progress-banner">
-  <div class="app-progress__bar" style="--progress-bar-target: {{ organisations|length }}; --progress-bar-progress: {{ orgs_with_adopted_plan|length }};">
-    <p class="govuk-visually-hidden">We expect to collect adopted local plans from {{ organisations|length }} planning authorities</p>
-    <span class="app-progress__bar__completed">
-      <p class="govuk-visually-hidden">So far we have collected from {{ orgs_with_adopted_plan|length }}</p>
-    </span>
-  </div>
-  <p class="govuk-body">We have collected adopted local plans from {{ orgs_with_adopted_plan|length }} of {{ organisations|length }} planning authorities</p>
-</section>

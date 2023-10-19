@@ -2,7 +2,12 @@
 
 {% block content %}
 
-  {% include 'partials/progress-bar.html' %}
+  {% from 'macros/progress-bar.html' import progressBar %}
+  {{ progressBar({
+      "organisations": organisations_expected_to_publish,
+      "orgs_with_adopted_plan": orgs_with_adopted_plan
+    })
+  }}
 
   <span class="govuk-caption-xl">Development plans</span>
   <h1 class="govuk-heading-xl">Find a plan by organisation</h1>

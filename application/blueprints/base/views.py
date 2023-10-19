@@ -11,7 +11,6 @@ from application.utils import (
     get_adopted_plans,
     get_organisations_expected_to_publish_plan,
     get_plans_query,
-    get_plans_with_geography,
     local_plan_count,
     plan_count,
 )
@@ -51,13 +50,14 @@ def stats():
                 for organisation in plan.organisations
             ]
         ),
-        plans_with_geography_count=get_plans_with_geography(count=True),
+        plans_with_geography_count=get_plans_query(
+            DevelopmentPlan.geography.has(), count=True
+        ),
     )
 
 
 @base.route("/roulette")
 def roulette():
-    development_plans = DevelopmentPlan.query.all()
     adopted_local_plans = get_adopted_local_plans()
     organisations = get_organisations_expected_to_publish_plan()
     orgs_with_adopted_lp = [
@@ -69,20 +69,18 @@ def roulette():
 
     if "random" in request.args:
         option = request.args.get("random")
+
+        # for org with no adopted local plan
         if option == "organisation":
             random_org = random.choice(orgs_without_adopted_lp)
             return redirect(
                 url_for("organisation.organisation", reference=random_org.organisation)
             )
-        if option == "missing-geography":
-            plans_without_geography = _exclude(
-                development_plans, get_plans_with_geography()
-            )
-            random_plan = random.choice(plans_without_geography)
-            return redirect(
-                url_for("development_plan.plan", reference=random_plan.reference)
-            )
+
+        # for plans missing something
         condition = None
+        if option == "missing-geography":
+            condition = not_(DevelopmentPlan.geography.has())
         if option == "no-documents":
             condition = not_(DevelopmentPlan.documents.any())
         if option == "no-events":

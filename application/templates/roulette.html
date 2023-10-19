@@ -7,20 +7,50 @@
     <span class="govuk-caption-xl">Development plan data collector</span>
     <h1 class="govuk-heading-xl">Roulette</h1>
 
+    <p class="govuk-body">Use this page to get to gaps in the data faster.</p>
+
+    <p class="govuk-body govuk-!-margin-bottom-1">
+      <strong class="govuk-!-font-weight-bold">{{ counts.orgs }}</strong> planning authorit{{ 'y' if counts.orgs == 1 else 'ies'}} are missing an adopted local plan
+    </p>
     <p class="govuk-body">
-      <a href="{{ url_for('base.roulette', random='organisation') }}" class="govuk-button">Take me planning authority without adopted local plan</a>
+      {%- if counts.orgs %}
+      <a href="{{ url_for('base.roulette', random='organisation') }}" class="govuk-button">Take me to one</a>
+      {%- else -%}
+      <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Take me to one</button>
+      {% endif -%}
     </p>
 
+    <p class="govuk-body govuk-!-margin-bottom-1">
+      <strong class="govuk-!-font-weight-bold">{{ counts.no_geography }}</strong> plan{{ '' if counts.no_geography == 1 else 's'}} are missing a geography
+    </p>
     <p class="govuk-body">
-      <a href="{{ url_for('base.roulette', random='missing-geography') }}" class="govuk-button">Take me to a plan missing a geography</a>
+      {%- if counts.no_geography %}
+      <a href="{{ url_for('base.roulette', random='missing-geography') }}" class="govuk-button">Take me to one</a>
+      {%- else -%}
+      <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Take me to one</button>
+      {% endif -%}
     </p>
 
+    <p class="govuk-body govuk-!-margin-bottom-1">
+      <strong class="govuk-!-font-weight-bold">{{ counts.no_documents }}</strong> plan{{ '' if counts.no_documents == 1 else 's'}} are missing documents
+    </p>
     <p class="govuk-body">
-      <a href="{{ url_for('base.roulette', random='no-documents') }}" class="govuk-button">Take me to a plan with no documents</a>
+      {%- if counts.no_documents %}
+      <a href="{{ url_for('base.roulette', random='no-documents') }}" class="govuk-button">Take me to one</a>
+      {%- else -%}
+      <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Take me to one</button>
+      {% endif -%}
     </p>
 
+    <p class="govuk-body govuk-!-margin-bottom-1">
+      <strong class="govuk-!-font-weight-bold">{{ counts.no_events }}</strong> plan{{ '' if counts.no_events == 1 else 's'}} are missing events
+    </p>
     <p class="govuk-body">
-      <a href="{{ url_for('base.roulette', random='no-events') }}" class="govuk-button">Take me to a plan with no events</a>
+      {%- if counts.no_events %}
+      <a href="{{ url_for('base.roulette', random='no-events') }}" class="govuk-button">Take me to one</a>
+      {%- else -%}
+      <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Take me to one</button>
+      {% endif -%}
     </p>
 
   </div>

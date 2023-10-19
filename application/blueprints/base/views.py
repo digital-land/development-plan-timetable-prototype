@@ -67,6 +67,17 @@ def roulette():
     ]
     orgs_without_adopted_lp = _exclude_orgs(organisations, orgs_with_adopted_lp)
 
+    counts = {
+        "orgs": len(orgs_without_adopted_lp),
+        "no_geography": get_plans_query(
+            not_(DevelopmentPlan.geography.has()), count=True
+        ),
+        "no_documents": get_plans_query(
+            not_(DevelopmentPlan.documents.any()), count=True
+        ),
+        "no_events": get_plans_query(not_(DevelopmentPlan.timetable.any()), count=True),
+    }
+
     if "random" in request.args:
         option = request.args.get("random")
 
@@ -93,7 +104,7 @@ def roulette():
                 url_for("development_plan.plan", reference=random_plan.reference)
             )
 
-    return render_template("roulette.html")
+    return render_template("roulette.html", counts=counts)
 
 
 def _exclude_orgs(main_list, to_exclude):

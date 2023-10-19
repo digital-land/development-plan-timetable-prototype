@@ -7,45 +7,121 @@
     <span class="govuk-caption-xl">Development plan data collector</span>
     <h1 class="govuk-heading-xl">Collection stats</h1>
 
-    <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ plan_count }}</span>
-      <span class="dl-data-item__label">Development plans</span>
-    </div>
+    <p class="govuk-body"><a href="{{ url_for('base.roulette') }}" class="govuk-link">Use the plan roulette to help us fill in the gaps</a>.</p>
 
-    <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ adopted_plan_count }}</span>
-      <span class="dl-data-item__label">Adopted development plans</span>
-    </div>
+  </div>
+</div>
 
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <h3 class="govuk-heading-l">Local plans</h3>
+  </div>
+  <div class="govuk-grid-column-one-third">
     <div class="dl-data-item ">
       <span class="dl-data-item__number">{{ local_plan_count }}</span>
       <span class="dl-data-item__label">Local plans</span>
     </div>
-
+  </div>
+  <div class="govuk-grid-column-one-third">
     <div class="dl-data-item ">
       <span class="dl-data-item__number">{{ adopted_local_plan_count }}</span>
-      <span class="dl-data-item__label">Adopted local plans</span>
+      <span class="dl-data-item__label">are adopted</span>
     </div>
+  </div>
+</div>
 
-    <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ organisation_count }}</span>
-      <span class="dl-data-item__label">Organisations expected to publish a local plan</span>
-    </div>
-
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
     <div class="dl-data-item ">
       <span class="dl-data-item__number">{{ orgs_with_adopted_lp_count }}</span>
       <span class="dl-data-item__label">Organisations with adopted local plans</span>
     </div>
+  </div>
 
+  <div class="govuk-grid-column-one-third">
     <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ plans_with_geography_count }}</span>
-      <span class="dl-data-item__label">Plans with geography</span>
-    </div>
-
-    <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ plan_count - plans_with_geography_count }}</span>
-      <span class="dl-data-item__label">Plans without geography</span>
+      <span class="dl-data-item__number">{{ organisation_count }}</span>
+      <span class="dl-data-item__label">Organisations expected to publish a local plan</span>
     </div>
   </div>
 </div>
+
+<h3 class="govuk-heading-l govuk-!-margin-top-9">Development plans</h3>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plan_count }}</span>
+      <span class="dl-data-item__label">Development plans</span>
+    </div>
+  </div>
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ adopted_plan_count }}</span>
+      <span class="dl-data-item__label">adopted</span>
+    </div>
+  </div>
+</div>
+
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plans_with_geography_count }}</span>
+      <span class="dl-data-item__label">with a geography</span>
+    </div>
+  </div>
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plan_count - plans_with_geography_count }}</span>
+      <span class="dl-data-item__label">without geography</span>
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plans_with_docs }}</span>
+      <span class="dl-data-item__label">have documents</span>
+    </div>
+  </div>
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plans_without_docs }}</span>
+      <span class="dl-data-item__label">without any documents</span>
+    </div>
+  </div>
+
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ total_documents }}</span>
+      <span class="dl-data-item__label">Total documents</span>
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plans_with_events }}</span>
+      <span class="dl-data-item__label">have events</span>
+    </div>
+  </div>
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ plans_without_events }}</span>
+      <span class="dl-data-item__label">without any events</span>
+    </div>
+  </div>
+
+  <div class="govuk-grid-column-one-third">
+    <div class="dl-data-item ">
+      <span class="dl-data-item__number">{{ total_events }}</span>
+      <span class="dl-data-item__label">Total events</span>
+    </div>
+  </div>
+</div>
+
+
 {% endblock content %}

@@ -3,7 +3,11 @@ import random
 from flask import Blueprint, redirect, render_template, request, url_for
 from sqlalchemy import not_
 
-from application.models import DevelopmentPlan
+from application.models import (
+    DevelopmentPlan,
+    DevelopmentPlanDocument,
+    DevelopmentPlanEvent,
+)
 from application.utils import (
     _exclude_orgs,
     adopted_local_plan_count,
@@ -39,6 +43,7 @@ def index():
 @base.route("/stats")
 def stats():
     adopted_local_plans = get_adopted_local_plans()
+
     return render_template(
         "stats.html",
         plan_count=plan_count(),
@@ -56,6 +61,16 @@ def stats():
         plans_with_geography_count=get_plans_query(
             DevelopmentPlan.geography.has(), count=True
         ),
+        plans_with_docs=get_plans_query(DevelopmentPlan.documents.any(), count=True),
+        plans_without_docs=get_plans_query(
+            not_(DevelopmentPlan.documents.any()), count=True
+        ),
+        total_documents=DevelopmentPlanDocument.query.count(),
+        plans_with_events=get_plans_query(DevelopmentPlan.timetable.any(), count=True),
+        plans_without_events=get_plans_query(
+            not_(DevelopmentPlan.timetable.any()), count=True
+        ),
+        total_events=DevelopmentPlanEvent.query.count(),
     )
 
 

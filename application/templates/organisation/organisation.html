@@ -14,10 +14,11 @@
 
   <a href="{{ url_for('development_plan.new', organisation=organisation.organisation) }}" class="govuk-button govuk-button--secondary">+ add new plan</a>
 
-
+  {% if plans -%}
   <p class="govuk-body">The plans we have collected are grouped by the plan type</p>
+  {%- endif %}
 
-  {% for plan_type, ps in plans.items() %}
+  {%- for plan_type, ps in plans.items() %}
   <h2 class="govuk-heading-m">{{ plan_type|replace("-", " ")|capitalize }}s</h2>
 
   <ul class="govuk-list govuk-list--bullet">

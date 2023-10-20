@@ -45,7 +45,7 @@
               </svg>
           </div>
           <p class="govuk-body" style="color: #fff;">{{ counts.orgs }} planning authorit{{ 'y' if counts.orgs == 1 else 'ies' }} are missing an adopted local plan</p>
-          <div><a href="{{ url_for('base.randomiser') }}" class="btn govuk-!-margin-bottom-0 govuk-button app-button--inverted{% if counts.orgs == 0 %} govuk-button--disabled{% endif %}" id="spin"{% if counts.orgs == 0 %} disabled{% endif %}><span class="btn-label">Take me to one!</span></button></div>
+          <div><a href="{{ url_for('base.roulette', random='organisation') }}" class="btn govuk-!-margin-bottom-0 govuk-button app-button--inverted{% if counts.orgs == 0 %} govuk-button--disabled{% endif %}" id="spin"{% if counts.orgs == 0 %} disabled{% endif %}><span class="btn-label">Take me to one!</span></a></div>
       </div>
 
     </div>

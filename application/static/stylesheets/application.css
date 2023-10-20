@@ -7572,9 +7572,9 @@
   z-index: 99; }
   .app-progress__bar__completed:after {
     position: absolute;
-    right: 1em;
+    left: 0;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translate(1em, -50%);
     font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -7585,8 +7585,8 @@
     content: attr(count);
     color: #fff;
     z-index: 100;
-    text-align: right;
-    width: calc((var(--progress-bar-progress) / var(--progress-bar-target)) * 100%); }
+    text-align: left;
+    min-width: 1em; }
     @media print {
       .app-progress__bar__completed:after {
         font-family: sans-serif; } }

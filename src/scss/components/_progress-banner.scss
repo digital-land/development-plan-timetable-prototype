@@ -52,14 +52,15 @@
   z-index: 99;
   &:after {
     position: absolute;
-    right: 1em;
+    left: 0;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translate(1em,-50%);
     @include govuk-font(16, bold);
     content: attr(count);
     color: #fff;
     z-index: 100;
-    text-align: right;
-    width: calc((var(--progress-bar-progress) / var(--progress-bar-target)) * 100%);
+    text-align: left;
+    // width: calc((var(--progress-bar-progress) / var(--progress-bar-target)) * 100%);
+    min-width: 1em;
   }
 }

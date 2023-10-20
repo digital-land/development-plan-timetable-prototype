@@ -8,6 +8,17 @@
           all: unset;
         }
 
+        @media only screen and (max-width: 600px) {
+          .plate {
+            scale: 0.9;
+          }
+          .plate-wrap {
+            margin-left: 25%;
+            transform: translateX(-50%);
+          }
+        }
+
+
         .number:nth-child(1) {
           transform: rotateZ(9.72972973deg);
         }
@@ -574,6 +585,7 @@
           <p class="govuk-body" style="color: #fff;">{{ params.organisation_count }} planning authorit{{ 'y' if params.organisation_count == 1 else 'ies' }} are missing an adopted local plan</p>
           <button type="button" class="btn govuk-button{% if params.organisation_count == 0 %} govuk-button--disabled{% endif %}" id="spin"{% if params.organisation_count == 0 %} disabled{% endif %}>
             <span class="btn-label">Take me to one!</span></button>
+          <div class="plate-wrap">
           <div class="plate" id="plate">
             <ul class="inner">
               <li class="number">
@@ -735,6 +747,7 @@
               </div>
             </div>
           </div>
+            </div>
           <div class="previous-results">
             <ol class="previous-list">
               <li class='visuallyhidden placeholder'>No results yet.</li>

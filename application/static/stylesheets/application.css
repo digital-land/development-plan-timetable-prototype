@@ -7610,6 +7610,10 @@
 .js-enabled .app-hide-if-js {
   display: none; }
 
+.app-heading--divided {
+  border-bottom: 4px solid #1d70b8;
+  padding-bottom: 5px; }
+
 .app-govuk-text {
   font-family: "GDS Transport", arial, sans-serif;
   -webkit-font-smoothing: antialiased;

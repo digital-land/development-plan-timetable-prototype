@@ -25,6 +25,11 @@
   }
 }
 
+.app-heading--divided {
+  border-bottom: 4px solid $govuk-brand-colour;
+  padding-bottom: 5px;
+}
+
 // Typography tweaks
 
 .app-govuk-text {

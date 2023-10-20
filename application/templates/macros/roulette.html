@@ -1,4 +1,4 @@
-{% macro wheel() %}
+{% macro wheel(params) %}
       <style>
 
         .inner,
@@ -590,8 +590,8 @@
         <div class="main">
           <span class="govuk-caption-xl" style="color: white;">Development plan data collector</span>
           <h2 class="govuk-heading-l govuk-!-margin-bottom-2" style="color: #fff;">Roulette</h2>
-          <p class="govuk-body" style="color: #fff;">343 planning authorities are missing an adopted local plan</p>
-          <button type="button" class="btn govuk-button" id="spin">
+          <p class="govuk-body" style="color: #fff;">{{ params.organisation_count }} planning authorit{{ 'y' if params.organisation_count == 1 else 'ies' }} are missing an adopted local plan</p>
+          <button type="button" class="btn govuk-button{% if params.organisation_count == 0 %} govuk-button--disabled{% endif %}" id="spin"{% if params.organisation_count == 0 %} disabled{% endif %}>
             <span class="btn-label">Take me to one!</span></button>
           <div class="plate" id="plate">
             <ul class="inner">

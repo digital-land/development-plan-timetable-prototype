@@ -5,7 +5,9 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
 
-      {{ roulette.wheel() }}
+      {{ roulette.wheel({
+        "organisation_count": counts.orgs
+      }) }}
 
     </div>
     <div class="govuk-grid-column-one-half">

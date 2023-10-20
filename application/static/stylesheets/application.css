@@ -7578,6 +7578,28 @@
       font-size: 14pt;
       line-height: 1.2; } }
 
+.app-button--inverted,
+.app-button--inverted:link,
+.app-button--inverted:visited {
+  color: #1d70b8;
+  background-color: #ffffff;
+  box-shadow: 0 2px 0 #144e81; }
+
+.app-button--inverted:hover {
+  color: #1d70b8;
+  background-color: #e8f1f8; }
+
+.app-button--inverted:focus:not(:hover) {
+  color: #0b0c0c;
+  background-color: #ffdd00; }
+
+.app-button--inverted:active,
+.app-button--inverted:focus {
+  border-color: #ffdd00;
+  color: #1d70b8;
+  background-color: #e8f1f8;
+  box-shadow: inset 0 0 0 2px #ffdd00; }
+
 .app-summary-list__row {
   border: 1px solid #b1b4b6;
   display: block;

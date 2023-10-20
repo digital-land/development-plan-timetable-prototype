@@ -6,10 +6,46 @@
     <span class="govuk-caption-xl">Development plan data collector</span>
     <h1 class="govuk-heading-xl">Collection stats</h1>
   </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h3 class="govuk-heading-l app-heading--divided">Local plans</h3>
+  </div>
+  <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+        <div class="dl-data-item ">
+          <span class="dl-data-item__number">{{ local_plan_count }}</span>
+          <span class="dl-data-item__label">Local plans</span>
+        </div>
+      </div>
+      <div class="govuk-grid-column-one-half">
+        <div class="dl-data-item ">
+          <span class="dl-data-item__number">{{ adopted_local_plan_count }}</span>
+          <span class="dl-data-item__label">are adopted</span>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+        <div class="dl-data-item ">
+          <span class="dl-data-item__number">{{ orgs_with_adopted_lp_count }}</span>
+          <span class="dl-data-item__label">Organisations with adopted local plans</span>
+        </div>
+      </div>
+
+      <div class="govuk-grid-column-one-half">
+        <div class="dl-data-item ">
+          <span class="dl-data-item__number">{{ organisation_count }}</span>
+          <span class="dl-data-item__label">Organisations expected to publish a local plan</span>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="govuk-grid-column-one-third">
     <p class="govuk-body">
       <a href="{{ url_for('base.randomiser') }}" class="govuk-link">
-
       <svg width="191px" height="210px" viewBox="0 0 191 210" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: 0 auto; display: block;">
           <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
               <g id="Group-2">
@@ -58,40 +94,6 @@
       </svg>
     </p>
     <p class="govuk-body">Use the the randomiser to help us fill in the gaps</a>.</p>
-  </div>
-</div>
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <h3 class="govuk-heading-l app-heading--divided">Local plans</h3>
-  </div>
-  <div class="govuk-grid-column-one-third">
-    <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ local_plan_count }}</span>
-      <span class="dl-data-item__label">Local plans</span>
-    </div>
-  </div>
-  <div class="govuk-grid-column-one-third">
-    <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ adopted_local_plan_count }}</span>
-      <span class="dl-data-item__label">are adopted</span>
-    </div>
-  </div>
-</div>
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-third">
-    <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ orgs_with_adopted_lp_count }}</span>
-      <span class="dl-data-item__label">Organisations with adopted local plans</span>
-    </div>
-  </div>
-
-  <div class="govuk-grid-column-one-third">
-    <div class="dl-data-item ">
-      <span class="dl-data-item__number">{{ organisation_count }}</span>
-      <span class="dl-data-item__label">Organisations expected to publish a local plan</span>
-    </div>
   </div>
 </div>
 

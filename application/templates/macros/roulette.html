@@ -1,20 +1,5 @@
 {% macro wheel(params) %}
 
-  <style>
-    .roulette {
-      background: #1d70b8;
-      box-sizing: border-box;
-      padding: 20px;
-    }
-  </style>
-
-      <div class="roulette">
-          <span class="govuk-caption-xl" style="color: white;">Development plan data collector</span>
-          <h2 class="govuk-heading-l govuk-!-margin-bottom-2" style="color: #fff;">Randomiser!</h2>
-          <p class="govuk-body" style="color: #fff;">{{ params.organisation_count }} planning authorit{{ 'y' if params.organisation_count == 1 else 'ies' }} are missing an adopted local plan</p>
-          <button type="button" class="btn govuk-button app-button--inverted{% if params.organisation_count == 0 %} govuk-button--disabled{% endif %}" id="spin"{% if params.organisation_count == 0 %} disabled{% endif %}>
-            <span class="btn-label">Take me to one!</span></button>
-      </div>
 {% endmacro %}
 
 {% macro scripts() %}

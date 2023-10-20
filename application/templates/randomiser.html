@@ -5,9 +5,21 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
 
-      {{ roulette.wheel({
-        "organisation_count": counts.orgs
-      }) }}
+  <style>
+    .roulette {
+      background: #1d70b8;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+  </style>
+
+      <div class="roulette">
+          <span class="govuk-caption-xl" style="color: white;">Development plan data collector</span>
+          <h2 class="govuk-heading-l govuk-!-margin-bottom-2" style="color: #fff;">Randomiser!</h2>
+          <p class="govuk-body" style="color: #fff;">{{ counts.orgs }} planning authorit{{ 'y' if counts.orgs == 1 else 'ies' }} are missing an adopted local plan</p>
+          <button type="button" class="btn govuk-button app-button--inverted{% if counts.orgs == 0 %} govuk-button--disabled{% endif %}" id="spin"{% if counts.orgs == 0 %} disabled{% endif %}>
+            <span class="btn-label">Take me to one!</span></button>
+      </div>
 
     </div>
     <div class="govuk-grid-column-one-half">
@@ -15,7 +27,7 @@
         <strong class="govuk-!-font-weight-bold govuk-!-font-size-36">{{ counts.no_geography }}</strong> plan{{ '' if counts.no_geography == 1 else 's'}} are missing a geography</p>
       <p class="govuk-body">
         {%- if counts.no_geography %}
-          <a href="{{ url_for('base.roulette', random='missing-geography') }}" class="govuk-button">Add a geography</a>
+          <a href="{{ url_for('base.randomiser', random='missing-geography') }}" class="govuk-button">Add a geography</a>
         {%- else -%}
           <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Add a geography</button>
         {% endif -%}
@@ -26,7 +38,7 @@
     </p>
       <p class="govuk-body">
         {%- if counts.no_documents %}
-          <a href="{{ url_for('base.roulette', random='no-documents') }}" class="govuk-button">Add a document</a>
+          <a href="{{ url_for('base.randomiser', random='no-documents') }}" class="govuk-button">Add a document</a>
         {%- else -%}
           <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Add a document</button>
         {% endif -%}
@@ -37,7 +49,7 @@
     </p>
       <p class="govuk-body">
         {%- if counts.no_events %}
-          <a href="{{ url_for('base.roulette', random='no-events') }}" class="govuk-button">Add an event</a>
+          <a href="{{ url_for('base.randomiser', random='no-events') }}" class="govuk-button">Add an event</a>
         {%- else -%}
           <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Add an event</button>
         {% endif -%}

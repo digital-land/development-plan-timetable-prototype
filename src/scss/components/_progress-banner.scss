@@ -29,6 +29,17 @@
   width: 100%;
   margin-bottom: var(--progress-bar-spacing);
   background: var(--progress-bar-background-colour);
+  &:after {
+    display: block;
+    content: attr(count);
+    color: govuk-colour('dark-grey');
+    position: absolute;
+    right: .5em;
+    top: 50%;
+    transform: translateY(-50%);
+    @include govuk-font(16);
+    z-index: 10;
+  }
 }
 
 .app-progress__bar__completed {
@@ -38,4 +49,15 @@
   height: var(--progress-bar-height);
   width: calc((var(--progress-bar-progress) / var(--progress-bar-target)) * 100%);
   background: var(--progress-bar-complete-colour);
+  z-index: 99;
+  &:after {
+    position: absolute;
+    left: .5em;
+    top: 50%;
+    transform: translateY(-50%);
+    @include govuk-font(16, bold);
+    content: attr(count);
+    color: #fff;
+    z-index: 100;
+  }
 }

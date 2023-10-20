@@ -7533,6 +7533,34 @@
   width: 100%;
   margin-bottom: var(--progress-bar-spacing);
   background: var(--progress-bar-background-colour); }
+  .app-progress__bar:after {
+    display: block;
+    content: attr(count);
+    color: #505a5f;
+    position: absolute;
+    right: .5em;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: "GDS Transport", arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 14px;
+    font-size: 0.875rem;
+    line-height: 1.14286;
+    z-index: 10; }
+    @media print {
+      .app-progress__bar:after {
+        font-family: sans-serif; } }
+    @media (min-width: 40.0625em) {
+      .app-progress__bar:after {
+        font-size: 16px;
+        font-size: 1rem;
+        line-height: 1.25; } }
+    @media print {
+      .app-progress__bar:after {
+        font-size: 14pt;
+        line-height: 1.2; } }
 
 .app-progress__bar__completed {
   position: absolute;
@@ -7540,7 +7568,35 @@
   left: 0;
   height: var(--progress-bar-height);
   width: calc((var(--progress-bar-progress) / var(--progress-bar-target)) * 100%);
-  background: var(--progress-bar-complete-colour); }
+  background: var(--progress-bar-complete-colour);
+  z-index: 99; }
+  .app-progress__bar__completed:after {
+    position: absolute;
+    left: .5em;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: "GDS Transport", arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 14px;
+    font-size: 0.875rem;
+    line-height: 1.14286;
+    content: attr(count);
+    color: #fff;
+    z-index: 100; }
+    @media print {
+      .app-progress__bar__completed:after {
+        font-family: sans-serif; } }
+    @media (min-width: 40.0625em) {
+      .app-progress__bar__completed:after {
+        font-size: 16px;
+        font-size: 1rem;
+        line-height: 1.25; } }
+    @media print {
+      .app-progress__bar__completed:after {
+        font-size: 14pt;
+        line-height: 1.2; } }
 
 .app-table--sortable th {
   white-space: nowrap; }

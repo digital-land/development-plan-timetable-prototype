@@ -11,7 +11,7 @@
 
     </div>
     <div class="govuk-grid-column-one-half">
-      <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold">{{ counts.no_geography }}</strong> plan{{ '' if counts.no_geography == 1 else 's'}} are missing a geography</p>
+      <p class="govuk-body govuk-!-margin-bottom-1"><strong class="govuk-!-font-weight-bold govuk-!-font-size-24">{{ counts.no_geography }}</strong> plan{{ '' if counts.no_geography == 1 else 's'}} are missing a geography</p>
       <p class="govuk-body">
         {%- if counts.no_geography %}
           <a href="{{ url_for('base.roulette', random='missing-geography') }}" class="govuk-button">Take me to one</a>
@@ -21,7 +21,7 @@
       </p>
 
       <p class="govuk-body govuk-!-margin-bottom-1">
-        <strong class="govuk-!-font-weight-bold">{{ counts.no_documents }}</strong> plan{{ '' if counts.no_documents == 1 else 's'}} are missing documents
+        <strong class="govuk-!-font-weight-bold  govuk-!-font-size-24">{{ counts.no_documents }}</strong> plan{{ '' if counts.no_documents == 1 else 's'}} are missing documents
     </p>
       <p class="govuk-body">
         {%- if counts.no_documents %}
@@ -32,7 +32,7 @@
       </p>
 
       <p class="govuk-body govuk-!-margin-bottom-1">
-        <strong class="govuk-!-font-weight-bold">{{ counts.no_events }}</strong> plan{{ '' if counts.no_events == 1 else 's'}} are missing events
+        <strong class="govuk-!-font-weight-bold govuk-!-font-size-24">{{ counts.no_events }}</strong> plan{{ '' if counts.no_events == 1 else 's'}} are missing events
     </p>
       <p class="govuk-body">
         {%- if counts.no_events %}

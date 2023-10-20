@@ -416,32 +416,13 @@
           content: '\2022';
         }
         .inner.rest:before {
-          transition: top 0.5s ease-in, right 0.5s ease-in, bottom 0.5s ease-in, left 0.5s ease-in;
+          transition: top 0.35s ease-in, right 0.35s ease-in, bottom 0.35s ease-in, left 0.35s ease-in;
           top: 25%;
           right: 25%;
           bottom: 24%;
           left: 25%;
         }
         .btn {}
-        {
-          # .btn .btn-label {
-            all: unset;
-            padding: 12px;
-            white-space: nowrap;
-          }
-          .btn.btn-reset {
-            background: darkgreen;
-            border: 1px solid #000000;
-            border-top-color: #009700;
-            border-left-color: #009700;
-          }
-          .btn.disabled {
-            opacity: 0.2;
-            transition: opacity 0.24s linear;
-            cursor: not-allowed;
-          }
-           #;
-        }
         @-webkit-keyframes rotate {
           0% {
             transform: rotateZ(0deg);
@@ -775,7 +756,7 @@
       $data = $('.data'),
       $mask = $('.mask'),
       maskDefault = 'Adopted plan roulette',
-      timer = 1500;
+      timer = 850;
 
     var red = [
       32,
@@ -820,14 +801,6 @@
         .show();
 
       $('.placeholder').remove();
-
-      setTimeout(function () {
-        $mask.text('No More Bets');
-      }, timer / 2);
-
-      setTimeout(function () {
-        $mask.text(maskDefault);
-      }, timer + 500);
 
       // remove the disabled attribute when the ball has stopped
       setTimeout(function () {

@@ -15,9 +15,9 @@
         <strong class="govuk-!-font-weight-bold govuk-!-font-size-36">{{ counts.no_geography }}</strong> plan{{ '' if counts.no_geography == 1 else 's'}} are missing a geography</p>
       <p class="govuk-body">
         {%- if counts.no_geography %}
-          <a href="{{ url_for('base.roulette', random='missing-geography') }}" class="govuk-button">Take me to one</a>
+          <a href="{{ url_for('base.roulette', random='missing-geography') }}" class="govuk-button">Add a geography</a>
         {%- else -%}
-          <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Take me to one</button>
+          <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Add a geography</button>
         {% endif -%}
       </p>
 
@@ -26,9 +26,9 @@
     </p>
       <p class="govuk-body">
         {%- if counts.no_documents %}
-          <a href="{{ url_for('base.roulette', random='no-documents') }}" class="govuk-button">Take me to one</a>
+          <a href="{{ url_for('base.roulette', random='no-documents') }}" class="govuk-button">Add a document</a>
         {%- else -%}
-          <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Take me to one</button>
+          <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Add a document</button>
         {% endif -%}
       </p>
 
@@ -37,9 +37,9 @@
     </p>
       <p class="govuk-body">
         {%- if counts.no_events %}
-          <a href="{{ url_for('base.roulette', random='no-events') }}" class="govuk-button">Take me to one</a>
+          <a href="{{ url_for('base.roulette', random='no-events') }}" class="govuk-button">Add an event</a>
         {%- else -%}
-          <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Take me to one</button>
+          <button class="govuk-button govuk-button--disabled" disabled="disabled" aria-disabled="true">Add an event</button>
         {% endif -%}
       </p>
 

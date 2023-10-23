@@ -11,9 +11,7 @@
 <span class="govuk-caption-xl">Development plan: {{ development_plan.reference }}</span>
 <h1 class="govuk-heading-xl">Area covered by this plan</h1>
 
-<div class="govuk-grid-row">
 
-  <div class="govuk-grid-column-two-thirds">
     <form class="govuk-form" method="POST" action="{{url_for('development_plan.add_geography', reference=development_plan.reference)}}" enctype="multipart/form-data">
 
       {# if we have a geography then show on map and ask user to confirm #}
@@ -26,36 +24,64 @@
             </h1>
           </legend>
 
-            {% set map_id = "map-" + random_int(5) %}
-            <div class="app-map-wrapper">
-              <div id="{{ map_id }}" style="height: 450px;">
-            </div>
-            <script>
-              const AppMap = {}
-              AppMap.mapID = '{{map_id}}';
-              AppMap.features = []
-              AppMap.geography = {
-                'featureCollection': {{geography | tojson}},
-                'centrePoint': {
-                  'lat': {{ coords["lat"] }},
-                  'long': {{ coords["long"] }}
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+              {% set map_id = "map-" + random_int(5) %}
+              <div class="app-map-wrapper">
+                <div id="{{ map_id }}" style="height: 450px;"></div>
+              </div>
+              <script>
+                const AppMap = {}
+                AppMap.mapID = '{{map_id}}';
+                AppMap.features = []
+                AppMap.geography = {
+                  'featureCollection': {{geography | tojson}},
+                  'centrePoint': {
+                    'lat': {{ coords["lat"] }},
+                    'long': {{ coords["long"] }}
+                  }
                 }
-              }
-              {% for geog in geographies %}
-              {% set geojson = geog | tojson %}
-              let features_{{loop.index}} = {{ geojson }}['features']
-              AppMap.features.push(...features_{{loop.index}})
-              {% endfor %}
-            </script>
-          <!--{{ geographies }}-->
-
-          {% for org in development_plan.organisations %}
-            {% if not org.geometry %}
-                  <p>No geometry found for {{org.name}}</p>
-            {% endif %}
-          {% endfor %}
+                {% for geog in geographies %}
+                {% set geojson = geog | tojson %}
+                let features_{{loop.index}} = {{ geojson }}['features']
+                AppMap.features.push(...features_{{loop.index}})
+                {% endfor %}
+              </script>
+            <!--{{ geographies }}-->
 
           </div>
+          <div class="govuk-grid-column-one-third">
+            <h3 class="govuk-heading-s">Why are we showing this area?</h3>
+            {% if development_plan.organisations|length == 1 %}
+              {% if geographies %}
+              <p class="govuk-body">This is the planning authority district for {{ development_plan.organisations[0].name }}</p>
+              {% else %}
+              <p class="govuk-body app-warning">We weren't able to find the planning authority district for {{ development_plan.organisations[0].name }}</p>
+              {% endif %}
+            {% elif development_plan.organisations|length > 1 %}
+              {% if geographies %}
+              <p class="govuk-body">We created this area by combining the planning authority districts for:</p>
+              <ul class="govuk-list govuk-list--bullet">
+                {% for geog in geographies %}
+                <li>{{ geog['features'][0]['properties']['name'] }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+              {% if missing_geographies %}
+              <div class="app-warning">
+                <p class="govuk-body">We couldn't find a geometry for:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                  {%- for org in missing_geographies %}
+                  <li>{{ org.name }}</li>
+                  {% endfor -%}
+                </ul>
+              </div>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+
            <!--<div id="contact-hint" class="govuk-hint">
             Select one option.
           </div>-->
@@ -92,29 +118,34 @@
         </fieldset>
       </div>
       {% else %}
-      <div class="govuk-warning-text">
-        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-        <strong class="govuk-warning-text__text">
-          <span class="govuk-warning-text__assistive">Warning</span>
-          We don't have any boundaries for the authoring planning authorities. Please provide one.
-        </strong>
-      </div>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+          <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+              <span class="govuk-warning-text__assistive">Warning</span>
+              We don't have any boundaries for the authoring planning authorities. Please provide one.
+            </strong>
+          </div>
 
-      <div class="govuk-form-group">
-        <input id="geography-provided" type="hidden" name="geography-provided" value="no">
-        <div class="govuk-form-group">
-          <label class="govuk-label" for="file-upload">
-            Upload shapefile
-          </label>
-          <input class="govuk-file-upload" id="file-upload" name="fileUpload" type="file">
-        </div>
-        <div class="govuk-form-group">
-          <label class="govuk-label" for="designated-plan-area">
-            Area name
-          </label>
-          <input class="govuk-input" id="designated-plan-area" name="designated-plan-area" type="text">
-        </div>
-      </div>
+          <div class="govuk-form-group">
+            <input id="geography-provided" type="hidden" name="geography-provided" value="no">
+            <div class="govuk-form-group">
+              <label class="govuk-label" for="file-upload">
+                Upload shapefile
+              </label>
+              <input class="govuk-file-upload" id="file-upload" name="fileUpload" type="file">
+            </div>
+            <div class="govuk-form-group">
+              <label class="govuk-label" for="designated-plan-area">
+                Area name
+              </label>
+              <input class="govuk-input" id="designated-plan-area" name="designated-plan-area" type="text">
+            </div>
+          </div>
+        </div><!-- end .govuk-grid-column-two-thirds -->
+      </div><!-- end .govuk-grid-row -->
+
       {% endif %}
 
       <div class="govuk-button-group">

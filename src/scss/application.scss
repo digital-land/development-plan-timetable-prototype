@@ -95,3 +95,13 @@
   }
   font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace !important;
 }
+
+.app-warning {
+  background: govuk-tint(govuk-colour("yellow"), 75);
+  margin: -10px;
+  padding: 10px;
+
+  & *:last-child {
+    margin-bottom: 0;
+  }
+}

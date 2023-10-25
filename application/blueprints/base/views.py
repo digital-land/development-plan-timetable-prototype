@@ -74,8 +74,8 @@ def stats():
     )
 
 
-@base.route("/roulette")
-def roulette():
+@base.route("/randomiser")
+def randomiser():
     adopted_local_plans = get_adopted_local_plans()
     organisations = get_organisations_expected_to_publish_plan()
     orgs_with_adopted_lp = [
@@ -122,7 +122,7 @@ def roulette():
                 url_for("development_plan.plan", reference=random_plan.reference)
             )
 
-    return render_template("roulette.html", counts=counts)
+    return render_template("randomiser.html", counts=counts)
 
 
 def _exclude(main_list, to_exclude, attr_name="reference"):

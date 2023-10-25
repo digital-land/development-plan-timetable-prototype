@@ -25,6 +25,11 @@
   }
 }
 
+.app-heading--divided {
+  border-bottom: 4px solid $govuk-brand-colour;
+  padding-bottom: 5px;
+}
+
 // Typography tweaks
 
 .app-govuk-text {
@@ -89,4 +94,14 @@
     font-size: 0.75em;
   }
   font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace !important;
+}
+
+.app-warning {
+  background: govuk-tint(govuk-colour("yellow"), 75);
+  margin: -10px;
+  padding: 10px;
+
+  & *:last-child {
+    margin-bottom: 0;
+  }
 }

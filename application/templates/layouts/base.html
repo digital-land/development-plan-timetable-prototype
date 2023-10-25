@@ -8,18 +8,53 @@
 {% endblock %}
 
 {% block mastHead %}
-<header class="govuk-header {{ app_header_classes }}" role="banner" data-module="govuk-header">
+{# <header class="govuk-header {{ app_header_classes }}" role="banner" data-module="govuk-header">
   <div class="govuk-header__container govuk-width-container app-govuk-header__container">
     <div class="header-proposition">
         <a href="/" class="govuk-header__link govuk-header__link--service-name">
           Data Standards
-          <span class="govuk-header__product-name">
+          <span class="govuk-header__product-name govuk-!-font-size-16">
             Development plan data collector
           </span>
         </a>
-        <!--<strong class="govuk-tag govuk-phase-banner__content__tag app-header__tag">
-          research tool
-        </strong>-->
+    </div>
+  </div>
+</header> #}<header class="govuk-header " role="banner" data-module="govuk-header">
+  <div class="govuk-header__container govuk-width-container">
+    <div class="govuk-header__logo">
+      <a href="/" class="govuk-header__link app-header__link">
+        <span class="govuk-!-font-size-24 govuk-!-font-weight-bold">Data Standards</span>
+        <span class="govuk-header__product-name govuk-!-font-size-16">Development plan data collector</span>
+      </a>
+    </div>
+    <div class="govuk-header__content">
+      {# <a href="#" class="govuk-header__link govuk-header__service-name">
+        Dataset manager
+      </a> #}
+      <nav aria-label="Menu" class="govuk-header__navigation govuk-header__navigation--end">
+        <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide menu" hidden>Menu</button>
+        <ul id="navigation" class="govuk-header__navigation-list">
+          <li class="govuk-header__navigation-item">
+            <a href="{{ url_for('organisation.organisations') }}" class="govuk-header__link">Find by organisation</a>
+          </li>
+          <li class="govuk-header__navigation-item">
+            <a class="govuk-header__link" href="{{ url_for('base.stats') }}">
+              Stats
+            </a>
+          </li>
+          <li class="govuk-header__navigation-item">
+            {% if config['AUTHENTICATION_ON'] and session["user"] %}
+            <a class="govuk-header__link" href="{{url_for('auth.logout')}}">
+              Sign out
+            </a>
+            {% else %}
+            <a class="govuk-header__link" href="{{url_for('auth.login', next=request.path)}}">
+              Sign in
+            </a>
+            {% endif %}
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </header>

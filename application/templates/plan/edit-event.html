@@ -14,7 +14,7 @@
 
       <div class="govuk-form-group">
         <label for="#" class="govuk-label">Event</label>
-        <div class="govuk-body govuk-!-font-weight-bold">{{ event.development_plan_event }} <span class="govuk-hint">(for {{ development_plan.reference }})</span></div>
+        <div class="govuk-body govuk-!-font-weight-bold">{{ event.development_plan_event_type.reference }}<span class="govuk-hint">(for {{ development_plan.reference }})</span></div>
       </div>
 
       {% for field in form %}

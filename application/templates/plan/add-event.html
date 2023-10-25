@@ -12,11 +12,9 @@
     <form class="govuk-form" method="POST">
       {{ form.hidden_tag() }}
 
-      <div data-module="select-or-new">
-        <div class="govuk-form-group">
-          {{ form.development_plan_event.label(class='govuk-label') }}
-          {{ form.development_plan_event(class='govuk-select') }}
-        </div>
+      <div class="govuk-form-group">
+        {{ form.development_plan_event.label(class='govuk-label') }}
+        {{ form.development_plan_event(class='govuk-select') }}
       </div>
 
       {% for field in form %}
@@ -120,9 +118,6 @@
 
 {% block pageScripts -%}
   <script>
-    const $selectContainer = document.querySelector('[data-module="select-or-new"]')
-    const selectModule = new dptp.SelectOrNew($selectContainer, 'development_plan_event', "action-panel-template").init()
-
     const $mulitSelectModule = document.querySelector('[data-module="multi-select"]')
     const mulitSelectModule = new dptp.MultiSelect($mulitSelectModule).init()
   </script>

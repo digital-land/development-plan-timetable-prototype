@@ -466,7 +466,11 @@ def _export_data():
     for file, model in download_file_map.items():
         csv_path = path / file
         with open(csv_path, "w") as f:
-            fieldnames = [col.name.replace("_", "-") for col in model.__table__.columns]
+            fieldnames = [
+                col.name.replace("_", "-")
+                for col in model.__table__.columns
+                if col.name != "development_plan_event_type_reference"
+            ]
             fieldnames = [f.replace("-reference", "") for f in fieldnames]
             if model in [
                 DevelopmentPlan,

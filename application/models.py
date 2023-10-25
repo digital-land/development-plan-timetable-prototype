@@ -227,6 +227,7 @@ class DevelopmentPlanEvent(DateModel):
             "name": self.name,
             "event-date": self.event_date,
             "development-plan": self.development_plan_reference,
+            "development-plan-event": self.development_plan_event_type_reference,
             "notes": self.notes,
             "organisations": orgs,
         } | super().as_dict()

@@ -297,7 +297,9 @@ def edit_event(reference, event_reference):
         DevelopmentPlanEvent.development_plan_reference == reference,
         DevelopmentPlanEvent.reference == event_reference,
     ).one_or_none()
-    event_type = DevelopmentPlanEvent.query.get(event.development_plan_event)
+    event_type = DevelopmentPlanEventType.query.get(
+        event.development_plan_event_type.reference
+    )
 
     if event is None:
         return abort(404)

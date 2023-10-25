@@ -16,6 +16,7 @@
         <label for="#" class="govuk-label">Event</label>
         <div class="govuk-body govuk-!-font-weight-bold">{{ event.development_plan_event_type.reference }}<span class="govuk-hint">(for {{ development_plan.reference }})</span></div>
       </div>
+      <input type="hidden" name="development_plan_event" id="development_plan_event" value="{{event.development_plan_event_type.reference}}"/>
 
       {% for field in form %}
       {%- if field.name not in ['event_date_year', 'event_date_month', 'event_date_day', 'notes', 'development_plan_event', 'csrf_token'] %}

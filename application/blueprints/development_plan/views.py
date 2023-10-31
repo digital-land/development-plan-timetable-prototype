@@ -216,10 +216,12 @@ def add_geography(reference):
         geography_reference = ":".join(references)
         gdf = gpd.read_file(json.dumps(geography), driver="GeoJSON")
         coords = {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}
+        bounding_box = list(gdf.total_bounds)
     else:
         geography = None
         geography_reference = None
         coords = None
+        bounding_box = None
     return render_template(
         "plan/choose-geography.html",
         development_plan=plan,
@@ -228,6 +230,7 @@ def add_geography(reference):
         coords=coords,
         geographies=geographies,
         missing_geographies=missing_geographies,
+        bounding_box=bounding_box,
     )
 
 

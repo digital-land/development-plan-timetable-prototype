@@ -47,20 +47,23 @@ development_plan = Blueprint(
 )
 
 
-def _get_plan_geography_centre(geography):
+def _get_centre_and_bounds(geography):
     if geography is not None:
         gdf = gpd.GeoDataFrame.from_features(geography.geojson["features"])
-        return {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}
-    return None
+        bounding_box = list(gdf.total_bounds)
+        return {"lat": gdf.centroid.y[0], "long": gdf.centroid.x[0]}, bounding_box
+    return None, None
 
 
 @development_plan.route("/<string:reference>")
 def plan(reference):
     development_plan = DevelopmentPlan.query.get(reference)
+    coords, bounding_box = _get_centre_and_bounds(development_plan.geography)
     return render_template(
         "plan/plan.html",
         development_plan=development_plan,
-        coords=_get_plan_geography_centre(development_plan.geography),
+        coords=coords,
+        bounding_box=bounding_box,
     )
 
 
@@ -248,10 +251,14 @@ def edit_geography(reference):
             return redirect(
                 url_for("development_plan.add_geography", reference=reference)
             )
+
+    coords, bounding_box = _get_centre_and_bounds(plan.geography)
+
     return render_template(
         "plan/remove-geography.html",
         development_plan=plan,
-        coords=_get_plan_geography_centre(plan.geography),
+        coords=coords,
+        bounding_box=bounding_box,
     )
 
 

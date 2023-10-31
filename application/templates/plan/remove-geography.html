@@ -72,7 +72,7 @@
   let map = L.map(AppMap.mapID).setView([AppMap.geography.centrePoint.lat, AppMap.geography.centrePoint.long], 6);
   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' }).addTo(map)
   var boundary_layer = L.geoJSON(AppMap.geography.featureCollection, {}).addTo(map)
-  const bbox = dptp.getBoundingBox(AppMap.geography.featureCollection)
+  const bbox = {{ bounding_box | tojson }}
   map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
 </script>
 {% endblock pageScripts %}

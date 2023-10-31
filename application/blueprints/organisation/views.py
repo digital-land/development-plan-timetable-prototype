@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, abort, redirect, render_template, request, url_for
 
 from application.models import Organisation
 from application.utils import (
@@ -48,6 +48,8 @@ def organisations():
 @organisation_bp.route("/<string:reference>")
 def organisation(reference):
     organisation = Organisation.query.get(reference)
+    if organisation is None:
+        return abort(404)
     plans = {}
     for plan in organisation.development_plans:
         plans.setdefault(plan.development_plan_type, []).append(plan)

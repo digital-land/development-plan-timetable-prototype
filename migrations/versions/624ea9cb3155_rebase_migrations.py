@@ -1,8 +1,8 @@
-"""initial migration
+"""rebase migrations
 
-Revision ID: 688e399bd69e
+Revision ID: 85e0adac64dd
 Revises:
-Create Date: 2023-04-27 13:56:02.133010
+Create Date: 2024-09-06 14:48:45.188737
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "688e399bd69e"
+revision = "624ea9cb3155"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,6 +28,7 @@ def upgrade():
         sa.Column("period_end_date", sa.Integer(), nullable=True),
         sa.Column("documentation_url", sa.Text(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
+        sa.Column("adopted_date", sa.String(), nullable=True),
         sa.Column("entry_date", sa.Date(), nullable=True),
         sa.Column("start_date", sa.Date(), nullable=True),
         sa.Column("end_date", sa.Date(), nullable=True),
@@ -35,6 +36,17 @@ def upgrade():
     )
     op.create_table(
         "development_plan_event_type",
+        sa.Column("reference", sa.Text(), nullable=False),
+        sa.Column("name", sa.Text(), nullable=True),
+        sa.Column("notes", sa.Text(), nullable=True),
+        sa.Column("entry_date", sa.Date(), nullable=True),
+        sa.Column("start_date", sa.Date(), nullable=True),
+        sa.Column("end_date", sa.Date(), nullable=True),
+        sa.PrimaryKeyConstraint("reference"),
+    )
+    op.create_table(
+        "development_plan_geography_type",
+        sa.Column("prefix", sa.Text(), nullable=True),
         sa.Column("reference", sa.Text(), nullable=False),
         sa.Column("name", sa.Text(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
@@ -55,9 +67,11 @@ def upgrade():
     )
     op.create_table(
         "document_type",
+        sa.Column("prefix", sa.Text(), nullable=True),
         sa.Column("reference", sa.Text(), nullable=False),
         sa.Column("name", sa.Text(), nullable=True),
-        sa.Column("category", sa.Text(), nullable=True),
+        sa.Column("notes", sa.Text(), nullable=True),
+        sa.Column("description", sa.Text(), nullable=True),
         sa.Column("entry_date", sa.Date(), nullable=True),
         sa.Column("start_date", sa.Date(), nullable=True),
         sa.Column("end_date", sa.Date(), nullable=True),
@@ -89,6 +103,9 @@ def upgrade():
         sa.Column("website", sa.Text(), nullable=True),
         sa.Column("wikidata", sa.Text(), nullable=True),
         sa.Column("wikipedia", sa.Text(), nullable=True),
+        sa.Column("geometry", sa.Text(), nullable=True),
+        sa.Column("geojson", sa.JSON(), nullable=True),
+        sa.Column("point", sa.Text(), nullable=True),
         sa.Column("entry_date", sa.Date(), nullable=True),
         sa.Column("start_date", sa.Date(), nullable=True),
         sa.Column("end_date", sa.Date(), nullable=True),
@@ -120,10 +137,41 @@ def upgrade():
         sa.Column("development_plan_event", sa.Text(), nullable=True),
         sa.Column("event_date", sa.String(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
+        sa.Column("development_plan_event_type_reference", sa.Text(), nullable=True),
         sa.Column("development_plan_reference", sa.Text(), nullable=True),
         sa.Column("entry_date", sa.Date(), nullable=True),
         sa.Column("start_date", sa.Date(), nullable=True),
         sa.Column("end_date", sa.Date(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["development_plan_event_type_reference"],
+            ["development_plan_event_type.reference"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["development_plan_reference"],
+            ["development_plan.reference"],
+        ),
+        sa.PrimaryKeyConstraint("reference"),
+    )
+    op.create_table(
+        "development_plan_geography",
+        sa.Column("reference", sa.Text(), nullable=False),
+        sa.Column("prefix", sa.Text(), nullable=True),
+        sa.Column("name", sa.Text(), nullable=True),
+        sa.Column("notes", sa.Text(), nullable=True),
+        sa.Column("geometry", sa.Text(), nullable=True),
+        sa.Column("geojson", sa.JSON(), nullable=True),
+        sa.Column("point", sa.Text(), nullable=True),
+        sa.Column(
+            "development_plan_geography_type_reference", sa.Text(), nullable=True
+        ),
+        sa.Column("development_plan_reference", sa.Text(), nullable=True),
+        sa.Column("entry_date", sa.Date(), nullable=True),
+        sa.Column("start_date", sa.Date(), nullable=True),
+        sa.Column("end_date", sa.Date(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["development_plan_geography_type_reference"],
+            ["development_plan_geography_type.reference"],
+        ),
         sa.ForeignKeyConstraint(
             ["development_plan_reference"],
             ["development_plan.reference"],
@@ -177,11 +225,13 @@ def downgrade():
     op.drop_table("development_plan_event_organisation")
     op.drop_table("development_plan_document_organisation")
     op.drop_table("development_plan_organisation")
+    op.drop_table("development_plan_geography")
     op.drop_table("development_plan_event")
     op.drop_table("development_plan_document")
     op.drop_table("organisation")
     op.drop_table("document_type")
     op.drop_table("development_plan_type")
+    op.drop_table("development_plan_geography_type")
     op.drop_table("development_plan_event_type")
     op.drop_table("development_plan")
     # ### end Alembic commands ###

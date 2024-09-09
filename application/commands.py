@@ -1,21 +1,11 @@
-import codecs
-import csv
 import logging
+import os
 import sys
-from contextlib import closing
-from pathlib import Path
 
 import requests
 from flask.cli import AppGroup
 
-from application.models import (
-    DevelopmentPlan,
-    DevelopmentPlanDocument,
-    DevelopmentPlanEvent,
-    DevelopmentPlanEventType,
-    DevelopmentPlanType,
-    Organisation,
-)
+from application.models import Organisation
 
 logging.basicConfig(stream=sys.stdout)
 logger = logging.getLogger(__name__)
@@ -34,78 +24,79 @@ ordered_tables = [
 ]
 
 
-@data_cli.command("load")
+@data_cli.command("load-data")
 def load_data():
-    from application.extensions import db
+    import subprocess
+    import sys
+    import tempfile
 
-    for table_name in ordered_tables:
-        table = db.metadata.tables[table_name]
-        logger.info(f"loading data for table: {table.name}")
+    from flask import current_app
 
-        if table.name == "organisation":
-            logger.info("organisation table is loaded from datasette")
-            _load_orgs(db, table)
-            continue
-        elif table_name == "development_plan_event":
-            data_file_name = (
-                f"{table.name.replace('event', 'timetable').replace('_', '-')}.csv"
-            )
-            data_file_path = f"{Path(__file__).parent.parent}/data/{data_file_name}"
-        else:
-            data_file_name = f"{table.name.replace('_', '-')}.csv"
-            data_file_path = f"{Path(__file__).parent.parent}/data/{data_file_name}"
-        try:
-            with open(data_file_path) as data:
-                reader = csv.DictReader(data)
-                for row in reader:
-                    copy = _get_insert_copy(row, table.name)
-                    if table.name in [
-                        "development_plan",
-                        "development_plan_document",
-                        "development_plan_event",
-                    ]:
-                        orgs_str = copy.pop("organisations")
-                        if orgs_str is not None:
-                            orgs = orgs_str.split(";")
-                        else:
-                            orgs = []
-                        if table.name == "development_plan":
-                            obj = DevelopmentPlan(**copy)
-                        elif table.name == "development_plan_document":
-                            obj = DevelopmentPlanDocument(**copy)
-                        else:
-                            obj = DevelopmentPlanEvent(**copy)
+    # check heroku cli installed
+    result = subprocess.run(["which", "heroku"], capture_output=True, text=True)
 
-                        db.session.add(obj)
-                        db.session.commit()
+    if result.returncode == 1:
+        logger.error("Heroku CLI is not installed. Please install it and try again.")
+        sys.exit(1)
 
-                        for org in orgs:
-                            organisation = Organisation.query.get(org)
-                            if organisation is not None:
-                                obj.organisations.append(organisation)
-                                db.session.add(organisation)
-                                db.session.commit()
-                    else:
-                        insert = table.insert().values(**copy)
-                        db.session.execute(insert)
-                        db.session.commit()
-        except Exception as e:
-            logger.info(f"error loading data for table: {table.name}")
-            logger.error(e)
-            db.session.rollback()
+    # check heroku login
+    result = subprocess.run(["heroku", "whoami"], capture_output=True, text=True)
 
+    if "Error: not logged in" in result.stderr:
+        logger.error("Please login to heroku using 'heroku login' and try again.")
+        sys.exit(1)
 
-@data_cli.command("drop")
-def drop_data():
-    from application.extensions import db
+    logger.info(
+        f"Starting load data into {current_app.config['SQLALCHEMY_DATABASE_URI']}"
+    )
+    if (
+        input(
+            "Completing process will overwrite your local database. Enter 'y' to continue, or anything else to exit. "
+        )
+        != "y"
+    ):
+        logger.info("Exiting without making any changes")
+        sys.exit(0)
 
-    for table in reversed(db.metadata.sorted_tables):
-        delete = table.delete()
-        try:
-            db.session.execute(delete)
-            db.session.commit()
-        except Exception as e:
-            logger.error(e)
+    with tempfile.TemporaryDirectory() as tempdir:
+        path = os.path.join(tempdir, "latest.dump")
+
+        # get the latest dump from heroku
+        result = subprocess.run(
+            [
+                "heroku",
+                "pg:backups:download",
+                "-a",
+                "development-plan-prototype",
+                "-o",
+                path,
+            ]
+        )
+
+        if result.returncode != 0:
+            logger.error("Error downloading the backup")
+            sys.exit(1)
+
+        # restore the dump to the local database
+        subprocess.run(
+            [
+                "pg_restore",
+                "--verbose",
+                "--clean",
+                "--no-acl",
+                "--no-owner",
+                "-h",
+                "localhost",
+                "-d",
+                "development_plan_timetable",
+                path,
+            ]
+        )
+        logger.info(
+            "\n\nRestored the dump to the local database using pg_restore. You can ignore warnings from pg_restore."
+        )
+
+    logger.info("Data loaded successfully")
 
 
 def _get_insert_copy(row, table_name):
@@ -152,81 +143,81 @@ def _load_orgs(db, table):
             db.session.rollback()
 
 
-@data_cli.command("migrate-event-types")
-def migrate_event_types():
-    from application.extensions import db
+# @data_cli.command("migrate-event-types")
+# def migrate_event_types():
+#     from application.extensions import db
 
-    url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-event.csv"
+#     url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-event.csv"
 
-    references = set([])
+#     references = set([])
 
-    with closing(requests.get(url, stream=True)) as r:
-        reader = csv.DictReader(
-            codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
-        )
+#     with closing(requests.get(url, stream=True)) as r:
+#         reader = csv.DictReader(
+#             codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
+#         )
 
-        for row in reader:
-            reference = row["reference"]
-            event_type = DevelopmentPlanEventType.query.get(reference)
-            if event_type is None:
-                print("adding event type", reference, row["name"])
-                event_type = DevelopmentPlanEventType(
-                    reference=reference,
-                    name=row["name"],
-                    notes=row["notes"],
-                )
-            else:
-                event_type.name = row["name"]
-                event_type.notes = row["notes"]
+#         for row in reader:
+#             reference = row["reference"]
+#             event_type = DevelopmentPlanTimetable.query.get(reference)
+#             if event_type is None:
+#                 print("adding event type", reference, row["name"])
+#                 event_type = DevelopmentPlanTimetable(
+#                     reference=reference,
+#                     name=row["name"],
+#                     notes=row["notes"],
+#                 )
+#             else:
+#                 event_type.name = row["name"]
+#                 event_type.notes = row["notes"]
 
-            db.session.add(event_type)
-            db.session.commit()
-            references.add(reference)
-
-
-@data_cli.command("remove-old-event-types")
-def remove_old_event_types():
-    from application.extensions import db
-
-    url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-event.csv"
-
-    references = set([])
-
-    with closing(requests.get(url, stream=True)) as r:
-        reader = csv.DictReader(
-            codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
-        )
-        for row in reader:
-            references.add(row["reference"])
-
-    event_types = DevelopmentPlanEventType.query.all()
-    for event_type in event_types:
-        if event_type.reference not in references:
-            print("deleting event type", event_type.reference)
-            db.session.delete(event_type)
-            db.session.commit()
+#             db.session.add(event_type)
+#             db.session.commit()
+#             references.add(reference)
 
 
-@data_cli.command("migrate-plan-types")
-def migrate_plan_types():
-    from application.extensions import db
+# @data_cli.command("remove-old-event-types")
+# def remove_old_event_types():
+#     from application.extensions import db
 
-    url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-type.csv"
+#     url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-event.csv"
 
-    with closing(requests.get(url, stream=True)) as r:
-        reader = csv.DictReader(
-            codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
-        )
+#     references = set([])
 
-        for row in reader:
-            reference = row["reference"]
-            plan_type = DevelopmentPlanType.query.get(reference)
-            if plan_type is None:
-                print("adding plan type", reference, row["name"])
-                plan_type = DevelopmentPlanType(reference=reference, name=row["name"])
+#     with closing(requests.get(url, stream=True)) as r:
+#         reader = csv.DictReader(
+#             codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
+#         )
+#         for row in reader:
+#             references.add(row["reference"])
 
-            db.session.add(plan_type)
-            db.session.commit()
+#     event_types = DevelopmentPlanTimetable.query.all()
+#     for event_type in event_types:
+#         if event_type.reference not in references:
+#             print("deleting event type", event_type.reference)
+#             db.session.delete(event_type)
+#             db.session.commit()
+
+
+# @data_cli.command("migrate-plan-types")
+# def migrate_plan_types():
+#     from application.extensions import db
+
+#     url = "https://dluhc-datasets.planning-data.dev/dataset/development-plan-type.csv"
+
+#     with closing(requests.get(url, stream=True)) as r:
+#         reader = csv.DictReader(
+#             codecs.iterdecode(r.iter_lines(), encoding="utf-8"), delimiter=","
+#         )
+
+#         for row in reader:
+#             reference = row["reference"]
+#             plan_type = DevelopmentPlanType.query.get(reference)
+#             if plan_type is None:
+#                 print("adding plan type", reference, row["name"])
+#                 plan_type = DevelopmentPlanType(reference=reference, name=row["name"])
+
+#             db.session.add(plan_type)
+#             db.session.commit()
 
 
 @data_cli.command("get-geographies")

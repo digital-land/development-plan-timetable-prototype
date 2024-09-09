@@ -6,7 +6,7 @@ from sqlalchemy import not_
 from application.models import (
     DevelopmentPlan,
     DevelopmentPlanDocument,
-    DevelopmentPlanEvent,
+    DevelopmentPlanTimetable,
 )
 from application.utils import (
     _exclude_orgs,
@@ -70,7 +70,7 @@ def stats():
         plans_without_events=get_plans_query(
             not_(DevelopmentPlan.timetable.any()), count=True
         ),
-        total_events=DevelopmentPlanEvent.query.count(),
+        total_events=DevelopmentPlanTimetable.query.count(),
     )
 
 

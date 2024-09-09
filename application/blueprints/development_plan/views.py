@@ -1,25 +1,12 @@
 import csv
-import glob
-import io
 import json
 import os
-import shutil
-import time
-import zipfile
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import geopandas as gpd
-from flask import (
-    Blueprint,
-    Response,
-    abort,
-    redirect,
-    render_template,
-    request,
-    url_for,
-)
+from flask import Blueprint, abort, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
 from application.blueprints.auth.utils import requires_auth
@@ -31,11 +18,11 @@ from application.blueprints.development_plan.forms import (
 from application.extensions import db
 from application.models import (
     DevelopmentPlan,
+    DevelopmentPlanBoundary,
+    DevelopmentPlanBoundaryType,
     DevelopmentPlanDocument,
     DevelopmentPlanEvent,
-    DevelopmentPlanEventType,
-    DevelopmentPlanGeography,
-    DevelopmentPlanGeographyType,
+    DevelopmentPlanTimetable,
     DevelopmentPlanType,
     DocumentType,
     Organisation,
@@ -58,7 +45,7 @@ def _get_centre_and_bounds(geography):
 @development_plan.route("/<string:reference>")
 def plan(reference):
     development_plan = DevelopmentPlan.query.get(reference)
-    coords, bounding_box = _get_centre_and_bounds(development_plan.geography)
+    coords, bounding_box = _get_centre_and_bounds(development_plan.boundary)
     return render_template(
         "plan/plan.html",
         development_plan=development_plan,
@@ -145,7 +132,7 @@ def add_geography(reference):
                     if plan.organisations[0].geojson is not None
                     else None
                 )
-                geography_type = DevelopmentPlanGeographyType.query.get(
+                geography_type = DevelopmentPlanBoundaryType.query.get(
                     "planning-authority-district"
                 )
             else:
@@ -156,15 +143,15 @@ def add_geography(reference):
                         if org.geojson is not None
                     ]
                 )
-                geography_type = DevelopmentPlanGeographyType.query.get(
+                geography_type = DevelopmentPlanBoundaryType.query.get(
                     "combined-planning-authority-district"
                 )
 
             geojson = combine_feature_collections(feature_collection)
-            g = DevelopmentPlanGeography.query.get(reference)
+            g = DevelopmentPlanBoundary.query.get(reference)
             if g is None:
-                g = DevelopmentPlanGeography(
-                    prefix="development-plan-geography",
+                g = DevelopmentPlanBoundary(
+                    prefix="development-plan-boundary",
                     reference=reference,
                     geojson=geojson,
                     development_plan_geography_type_reference=geography_type.reference,
@@ -186,11 +173,11 @@ def add_geography(reference):
                         file.save(shapefile_path)
                         gdf = gpd.read_file(shapefile_path)
                         geojson = gdf.to_crs(epsg="4326").to_json()
-                        geography_type = DevelopmentPlanGeographyType.query.get(
+                        geography_type = DevelopmentPlanBoundaryType.query.get(
                             "combined-planning-authority-district"
                         )
                         geog_type_ref = geography_type.reference
-                        g = DevelopmentPlanGeography(
+                        g = DevelopmentPlanBoundary(
                             prefix="designated‑plan‑area",
                             reference=reference,
                             geojson=json.loads(geojson),
@@ -272,10 +259,10 @@ def add_event(reference):
     form.development_plan_event.choices = _get_event_choices()
 
     if form.validate_on_submit():
-        event = DevelopmentPlanEvent()
+        event = DevelopmentPlanTimetable()
         ref = f"{plan.reference}-{form.development_plan_event.data.lower().replace(' ', '-')}"
 
-        t = DevelopmentPlanEvent.query.get(ref)
+        t = DevelopmentPlanTimetable.query.get(ref)
         if t is not None:
             ref = f"{ref}-{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}"
         event.reference = ref
@@ -303,11 +290,11 @@ def add_event(reference):
 @requires_auth
 def edit_event(reference, event_reference):
     plan = DevelopmentPlan.query.get(reference)
-    event = DevelopmentPlanEvent.query.filter(
-        DevelopmentPlanEvent.development_plan_reference == reference,
-        DevelopmentPlanEvent.reference == event_reference,
+    event = DevelopmentPlanTimetable.query.filter(
+        DevelopmentPlanTimetable.development_plan == reference,
+        DevelopmentPlanTimetable.reference == event_reference,
     ).one_or_none()
-    event_type = DevelopmentPlanEventType.query.get(
+    event_type = DevelopmentPlanTimetable.query.get(
         event.development_plan_event_type.reference
     )
 
@@ -347,9 +334,9 @@ def edit_event(reference, event_reference):
 @development_plan.get("/<string:reference>/timetable/<string:event_reference>/delete")
 @requires_auth
 def delete_event(reference, event_reference):
-    event = DevelopmentPlanEvent.query.filter(
-        DevelopmentPlanEvent.development_plan_reference == reference,
-        DevelopmentPlanEvent.reference == event_reference,
+    event = DevelopmentPlanTimetable.query.filter(
+        DevelopmentPlanTimetable.development_plan == reference,
+        DevelopmentPlanTimetable.reference == event_reference,
     ).one_or_none()
 
     if event is None:
@@ -435,37 +422,37 @@ def delete_document(reference, document_reference):
     return redirect(url_for("development_plan.plan", reference=reference))
 
 
-@development_plan.route("/download", methods=["GET"])
-def download():
-    tempdir = _export_data()
-    zipname = "development-plan-data.zip"
-    files = glob.glob(f"{tempdir.name}/*.csv")
-    file_handle = io.BytesIO()
-    with zipfile.ZipFile(file_handle, "w") as zip:
-        for file in files:
-            p = Path(file)
-            info = zipfile.ZipInfo(p.name)
-            info.date_time = time.localtime(time.time())[:6]
-            info.compress_type = zipfile.ZIP_DEFLATED
-            with open(p, "rb") as fd:
-                zip.writestr(info, fd.read())
-    file_handle.seek(0)
-    shutil.rmtree(tempdir.name)
+# @development_plan.route("/download", methods=["GET"])
+# def download():
+#     tempdir = _export_data()
+#     zipname = "development-plan-data.zip"
+#     files = glob.glob(f"{tempdir.name}/*.csv")
+#     file_handle = io.BytesIO()
+#     with zipfile.ZipFile(file_handle, "w") as zip:
+#         for file in files:
+#             p = Path(file)
+#             info = zipfile.ZipInfo(p.name)
+#             info.date_time = time.localtime(time.time())[:6]
+#             info.compress_type = zipfile.ZIP_DEFLATED
+#             with open(p, "rb") as fd:
+#                 zip.writestr(info, fd.read())
+#     file_handle.seek(0)
+#     shutil.rmtree(tempdir.name)
 
-    return Response(
-        file_handle.getvalue(),
-        mimetype="application/zip",
-        headers={"Content-Disposition": f"attachment;filename={zipname}"},
-    )
+#     return Response(
+#         file_handle.getvalue(),
+#         mimetype="application/zip",
+#         headers={"Content-Disposition": f"attachment;filename={zipname}"},
+#     )
 
 
 def _export_data():
     download_file_map = {
         "development-plan-type.csv": DevelopmentPlanType,
-        "development-plan-event.csv": DevelopmentPlanEventType,
+        "development-plan-timetable.csv": DevelopmentPlanTimetable,
         "development-plan.csv": DevelopmentPlan,
         "development-plan-document.csv": DevelopmentPlanDocument,
-        "development-plan-timetable.csv": DevelopmentPlanEvent,
+        "development-plan-timetable.csv": DevelopmentPlanTimetable,
         "document-type.csv": DocumentType,
     }
 
@@ -485,7 +472,7 @@ def _export_data():
             if model in [
                 DevelopmentPlan,
                 DevelopmentPlanDocument,
-                DevelopmentPlanEvent,
+                DevelopmentPlanTimetable,
             ]:
                 fieldnames.append("organisations")
             writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -575,9 +562,7 @@ def _get_plan_type_choices():
 def _get_event_choices():
     return [
         (evt.reference, evt.name)
-        for evt in DevelopmentPlanEventType.query.order_by(
-            DevelopmentPlanEventType.name
-        ).all()
+        for evt in DevelopmentPlanEvent.query.order_by(DevelopmentPlanEvent.name).all()
     ]
 
 

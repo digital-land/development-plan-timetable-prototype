@@ -35,8 +35,8 @@ class DevelopmentPlanType(DateModel):
         } | super().as_dict()
 
 
-class DevelopmentPlanEventType(DateModel):
-    __tablename__ = "development_plan_event_type"
+class DevelopmentPlanEvent(DateModel):
+    __tablename__ = "development_plan_event"
 
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
@@ -94,19 +94,19 @@ development_plan_document_organisation = db.Table(
     db.Column("organisation", db.Text, db.ForeignKey("organisation.organisation")),
 )
 
-development_plan_event_organisation = db.Table(
-    "development_plan_event_organisation",
+development_plan_timetable_organisation = db.Table(
+    "development_plan_timetable_organisation",
     db.Column(
-        "development_plan_event",
+        "development_plan_timetable",
         db.Text,
-        db.ForeignKey("development_plan_event.reference"),
+        db.ForeignKey("development_plan_timetable.reference"),
     ),
     db.Column("organisation", db.Text, db.ForeignKey("organisation.organisation")),
 )
 
 
-class DevelopmentPlanGeographyType(DateModel):
-    __tablename__ = "development_plan_geography_type"
+class DevelopmentPlanBoundaryType(DateModel):
+    __tablename__ = "development_plan_boundary_type"
 
     prefix = db.Column(db.Text)
     reference = db.Column(db.Text, primary_key=True)
@@ -122,7 +122,9 @@ class DevelopmentPlanGeographyType(DateModel):
         } | super().as_dict()
 
 
-class DevelopmentPlanGeography(DateModel):
+class DevelopmentPlanBoundary(DateModel):
+    __tablename__ = "development_plan_boundary"
+
     reference = db.Column(db.Text, primary_key=True)
     prefix = db.Column(db.Text)
     name = db.Column(db.Text)
@@ -130,14 +132,12 @@ class DevelopmentPlanGeography(DateModel):
     geometry = db.Column(db.Text)
     geojson = db.Column(JSON)
     point = db.Column(db.Text)
-    development_plan_geography_type_reference = db.Column(
-        db.Text, db.ForeignKey("development_plan_geography_type.reference")
+    development_plan_boundary_type = db.Column(
+        db.Text, db.ForeignKey("development_plan_boundary_type.reference")
     )
-    development_plan_geography_type = db.relationship("DevelopmentPlanGeographyType")
-    development_plan_reference = mapped_column(
-        db.ForeignKey("development_plan.reference")
-    )
-    development_plan = db.relationship("DevelopmentPlan")
+    boundary_type = db.relationship("DevelopmentPlanBoundaryType")
+    development_plan = mapped_column(db.ForeignKey("development_plan.reference"))
+    plan = db.relationship("DevelopmentPlan")
     point = db.Column(db.Text)
 
 
@@ -164,17 +164,17 @@ class DevelopmentPlan(DateModel):
     )
 
     timetable = db.relationship(
-        "DevelopmentPlanEvent",
-        back_populates="development_plan",
-        order_by="DevelopmentPlanEvent.event_date",
+        "DevelopmentPlanTimetable",
+        back_populates="plan",
+        order_by="DevelopmentPlanTimetable.event_date",
     )
 
     documents = db.relationship(
         "DevelopmentPlanDocument", back_populates="development_plan"
     )
 
-    geography = db.relationship(
-        "DevelopmentPlanGeography", uselist=False, back_populates="development_plan"
+    boundary = db.relationship(
+        "DevelopmentPlanBoundary", uselist=False, back_populates="plan"
     )
 
     def as_dict(self):
@@ -193,32 +193,29 @@ class DevelopmentPlan(DateModel):
         } | super().as_dict()
 
 
-class DevelopmentPlanEvent(DateModel):
-    __tablename__ = "development_plan_event"
+class DevelopmentPlanTimetable(DateModel):
+    __tablename__ = "development_plan_timetable"
 
     reference = db.Column(db.Text, primary_key=True)
     name = db.Column(db.Text)
-    development_plan_event = db.Column(db.Text)
     event_date = db.Column(db.String)
 
     notes = db.Column(db.Text)
 
-    development_plan_event_type_reference = mapped_column(
-        db.ForeignKey("development_plan_event_type.reference")
+    development_plan_event = mapped_column(
+        db.ForeignKey("development_plan_event.reference")
     )
-    development_plan_event_type = db.relationship("DevelopmentPlanEventType")
+    event = db.relationship("DevelopmentPlanEvent")
 
     organisations = db.relationship(
         "Organisation",
-        secondary=development_plan_event_organisation,
+        secondary=development_plan_timetable_organisation,
         lazy="subquery",
         back_populates="development_plan_timetables",
     )
 
-    development_plan_reference = mapped_column(
-        db.ForeignKey("development_plan.reference")
-    )
-    development_plan = db.relationship("DevelopmentPlan")
+    development_plan = mapped_column(db.ForeignKey("development_plan.reference"))
+    plan = db.relationship("DevelopmentPlan", back_populates="timetable")
 
     def as_dict(self):
         orgs = ";".join([org.organisation for org in self.organisations])
@@ -226,8 +223,8 @@ class DevelopmentPlanEvent(DateModel):
             "reference": self.reference,
             "name": self.name,
             "event-date": self.event_date,
-            "development-plan": self.development_plan_reference,
-            "development-plan-event": self.development_plan_event_type_reference,
+            "development-plan": self.development_plan,
+            "development-plan-event": self.development_plan_event,
             "notes": self.notes,
             "organisations": orgs,
         } | super().as_dict()
@@ -320,8 +317,8 @@ class Organisation(DateModel):
     )
 
     development_plan_timetables = db.relationship(
-        "DevelopmentPlanEvent",
-        secondary=development_plan_event_organisation,
+        "DevelopmentPlanTimetable",
+        secondary=development_plan_timetable_organisation,
         lazy="subquery",
         back_populates="organisations",
     )

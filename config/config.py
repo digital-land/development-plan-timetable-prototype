@@ -38,6 +38,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     ENV = "development"
     WTF_CSRF_ENABLED = False
+    AUTHENTICATION_ON = True
 
 
 class TestConfig(Config):

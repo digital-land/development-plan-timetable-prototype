@@ -33,7 +33,7 @@ cligj==0.7.2
     # via fiona
 cryptography==41.0.4
     # via authlib
-digital_land_frontend @ git+https://github.com/digital-land/digital-land-frontend.git
+digital-land-frontend @ git+https://github.com/digital-land/digital-land-frontend.git
     # via -r requirements/requirements.in
 fiona==1.9.4.post1
     # via geopandas
@@ -58,8 +58,6 @@ geopandas==0.14.0
     # via -r requirements/requirements.in
 govuk-frontend-jinja==2.7.0
     # via digital-land-frontend
-greenlet==3.0.0
-    # via sqlalchemy
 gunicorn==21.2.0
     # via -r requirements/requirements.in
 idna==3.4

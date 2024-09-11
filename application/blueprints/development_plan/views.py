@@ -6,7 +6,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import geopandas as gpd
-from flask import Blueprint, abort, redirect, render_template, request, url_for
+from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
 from application.blueprints.auth.utils import requires_auth
@@ -44,14 +44,31 @@ def _get_centre_and_bounds(geography):
 
 @development_plan.route("/<string:reference>")
 def plan(reference):
-    development_plan = DevelopmentPlan.query.get(reference)
-    coords, bounding_box = _get_centre_and_bounds(development_plan.boundary)
+    plan = DevelopmentPlan.query.get(reference)
+    if plan is None:
+        return abort(404)
+
+    coords, bounding_box = _get_centre_and_bounds(plan.boundary)
     return render_template(
         "plan/plan.html",
-        development_plan=development_plan,
+        development_plan=plan,
         coords=coords,
         bounding_box=bounding_box,
     )
+
+
+@development_plan.route("/<string:reference>.json")
+def plan_json(reference):
+    from application.export import DevelopmentPlanModel
+
+    development_plan = DevelopmentPlan.query.get(reference)
+
+    if development_plan is None:
+        return abort(404)
+
+    model = DevelopmentPlanModel.model_validate(development_plan)
+    data = model.model_dump(by_alias=True)
+    return jsonify(data)
 
 
 @development_plan.route("/<string:reference>/edit", methods=["GET", "POST"])

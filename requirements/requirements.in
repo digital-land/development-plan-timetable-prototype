@@ -12,3 +12,4 @@ authlib
 shapely
 geopandas
 is-safe-url
+pydantic

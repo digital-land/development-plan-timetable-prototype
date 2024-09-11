@@ -172,10 +172,6 @@ class DevelopmentPlan(DateModel):
         "DevelopmentPlanDocument", back_populates="development_plan"
     )
 
-    # boundary = db.relationship(
-    #     "DevelopmentPlanBoundary", uselist=False, back_populates="plan"
-    # )
-
     development_plan_boundary = mapped_column(
         db.ForeignKey("development_plan_boundary.reference"), nullable=True
     )

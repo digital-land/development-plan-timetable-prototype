@@ -58,8 +58,8 @@ def stats():
                 for organisation in plan.organisations
             ]
         ),
-        plans_with_geography_count=get_plans_query(
-            DevelopmentPlan.geography.has(), count=True
+        plans_with_boundary_count=get_plans_query(
+            DevelopmentPlan.development_plan_boundary.isnot(None), count=True
         ),
         plans_with_docs=get_plans_query(DevelopmentPlan.documents.any(), count=True),
         plans_without_docs=get_plans_query(

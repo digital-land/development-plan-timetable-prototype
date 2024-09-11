@@ -136,8 +136,7 @@ class DevelopmentPlanBoundary(DateModel):
         db.Text, db.ForeignKey("development_plan_boundary_type.reference")
     )
     boundary_type = db.relationship("DevelopmentPlanBoundaryType")
-    development_plan = mapped_column(db.ForeignKey("development_plan.reference"))
-    plan = db.relationship("DevelopmentPlan")
+    plan = db.relationship("DevelopmentPlan", backref="boundary")
     point = db.Column(db.Text)
 
 
@@ -173,8 +172,12 @@ class DevelopmentPlan(DateModel):
         "DevelopmentPlanDocument", back_populates="development_plan"
     )
 
-    boundary = db.relationship(
-        "DevelopmentPlanBoundary", uselist=False, back_populates="plan"
+    # boundary = db.relationship(
+    #     "DevelopmentPlanBoundary", uselist=False, back_populates="plan"
+    # )
+
+    development_plan_boundary = mapped_column(
+        db.ForeignKey("development_plan_boundary.reference"), nullable=True
     )
 
     def as_dict(self):

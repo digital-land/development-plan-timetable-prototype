@@ -88,10 +88,10 @@
       <section class="app-summary-card govuk-!-margin-top-6">
         <header class="app-summary-card__header">
           <h2 class="app-summary-card__title">
-            Plan geography
+            Plan boundary
           </h2>
           <div class="app-summary-card__actions">
-            {%- if plan.geography %}
+            {%- if plan.boundary %}
             <a href="{{ url_for('development_plan.edit_geography', reference=plan.reference) }}" class="govuk-link">Edit<span class="govuk-visually-hidden"> record</span></a>
             {% else %}
             <a href="{{ url_for('development_plan.add_geography', reference=plan.reference) }}" class="govuk-link">Add<span class="govuk-visually-hidden"> record</span></a>
@@ -99,9 +99,9 @@
           </div>
         </header>
         <div class="app-summary-card__body">
-        {%- if plan.geography %}
-          {%- set map_id = "map-" + plan.geography.reference %}
-          <p class="govuk-hint govuk-!-margin-top-0">Reference: {{ plan.geography.reference }}</p>
+        {%- if plan.boundary %}
+          {%- set map_id = "map-" + plan.boundary.reference %}
+          <p class="govuk-hint govuk-!-margin-top-0">Reference: {{ plan.boundary.reference }}</p>
           <div class="app-map-wrapper">
             <div id="{{ map_id }}" style="height: 400px;">
           </div>
@@ -109,7 +109,7 @@
             const AppMap = {}
             AppMap.mapID = '{{map_id}}';
             AppMap.geography = {
-              'featureCollection': {{plan.geography.geojson | tojson}},
+              'featureCollection': {{plan.boundary.geojson | tojson}},
               'centrePoint': {
                 'lat': {{ coords["lat"] }},
                 'long': {{ coords["long"] }}

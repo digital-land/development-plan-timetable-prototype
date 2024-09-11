@@ -1,12 +1,25 @@
 import csv
+import glob
+import io
 import json
 import os
+import shutil
+import zipfile
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import geopandas as gpd
-from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    Response,
+    abort,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from werkzeug.utils import secure_filename
 
 from application.blueprints.auth.utils import requires_auth
@@ -15,6 +28,7 @@ from application.blueprints.development_plan.forms import (
     EventForm,
     PlanForm,
 )
+from application.export import DevelopmentPlanModel
 from application.extensions import db
 from application.models import (
     DevelopmentPlan,
@@ -59,14 +73,12 @@ def plan(reference):
 
 @development_plan.route("/<string:reference>.json")
 def plan_json(reference):
-    from application.export import DevelopmentPlanModel
+    plan = DevelopmentPlan.query.get(reference)
 
-    development_plan = DevelopmentPlan.query.get(reference)
-
-    if development_plan is None:
+    if plan is None:
         return abort(404)
 
-    model = DevelopmentPlanModel.model_validate(development_plan)
+    model = DevelopmentPlanModel.model_validate(plan)
     data = model.model_dump(by_alias=True)
     return jsonify(data)
 
@@ -439,38 +451,33 @@ def delete_document(reference, document_reference):
     return redirect(url_for("development_plan.plan", reference=reference))
 
 
-# @development_plan.route("/download", methods=["GET"])
-# def download():
-#     tempdir = _export_data()
-#     zipname = "development-plan-data.zip"
-#     files = glob.glob(f"{tempdir.name}/*.csv")
-#     file_handle = io.BytesIO()
-#     with zipfile.ZipFile(file_handle, "w") as zip:
-#         for file in files:
-#             p = Path(file)
-#             info = zipfile.ZipInfo(p.name)
-#             info.date_time = time.localtime(time.time())[:6]
-#             info.compress_type = zipfile.ZIP_DEFLATED
-#             with open(p, "rb") as fd:
-#                 zip.writestr(info, fd.read())
-#     file_handle.seek(0)
-#     shutil.rmtree(tempdir.name)
+@development_plan.route("/download", methods=["GET"])
+def download():
+    tempdir = _export_data()
+    zipname = "development-plan-data.zip"
+    files = glob.glob(f"{tempdir.name}/*.csv")
+    file_handle = io.BytesIO()
+    with zipfile.ZipFile(file_handle, "w") as zip:
+        for file in files:
+            p = Path(file)
+            info = zipfile.ZipInfo(p.name)
+            # info.date_time = time.localtime(time.time())[:6]
+            info.compress_type = zipfile.ZIP_DEFLATED
+            with open(p, "rb") as fd:
+                zip.writestr(info, fd.read())
+    file_handle.seek(0)
+    shutil.rmtree(tempdir.name)
 
-#     return Response(
-#         file_handle.getvalue(),
-#         mimetype="application/zip",
-#         headers={"Content-Disposition": f"attachment;filename={zipname}"},
-#     )
+    return Response(
+        file_handle.getvalue(),
+        mimetype="application/zip",
+        headers={"Content-Disposition": f"attachment;filename={zipname}"},
+    )
 
 
 def _export_data():
     download_file_map = {
-        "development-plan-type.csv": DevelopmentPlanType,
-        "development-plan-timetable.csv": DevelopmentPlanTimetable,
         "development-plan.csv": DevelopmentPlan,
-        "development-plan-document.csv": DevelopmentPlanDocument,
-        "development-plan-timetable.csv": DevelopmentPlanTimetable,
-        "document-type.csv": DocumentType,
     }
 
     tempdir = TemporaryDirectory()
@@ -488,14 +495,14 @@ def _export_data():
             fieldnames = [f.replace("-reference", "") for f in fieldnames]
             if model in [
                 DevelopmentPlan,
-                DevelopmentPlanDocument,
-                DevelopmentPlanTimetable,
             ]:
                 fieldnames.append("organisations")
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             for d in model.query.all():
-                writer.writerow(d.as_dict())
+                model = DevelopmentPlanModel.model_validate(d)
+                data = model.model_dump(by_alias=True)
+                writer.writerow(data)
     return tempdir
 
 

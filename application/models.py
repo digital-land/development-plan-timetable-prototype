@@ -113,14 +113,6 @@ class DevelopmentPlanBoundaryType(DateModel):
     name = db.Column(db.Text)
     notes = db.Column(db.Text)
 
-    def as_dict(self):
-        return {
-            "prefix": self.prefix,
-            "reference": self.reference,
-            "name": self.name,
-            "notes": self.notes,
-        } | super().as_dict()
-
 
 class DevelopmentPlanBoundary(DateModel):
     __tablename__ = "development_plan_boundary"
@@ -168,28 +160,11 @@ class DevelopmentPlan(DateModel):
         order_by="DevelopmentPlanTimetable.event_date",
     )
 
-    documents = db.relationship(
-        "DevelopmentPlanDocument", back_populates="development_plan"
-    )
+    documents = db.relationship("DevelopmentPlanDocument", back_populates="plan")
 
     development_plan_boundary = mapped_column(
         db.ForeignKey("development_plan_boundary.reference"), nullable=True
     )
-
-    def as_dict(self):
-        orgs = ";".join([org.organisation for org in self.organisations])
-        return {
-            "reference": self.reference,
-            "name": self.name,
-            "description": self.description,
-            "development-plan-type": self.development_plan_type,
-            "period-start-date": self.period_start_date,
-            "period-end-date": self.period_end_date,
-            "adopted-date": self.adopted_date,
-            "documentation-url": self.documentation_url,
-            "notes": self.notes,
-            "organisations": orgs,
-        } | super().as_dict()
 
 
 class DevelopmentPlanTimetable(DateModel):
@@ -216,18 +191,6 @@ class DevelopmentPlanTimetable(DateModel):
     development_plan = mapped_column(db.ForeignKey("development_plan.reference"))
     plan = db.relationship("DevelopmentPlan", back_populates="timetable")
 
-    def as_dict(self):
-        orgs = ";".join([org.organisation for org in self.organisations])
-        return {
-            "reference": self.reference,
-            "name": self.name,
-            "event-date": self.event_date,
-            "development-plan": self.development_plan,
-            "development-plan-event": self.development_plan_event,
-            "notes": self.notes,
-            "organisations": orgs,
-        } | super().as_dict()
-
 
 class DevelopmentPlanDocument(DateModel):
     __tablename__ = "development_plan_document"
@@ -247,24 +210,8 @@ class DevelopmentPlanDocument(DateModel):
         back_populates="development_plan_documents",
     )
 
-    development_plan_reference = mapped_column(
-        db.ForeignKey("development_plan.reference")
-    )
-    development_plan = db.relationship("DevelopmentPlan")
-
-    def as_dict(self):
-        orgs = ";".join([org.organisation for org in self.organisations])
-        return {
-            "reference": self.reference,
-            "name": self.name,
-            "description": self.description,
-            "document-type": self.document_type,
-            "documentation-url": self.documentation_url,
-            "document-url": self.document_url,
-            "development-plan": self.development_plan_reference,
-            "notes": self.notes,
-            "organisations": orgs,
-        } | super().as_dict()
+    development_plan = mapped_column(db.ForeignKey("development_plan.reference"))
+    plan = db.relationship("DevelopmentPlan")
 
 
 class Organisation(DateModel):

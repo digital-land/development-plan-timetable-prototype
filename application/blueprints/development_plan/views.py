@@ -28,7 +28,11 @@ from application.blueprints.development_plan.forms import (
     EventForm,
     PlanForm,
 )
-from application.export import DevelopmentPlanModel
+from application.export import (
+    DevelopementPlanDocumentModel,
+    DevelopmentPlanModel,
+    DevelopmentPlanTimetableModel,
+)
 from application.extensions import db
 from application.models import (
     DevelopmentPlan,
@@ -477,6 +481,14 @@ def download():
 def _export_data():
     download_file_map = {
         "development-plan.csv": DevelopmentPlan,
+        "development-plan-timetable.csv": DevelopmentPlanTimetable,
+        "development-plan-document.csv": DevelopmentPlanDocument,
+    }
+
+    model_map = {
+        DevelopmentPlan: DevelopmentPlanModel,
+        DevelopmentPlanTimetable: DevelopmentPlanTimetableModel,
+        DevelopmentPlanDocument: DevelopementPlanDocumentModel,
     }
 
     tempdir = TemporaryDirectory()
@@ -494,13 +506,16 @@ def _export_data():
             fieldnames = [f.replace("-reference", "") for f in fieldnames]
             if model in [
                 DevelopmentPlan,
+                DevelopmentPlanTimetable,
+                DevelopmentPlanDocument,
             ]:
                 fieldnames.append("organisations")
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
-            for d in model.query.all():
-                model = DevelopmentPlanModel.model_validate(d)
-                data = model.model_dump(by_alias=True)
+            for obj in model.query.all():
+                serializer_class = model_map[model]
+                m = serializer_class.model_validate(obj)
+                data = m.model_dump(by_alias=True)
                 writer.writerow(data)
     return tempdir
 

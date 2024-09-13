@@ -3,19 +3,6 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, field_serializer, model_validator
 
-# class Development(BaseModel):
-#     model_config = ConfigDict(from_attributes=True)
-
-#     name: str
-#     value: str
-
-
-# class FrequencyOfUpdatesModel(BaseModel):
-#     model_config = ConfigDict(from_attributes=True)
-
-#     name: str
-#     value: str
-
 
 class OrganisationModel(BaseModel):
     model_config = ConfigDict(
@@ -160,3 +147,8 @@ class DevelopementPlanDocumentModel(DevelopmentPlanBaseModel):
             if getattr(values, field) is None:
                 setattr(values, field, "")
         return values
+
+
+class DevelopmentPlanBoundaryModel(DevelopmentPlanBaseModel):
+    geometry: str
+    development_plan_boundary_type: str

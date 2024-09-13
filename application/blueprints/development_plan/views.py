@@ -30,6 +30,7 @@ from application.blueprints.development_plan.forms import (
 )
 from application.export import (
     DevelopementPlanDocumentModel,
+    DevelopmentPlanBoundaryModel,
     DevelopmentPlanModel,
     DevelopmentPlanTimetableModel,
 )
@@ -483,12 +484,14 @@ def _export_data():
         "development-plan.csv": DevelopmentPlan,
         "development-plan-timetable.csv": DevelopmentPlanTimetable,
         "development-plan-document.csv": DevelopmentPlanDocument,
+        "development-plan-boundary.csv": DevelopmentPlanBoundary,
     }
 
     model_map = {
         DevelopmentPlan: DevelopmentPlanModel,
         DevelopmentPlanTimetable: DevelopmentPlanTimetableModel,
         DevelopmentPlanDocument: DevelopementPlanDocumentModel,
+        DevelopmentPlanBoundary: DevelopmentPlanBoundaryModel,
     }
 
     tempdir = TemporaryDirectory()

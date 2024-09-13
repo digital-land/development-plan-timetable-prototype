@@ -1,4 +1,3 @@
-import csv
 import glob
 import io
 import json
@@ -29,12 +28,7 @@ from application.blueprints.development_plan.forms import (
     EventForm,
     PlanForm,
 )
-from application.export import (
-    DevelopementPlanDocumentModel,
-    DevelopmentPlanBoundaryModel,
-    DevelopmentPlanModel,
-    DevelopmentPlanTimetableModel,
-)
+from application.export import DevelopmentPlanModel, export_data_to_file
 from application.extensions import db
 from application.models import (
     DevelopmentPlan,
@@ -459,7 +453,7 @@ def delete_document(reference, document_reference):
 
 @development_plan.route("/download", methods=["GET"])
 def download():
-    tempdir = _export_data()
+    tempdir = export_data_to_file()
     zipname = "development-plan-data.zip"
     files = glob.glob(f"{tempdir.name}/*.csv")
     file_handle = io.BytesIO()
@@ -479,50 +473,6 @@ def download():
         mimetype="application/zip",
         headers={"Content-Disposition": f"attachment;filename={zipname}"},
     )
-
-
-def _export_data():
-    download_file_map = {
-        "development-plan.csv": DevelopmentPlan,
-        "development-plan-timetable.csv": DevelopmentPlanTimetable,
-        "development-plan-document.csv": DevelopmentPlanDocument,
-        "development-plan-boundary.csv": DevelopmentPlanBoundary,
-    }
-
-    model_map = {
-        DevelopmentPlan: DevelopmentPlanModel,
-        DevelopmentPlanTimetable: DevelopmentPlanTimetableModel,
-        DevelopmentPlanDocument: DevelopementPlanDocumentModel,
-        DevelopmentPlanBoundary: DevelopmentPlanBoundaryModel,
-    }
-
-    tempdir = TemporaryDirectory()
-
-    path = Path(tempdir.name)
-
-    for file, model in download_file_map.items():
-        csv_path = path / file
-        with open(csv_path, "w") as f:
-            fieldnames = [
-                col.name.replace("_", "-")
-                for col in model.__table__.columns
-                if col.name != "development_plan_event_type_reference"
-            ]
-            fieldnames = [f.replace("-reference", "") for f in fieldnames]
-            if model in [
-                DevelopmentPlan,
-                DevelopmentPlanTimetable,
-                DevelopmentPlanDocument,
-            ]:
-                fieldnames.append("organisations")
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            for obj in model.query.all():
-                serializer_class = model_map[model]
-                m = serializer_class.model_validate(obj)
-                data = m.model_dump(by_alias=True)
-                writer.writerow(data)
-    return tempdir
 
 
 def _populate_plan(form, plan):

@@ -1,6 +1,30 @@
-from flask import Blueprint, abort, redirect, render_template, request, url_for
+import csv
+import glob
+import io
+import shutil
+import time
+import zipfile
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from application.models import Organisation
+from flask import (
+    Blueprint,
+    Response,
+    abort,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+
+from application.export import download_file_map, model_map
+from application.models import (
+    DevelopmentPlan,
+    DevelopmentPlanBoundary,
+    DevelopmentPlanDocument,
+    DevelopmentPlanTimetable,
+    Organisation,
+)
 from application.utils import (
     get_adopted_local_plans,
     get_organisations_expected_to_publish_plan,
@@ -56,4 +80,71 @@ def organisation(reference):
 
     return render_template(
         "organisation/organisation.html", organisation=organisation, plans=plans
+    )
+
+
+@organisation_bp.route("/<string:organisation>/download-plans")
+def download_plans(organisation):
+    tempdir = TemporaryDirectory()
+    path = Path(tempdir.name)
+
+    organisation = Organisation.query.get(organisation)
+
+    for file, model in download_file_map.items():
+        csv_path = path / file
+        with open(csv_path, "w") as f:
+            serializer_class = model_map[model]
+            fieldnames = list(serializer_class.__fields__.keys())
+            fieldnames = [field.replace("_", "-") for field in fieldnames]
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            if model == DevelopmentPlan:
+                for plan in organisation.development_plans:
+                    serializer_class = model_map[model]
+                    m = serializer_class.model_validate(plan)
+                    data = m.model_dump(by_alias=True)
+                    writer.writerow(data)
+            elif model == DevelopmentPlanDocument:
+                for document in organisation.development_plan_documents:
+                    serializer_class = model_map[model]
+                    m = serializer_class.model_validate(document)
+                    data = m.model_dump(by_alias=True)
+                    writer.writerow(data)
+            elif model == DevelopmentPlanTimetable:
+                for timetable in organisation.development_plan_timetables:
+                    serializer_class = model_map[model]
+                    m = serializer_class.model_validate(timetable)
+                    data = m.model_dump(by_alias=True)
+                    writer.writerow(data)
+            elif model == DevelopmentPlanBoundary:
+                for plan in organisation.development_plans:
+                    if plan.development_plan_boundary is not None:
+                        boundary = DevelopmentPlanBoundary.query.filter(
+                            DevelopmentPlanBoundary.reference
+                            == plan.development_plan_boundary
+                        ).one_or_none()
+                        if boundary is not None:
+                            serializer_class = model_map[model]
+                            m = serializer_class.model_validate(boundary)
+                            data = m.model_dump(by_alias=True)
+                            writer.writerow(data)
+
+    zipname = "development-plan-data.zip"
+    files = glob.glob(f"{tempdir.name}/*.csv")
+    file_handle = io.BytesIO()
+    with zipfile.ZipFile(file_handle, "w") as zip:
+        for file in files:
+            p = Path(file)
+            info = zipfile.ZipInfo(p.name)
+            info.date_time = time.localtime(time.time())[:6]
+            info.compress_type = zipfile.ZIP_DEFLATED
+            with open(p, "rb") as fd:
+                zip.writestr(info, fd.read())
+    file_handle.seek(0)
+    shutil.rmtree(tempdir.name)
+
+    return Response(
+        file_handle.getvalue(),
+        mimetype="application/zip",
+        headers={"Content-Disposition": f"attachment;filename={zipname}"},
     )

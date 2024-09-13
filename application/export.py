@@ -1,7 +1,17 @@
+import csv
 import datetime
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, field_serializer, model_validator
+
+from application.models import (
+    DevelopmentPlan,
+    DevelopmentPlanBoundary,
+    DevelopmentPlanDocument,
+    DevelopmentPlanTimetable,
+)
 
 
 class OrganisationModel(BaseModel):
@@ -152,3 +162,37 @@ class DevelopementPlanDocumentModel(DevelopmentPlanBaseModel):
 class DevelopmentPlanBoundaryModel(DevelopmentPlanBaseModel):
     geometry: str
     development_plan_boundary_type: str
+
+
+def export_data_to_file():
+    tempdir = TemporaryDirectory()
+    path = Path(tempdir.name)
+    for file, model in download_file_map.items():
+        csv_path = path / file
+        with open(csv_path, "w") as f:
+            serializer_class = model_map[model]
+            fieldnames = list(serializer_class.__fields__.keys())
+            fieldnames = [field.replace("_", "-") for field in fieldnames]
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for obj in model.query.all():
+                serializer_class = model_map[model]
+                m = serializer_class.model_validate(obj)
+                data = m.model_dump(by_alias=True)
+                writer.writerow(data)
+    return tempdir
+
+
+download_file_map = {
+    "development-plan.csv": DevelopmentPlan,
+    "development-plan-timetable.csv": DevelopmentPlanTimetable,
+    "development-plan-document.csv": DevelopmentPlanDocument,
+    "development-plan-boundary.csv": DevelopmentPlanBoundary,
+}
+
+model_map = {
+    DevelopmentPlan: DevelopmentPlanModel,
+    DevelopmentPlanTimetable: DevelopmentPlanTimetableModel,
+    DevelopmentPlanDocument: DevelopementPlanDocumentModel,
+    DevelopmentPlanBoundary: DevelopmentPlanBoundaryModel,
+}

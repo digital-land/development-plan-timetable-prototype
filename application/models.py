@@ -118,18 +118,13 @@ class DevelopmentPlanBoundary(DateModel):
     __tablename__ = "development_plan_boundary"
 
     reference = db.Column(db.Text, primary_key=True)
-    prefix = db.Column(db.Text)
     name = db.Column(db.Text)
-    notes = db.Column(db.Text)
     geometry = db.Column(db.Text)
     geojson = db.Column(JSON)
-    point = db.Column(db.Text)
     development_plan_boundary_type = db.Column(
         db.Text, db.ForeignKey("development_plan_boundary_type.reference")
     )
     boundary_type = db.relationship("DevelopmentPlanBoundaryType")
-    plan = db.relationship("DevelopmentPlan", backref="boundary")
-    point = db.Column(db.Text)
 
 
 class DevelopmentPlan(DateModel):

@@ -4,6 +4,7 @@ import io
 import json
 import os
 import shutil
+import time
 import zipfile
 from datetime import datetime
 from pathlib import Path
@@ -466,6 +467,7 @@ def download():
         for file in files:
             p = Path(file)
             info = zipfile.ZipInfo(p.name)
+            info.date_time = time.localtime(time.time())[:6]
             info.compress_type = zipfile.ZIP_DEFLATED
             with open(p, "rb") as fd:
                 zip.writestr(info, fd.read())

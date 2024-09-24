@@ -62,7 +62,7 @@ def plan(reference):
     if plan is None:
         return abort(404)
 
-    coords, bounding_box = _get_centre_and_bounds(plan.boundary)
+    coords, bounding_box = _get_centre_and_bounds(plan.development_plan_boundary)
     return render_template(
         "plan/plan.html",
         development_plan=plan,

@@ -88,7 +88,7 @@ def randomiser():
     counts = {
         "orgs": len(orgs_without_adopted_lp),
         "no_geography": get_plans_query(
-            not_(DevelopmentPlan.geography.has()), count=True
+            not_(DevelopmentPlan.development_plan_boundary.is_(None)), count=True
         ),
         "no_documents": get_plans_query(
             not_(DevelopmentPlan.documents.any()), count=True
